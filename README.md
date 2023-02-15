@@ -1,14 +1,13 @@
 P2
 ===
 
-This is the Semester Project for the second semester of Aalborg 
+This is our Semester Project for the second semester of Aalborg 
 University's Software course. It is currently empty.
 
 This repository is not public yet, so you probably don't have any 
 questions. If, by any chance, GitHub has a security breach that allows 
 people to see this repository, and one of those people are interested, 
-we can maybe be contacted at cs-23-sw-2-p2-12@student.aau.dk (the 
-email doesn't seem to work, but it might in the future). 
+we can maybe be contacted at cs-23-sw-2-12@student.aau.dk.
 Alternatively, you can contact us at our individual emails:
 
 | Name                      | Email                   |
