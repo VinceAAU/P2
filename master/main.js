@@ -44,10 +44,11 @@ function handleRequest(req, res){
         //USE "sp" from above to get query search parameters
         switch(pathElements[1]){     
           case "":
-             fileResponse(res,"P2/worker/login.html");
+             fileResponse(res,"worker/index.html");
              break;
-          case "":
-          startPath += pathElements[1];
+          case "login.html":
+            let startPath = "worker/";
+            startPath += pathElements[1];
             fileResponse(res, startPath);
            break;
            default: //for anything else we assume it is a file to be served
