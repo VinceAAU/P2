@@ -1,0 +1,21 @@
+input[type="file"]{
+    display: none;
+}
+label{
+    color: white;
+    height: 60px;
+    width: 250px;
+    background-color: #002a3f;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Montserrat",sans-serif;
+
+}
