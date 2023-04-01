@@ -44,7 +44,7 @@ function handleRequest(req, res){
         //USE "sp" from above to get query search parameters
         switch(pathElements[1]){     
           case "":
-             fileResponse(res,"worker/index.html");
+             fileResponse(res,"P2/worker/login.html");
              break;
           case "":
           startPath += pathElements[1];
