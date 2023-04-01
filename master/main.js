@@ -42,18 +42,24 @@ function handleRequest(req, res){
       let pathElements=queryPath.split("/"); 
         console.log(pathElements);
         //USE "sp" from above to get query search parameters
+        let startPath = "";
         switch(pathElements[1]){     
           case "":
              fileResponse(res,"worker/index.html");
              break;
           case "login.html":
-            let startPath = "worker/";
+            startPath += "worker/";
             startPath += pathElements[1];
             fileResponse(res, startPath);
            break;
-           default: //for anything else we assume it is a file to be served
+          case "Page.html":
+            startPath += "Customer/";
+            startPath += pathElements[1];
+            fileResponse(res, startPath);
+            break;
+          default: //for anything else we assume it is a file to be served
              fileResponse(res, req.url);
-           break;
+            break;
     }
       break;
     case "POST":
