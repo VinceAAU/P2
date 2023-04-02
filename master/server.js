@@ -9,8 +9,17 @@ import fs from "fs";
 import path  from "path";
 import process from "process";
 
+import qs from "querystring";
+import {user_login_info} from "./login.js"
+export {fileResponse, requestHandler};
+
 const hostname = '127.0.0.1';
 const port = 3000;
+const NoResourceError="No Such Resource";
+const ValidationError="Validation Error";
+const InternalError ="Internal Error";
+const UserNotRecognized="User not recognized";
+
 
 let rootFileSystem=process.cwd();
 //rootFileSystem = rootFileSystem.replace("/master", "");
@@ -62,13 +71,100 @@ function handleRequest(req, res){
             break;
     }
       break;
-    case "POST":
-      
-      break;
+    case "POST": {
+      console.log("POST");
+      let pathElements=queryPath.split("/"); 
+      console.log(pathElements[pathElements.length-1]); //to be looked at /cg
+        switch(pathElements[pathElements.length-1]){
+          case "login-attempt":
+            try{
+              extractForm(req)
+              .then(user_info => user_login_info(user_info))
+              //.then(fileResponse(res, "P2/worker/worker_page.html"))
+              .catch(path => fileResponse(res, path))
+            }
+            catch(e){
+              console.log("catched!c");
+              console.log(e);
+            }
+            finally{
+              console.log("no exception throwed");
+              fileResponse(res, "P2/worker/worker_page.html");
+              //fileResponse(res, "P2/worker/login.html");
+            }
+            break;
+          default: 
+            console.error("Resource doesn't exist");
+            reportError(res, new Error(NoResourceError)); 
+          }
+      } 
+        break; //POST URL
     default:
       console.log("Fault");
       break;
 
+  }
+}
+
+function extractForm(req){ //cg addin explanation due
+  if(isFormEncoded(req.headers['content-type']))
+    return collectPostBody(req).then(body=> {
+      const data = qs.parse(body);//LEGACY
+       //console.log(data);
+       //let data=new URLSearchParams(body);
+      return data;
+      });
+  else
+    return Promise.reject(new Error(ValidationError));  //create a rejected promise
+}
+
+function isFormEncoded(contentType){//cg addin explanation due
+  let ctType=contentType.split(";")[0];
+  ctType=ctType.trim();
+  return (ctType==="application/x-www-form-urlencoded"); 
+}
+
+function collectPostBody(req){//cg addin explanation due
+ function collectPostBodyExecutor(resolve,reject){
+    let bodyData = [];
+    let length=0;
+    req.on('data', (chunk) => {
+      bodyData.push(chunk);
+      length+=chunk.length; 
+ 
+      if(length>10000000) { 
+        req.connection.destroy(); 
+        reject(new Error(MessageTooLongError));
+      }
+    }).on('end', () => {
+    bodyData = Buffer.concat(bodyData).toString(); 
+    console.log(bodyData);
+    resolve(bodyData); 
+    });
+    //Exceptions raised will reject the promise
+  }
+  return new Promise(collectPostBodyExecutor);
+}
+
+function returnToLogin(){
+  console.log("well this sucks");
+}
+
+function reportError(res,error){//cg addin explanation due
+  console.log("error catched");
+  if(error.message===ValidationError){
+    return errorResponse(res,400,error.message);
+  }
+  if(error.message===NoResourceError){
+    return errorResponse(res,404,error.message);
+  }
+  if(error.message===UserNotRecognized){
+    //fileResponse(res, "/P2/worker/login.html"); //To be shined up
+    return Promise.reject(returnToLogin);
+  }
+  else {
+    console.log(InternalError + ": " +error);
+    return errorResponse(res,500,"");
   }
 }
 
