@@ -4,10 +4,10 @@
  */
 
 function toggleStartButton() {
-    var button = document.getElementById("login_button");
-    if (button.innerHTML === "Login") {
+    var button = document.getElementById("start_button");
+    if (button.innerHTML === "Start") {
       button.innerHTML = "Disconnect";
     } else {
-      button.innerHTML = "Login";
+      button.innerHTML = "Start";
     }
   }
