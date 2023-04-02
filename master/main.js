@@ -52,8 +52,8 @@ function handleRequest(req, res){
             startPath += pathElements[1];
             fileResponse(res, startPath);
            break;
-          case "Page.html":
-            startPath += "Customer/";
+          case "page.html":
+            startPath += "customer/";
             startPath += pathElements[1];
             fileResponse(res, startPath);
             break;
