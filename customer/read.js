@@ -1,22 +1,19 @@
-console.log('test234');
-alert('test');
+const fileInput = document.querySelector('input');
+const preview = document.getElementById('preview');
 
 
-const realFileBtn = document.getElementById("real-file");
-const customBtn = document.getElementById("custom-button");
-const customTxt = document.getElementById("custom-text");
+//Saves a csv file in arrays and splits it up by comma
+fileInput.addEventListener('change', () => {
+    const fr = new FileReader();
+    fr.readAsText(fileInput.files[0]);
 
-customBtn.addEventListener("click", function() {
-    realFileBtn.click()
-}); 
+    fr.addEventListener('load', () => {
+        const csv = fr.result;
 
+        const array = csv.split('\r\n').map((line) => {
+            return line.split(',');
+        });
 
-realFileBtn.addEventListener("change", function(){
-    if (realFileBtn.value) {
-        customTxt.innerHTML = realFileBtn.value.match(/[\/\\]([\w\d\s\.\-\(\)]+)$/)[1];
-    } 
-    else
-     {
-        customTxt.innerHTML = "No file chosen, yet." 
-    }
-});
+        console.log(array);
+    })
+})
