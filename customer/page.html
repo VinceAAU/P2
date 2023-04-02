@@ -1,16 +1,12 @@
-<html>
-
+ <html>
 
 <head>
 	<title>Custom File Input</title>
 </head>
 <body>
-    <form action ="read.php" method="post" enctype="multipart/form-data">
-    Select a File to Upload
-    <br>
-    <input type="file" name="fuResume" id="fuResume">
-
-    <input type="submit" value="Upload File">
-    </form>
+    <input type="file" id="real-file" hidden="hidden"/>
+    <button type="button" id="custom-button">CHOOSE A FILE</button>
+    <span id="custom-text">No file chosen, yet.</span>
+    <script src="read.js"></script>
 </body>
 </html>
