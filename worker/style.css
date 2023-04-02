@@ -1,1 +1,26 @@
+.column {
+    float: left;
+    width: 50%;
+}
+
+.left {
+    width: 70%;
+}
+
+.right {
+    width: 30%;
+}
+
+.indexbutton {
+    float: right;
+    padding: 3px;
+    margin: 5px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+ }
 
