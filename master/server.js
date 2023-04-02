@@ -45,7 +45,7 @@ function handleRequest(req, res){
         let startPath = "";
         switch(pathElements[1]){     
           case "":
-             fileResponse(res,"worker/index.html");
+             fileResponse(res,"P2/worker/index.html");
              break;
           case "login.html":
             startPath += "worker/";
