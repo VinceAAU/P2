@@ -197,7 +197,7 @@ function fileResponse(res, filename){
   function guessMimeType(fileName){
     const fileExtension=fileName.split('.').pop().toLowerCase();
     console.log(fileExtension);
-    const ext2Mime ={ //Aught to check with IANA spec
+    const ext2Mime ={ //Ought to check with IANA spec
       "txt": "text/txt",
       "html": "text/html",
       "ico": "image/ico", // CHECK x-icon vs image/vnd.microsoft.icon
