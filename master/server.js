@@ -80,34 +80,26 @@ function handleRequest(req, res){
             try{
               extractForm(req)
               .then(user_info => user_login_info(user_info))
-              //.then(fileResponse(res, "P2/worker/worker_page.html"))
               .catch(path => fileResponse(res, path))
             }
             catch(e){
-              console.log("catched!c");
-              console.log(e);
+              console.log('Catched exception: '+e);
             }
             finally{
-              console.log("no exception throwed");
               fileResponse(res, "P2/worker/worker_page.html");
-              //fileResponse(res, "P2/worker/login.html");
             }
             break;
             case "create-user":
               try{
                 extractForm(req)
                 .then(user_info => create_user(user_info))
-                //.then(fileResponse(res, "P2/worker/worker_page.html"))
                 .catch(path => fileResponse(res, path))
               }
               catch(e){
-                console.log("catched!c");
-                console.log(e);
+                console.log('Catched exception: '+e);
               }
               finally{
-                console.log("no exception throwed");
                 fileResponse(res, "P2/worker/login.html");
-                //fileResponse(res, "P2/worker/login.html");
               }
               break;
           default: 
