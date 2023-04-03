@@ -21,9 +21,9 @@ const InternalError ="Internal Error";
 const UserNotRecognized="User not recognized";
 
 
-let rootFileSystem=process.cwd();
+let rootFileSystem=process.cwd(); //\Users\lasse\Desktop\P2\master
 //rootFileSystem = rootFileSystem.replace("/master", "");
-rootFileSystem = path.dirname(rootFileSystem);
+rootFileSystem = path.dirname(rootFileSystem); //\Users\lasse\Desktop\P2
 
 const server = http.createServer(requestHandler);
 
@@ -54,7 +54,7 @@ function handleRequest(req, res){
         let startPath = "";
         switch(pathElements[1]){     
           case "":
-             fileResponse(res,"P2/worker/index.html");
+             fileResponse(res,"worker/index.html");
              break;
           case "login.html":
             startPath += "worker/";
@@ -86,7 +86,7 @@ function handleRequest(req, res){
               console.log('Catched exception: '+e);
             }
             finally{
-              fileResponse(res, "P2/worker/worker_page.html");
+              fileResponse(res, "worker/worker_page.html");
             }
             break;
             case "create-user":
@@ -233,7 +233,7 @@ function fileResponse(res, filename){
     }
     userPath = path.normalize(userPath).replace(/^(\.\.(\/|\\|$))+/, '');
   
-    let p= path.join(rootFileSystem,path.normalize(userPath)); 
+    let p= path.join(rootFileSystem,path.normalize(userPath)); //\Users\lasse\Desktop\P2\worker\index.html
     //console.log("The path is:"+p);
     return p;
   }
