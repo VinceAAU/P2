@@ -23,6 +23,7 @@ function readJSON() { //Needs variable inputs
       try { //try catch will catch any errors from parsing bad json
         const data = JSON.parse(jsonString);
         console.log(data.userName);
+        return(data);
       }
       catch (err) {
         console.log('Error parsing JSON', err);
@@ -67,7 +68,7 @@ function writeToJSON(){
 
 function user_login_info(user_info){
   //readJSON() //temp
-  writeToJSON() //temp
+   //temp
 
   console.log(user_info['userName']); //temp
   let userExists = true;
@@ -81,7 +82,17 @@ function user_login_info(user_info){
 
 
 function create_user(user_info){ //create exception for already existing user
-  console.log("haha nice try");
+  //let specify = userName;
+  //console.log(readJSON());
+
+  //(Notes to self) To do:
+  // 
+  // Verify unique password
+  // Read JSON. Check for existing users
+  // If none, proceed to upload
+  // Fix auth fail
+
+
   let userExists = true;
   if(userExists == true){
     console.log("user exists");
