@@ -10,7 +10,7 @@ import path  from "path";
 import process from "process";
 
 import qs from "querystring";
-import {user_login_info} from "./login.js"
+import {user_login_info, create_user} from "./login.js"
 export {fileResponse, requestHandler};
 
 const hostname = '127.0.0.1';
@@ -93,6 +93,23 @@ function handleRequest(req, res){
               //fileResponse(res, "P2/worker/login.html");
             }
             break;
+            case "create-user":
+              try{
+                extractForm(req)
+                .then(user_info => create_user(user_info))
+                //.then(fileResponse(res, "P2/worker/worker_page.html"))
+                .catch(path => fileResponse(res, path))
+              }
+              catch(e){
+                console.log("catched!c");
+                console.log(e);
+              }
+              finally{
+                console.log("no exception throwed");
+                fileResponse(res, "P2/worker/login.html");
+                //fileResponse(res, "P2/worker/login.html");
+              }
+              break;
           default: 
             console.error("Resource doesn't exist");
             reportError(res, new Error(NoResourceError)); 
