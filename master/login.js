@@ -16,14 +16,14 @@ const path="P2/worker/login.html";
 function user_login_info(user_info){
 
   console.log("Supposed to read Json --------------");
-  fs.readFile('./users.json', 'utf-8', (err, jsonString) => {
+  fs.readFile('./master/users.json', 'utf-8', (err, jsonString) => {
     if(err) {
       console.log(err);
     } else {
     console.log(jsonString);
     }
   });
-  console.log("Supposed to  stop reading read Json --------------");
+  console.log("Supposed to  stop readingread Json --------------");
 
   console.log(user_info['userName']);
   let userExists = true;
