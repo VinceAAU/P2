@@ -1,5 +1,5 @@
 export {user_login_info, create_user};
-import {fileResponse, requestHandler} from "./server.js"
+import {fileResponse, requestHandler} from "../server.js"
 
 //important fs
 import fs from 'fs'
@@ -9,8 +9,8 @@ import fs from 'fs'
 
 const ValidationError="Validation Error";
 const UserNotRecognized="User not recognized";
-const login_path="P2/worker/login.html";
-const createUser_path="P2/worker/create_user.html";
+const login_path="worker/login.html";
+const createUser_path="worker/create_user.html";
 const jsonPath="./master/users.json"
 
 
