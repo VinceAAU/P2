@@ -1,26 +1,30 @@
-.column {
-    float: left;
-    width: 50%;
-}
-
-.left {
-    width: 70%;
-}
-
-.right {
-    width: 30%;
-}
-
 .indexbutton {
     float: right;
-    padding: 3px;
-    margin: 5px;
+    margin: 10px;
 }
 
-/* Clear floats after the columns */
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
- }
+#footer {
+    position: fixed;
+    border-top: 2px solid black;
+    background-color: lightgrey;
+    bottom: 0;
+    width: 100%;
+}
 
+#header {
+    position: absolute;  
+    top: 0;
+    width: 100%;
+}
+
+#indexp1 {
+    line-height: 1.5;
+}
+
+#indexlist {
+    line-height: 2.5;
+}
+
+#indexh1 {
+    text-decoration: underline;
+}
