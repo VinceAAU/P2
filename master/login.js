@@ -1,19 +1,17 @@
-export { user_login_info, validify_new_user, handler, hashing};
+export { user_login, validify_new_user, handler, hashing};
 import { search_db, insert_values, search_for_username, search_for_mail } from "./db.js";
 
 const login_path = "worker/login.html"; //temporary
 const worker_path = "./worker/worker_page.html" //temporary
 
-function user_login_info(user_info) {//temporary
-  console.log(user_info['userName']); //temp
-  let userExists = false;
-  if (userExists == true) {
-    console.log("user exists");
-    return (worker_path);
-  }
-  console.log("no user");
-  throw (login_path);
-}
+function user_login(user_info) {//temporary
+  //console.log(user_info['userName']); //temp
+  search_db(user_info['userName'], user_info['password']);
+  //let userExists = false;
+  //if (userExists == true) {
+  //  console.log("user exists");
+  //}
+};
 
 function hashing(raw_data){ //to be made
   console.log("Hashing");
@@ -46,8 +44,6 @@ function validify_new_user(user_info){
 
 
 function handler(new_user_info){
-  console.log("handler");
-  console.log(new_user_info)
   switch (true){
     case new_user_info.mail_validity === false:
       throw("mail_exists");

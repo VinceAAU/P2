@@ -12,7 +12,7 @@ import process from "process";
 import qs from "querystring";
 
 //function imports from other .js files
-import { user_login_info, validify_new_user, handler, hashing} from "./master/login.js"
+import { user_login, validify_new_user, handler, hashing} from "./master/login.js"
 import { connect_to_db } from "./master/db.js"
 
 //function exports
@@ -87,9 +87,9 @@ function handleRequest(req, res) {
         case "login-attempt":
           try {
             extractForm(req)
-              .then(user_info => user_login_info(user_info))
-              .then(worker_p => fileResponse(res, worker_p))
-              .catch(login_path => fileResponse(res, login_path))
+              .then(user_info => user_login(user_info))
+              .then(_ => fileResponse(res, worker_path))
+              .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]))
               //create function that throws loginpage instead of having a fileresponse in post
             }
           catch (e) { 
@@ -123,11 +123,18 @@ function handleRequest(req, res) {
 }
 
 function throw_user(res, thrown_error, redirected_from){ // to be extended for 2 fail modes for login
-
   let fileresponse_path;
 
   switch (redirected_from){
     case "login-attempt":
+      switch(thrown_error){
+        case "wrong-password":
+          console.log("wrong-password");
+          break;
+        case "no-user":
+          console.log("user not found");
+          break;
+      }
       fileresponse_path = login_path;
       break;
     case "create-user":
