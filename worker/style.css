@@ -1,6 +1,6 @@
 .indexbutton {
     float: right;
-    margin: 10px;
+    margin: 8px;
 }
 
 #footer {
@@ -9,10 +9,17 @@
     background-color: lightskyblue;
     bottom: 0;
     width: 100%;
+    text-align: center;
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+}
+  
 #header {
     position: fixed;  
+    margin: 0px;
     top: 0;
     width: 100%;
     background-color: lightgreen;
@@ -21,7 +28,7 @@
 
 #indexp1 {
     line-height: 1.5;
-    text-align: center;
+    margin: 2px;
 }
 
 #indexh1 {
