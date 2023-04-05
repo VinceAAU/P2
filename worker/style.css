@@ -6,25 +6,26 @@
 #footer {
     position: fixed;
     border-top: 2px solid black;
-    background-color: lightgrey;
+    background-color: lightskyblue;
     bottom: 0;
     width: 100%;
 }
 
 #header {
-    position: absolute;  
+    position: fixed;  
     top: 0;
     width: 100%;
+    background-color: lightgreen;
+    border-bottom: 2px solid black;
 }
 
 #indexp1 {
     line-height: 1.5;
-}
-
-#indexlist {
-    line-height: 2.5;
+    text-align: center;
 }
 
 #indexh1 {
     text-decoration: underline;
+    text-align: center;
+    padding: 20px;
 }
