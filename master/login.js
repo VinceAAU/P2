@@ -1,14 +1,10 @@
-export { user_login_info, create_user, validify_new_user, handler, hashing};
+export { user_login_info, validify_new_user, handler, hashing};
 import { search_db, insert_values, search_for_username, search_for_mail } from "./db.js";
 
-import fs from 'fs';
+const login_path = "worker/login.html"; //temporary
+const worker_path = "./worker/worker_page.html" //temporary
 
-const login_path = "worker/login.html";
-const createUser_path = "worker/create_user.html";
-const jsonPath = "./master/users.json"
-const worker_path = "./worker/worker_page.html"
-
-function user_login_info(user_info) {
+function user_login_info(user_info) {//temporary
   console.log(user_info['userName']); //temp
   let userExists = false;
   if (userExists == true) {
@@ -52,7 +48,6 @@ function validify_new_user(user_info){
 function handler(new_user_info){
   console.log("handler");
   console.log(new_user_info)
-  //if((new_user_info.mail_validity == true) && (new_user_info.user_validity == true) && (new_user_info.password_match == true)){}
   switch (true){
     case new_user_info.mail_validity === false:
       throw("mail_exists");
@@ -64,24 +59,3 @@ function handler(new_user_info){
       insert_values(new_user_info.mail, new_user_info.username, new_user_info.password)
   }; 
 };
-
-function create_user(user_info) { //create exception for already existing user
-
-  //(Notes to self) To do:
-  // 
-  // Verify unique password
-  // Read JSON. Check for existing users
-  // If none, proceed to upload
-  // Fix auth fail
-  
-
-  let userExists = true;
-  if (userExists == true) {
-    console.log("user exists");
-    return "success";
-  }
-  console.log("no user");
-  throw (createUser_path);
-}
-
-

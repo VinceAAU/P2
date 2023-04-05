@@ -12,7 +12,7 @@ import process from "process";
 import qs from "querystring";
 
 //function imports from other .js files
-import { user_login_info, create_user, validify_new_user, handler, hashing} from "./master/login.js"
+import { user_login_info, validify_new_user, handler, hashing} from "./master/login.js"
 import { connect_to_db } from "./master/db.js"
 
 //function exports
