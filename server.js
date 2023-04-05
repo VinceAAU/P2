@@ -4,23 +4,33 @@
  * server
  */
 
+//Library imports
 import http from 'http';
 import fs from "fs";
 import path from "path";
 import process from "process";
-
 import qs from "querystring";
+
+//function imports from other .js files
 import { user_login_info, create_user, validify_new_user, handler, hashing} from "./master/login.js"
-export { fileResponse, requestHandler };
 import { connect_to_db } from "./master/db.js"
 
-const hostname = '127.0.0.1';
-const port = 3000;
+//function exports
+export { fileResponse, requestHandler };
+
+//errors
 const NoResourceError = "No Such Resource";
 const ValidationError = "Validation Error";
 const InternalError = "Internal Error";
 
+//paths
+const login_path = "worker/login.html";
+const createUser_path = "worker/create_user.html";
+const worker_path = "./worker/worker_page.html";
+const index_path = "worker/index.html";
 
+const hostname = '127.0.0.1';
+const port = 3000;
 
 let rootFileSystem = process.cwd();
 
@@ -32,9 +42,8 @@ function requestHandler(req, res) {
   } catch (e) {
     console.log("!!: " + e);
     errorResponse(res, 500, "");
-  }
-}
-
+  };
+};
 
 function handleRequest(req, res) {
   console.log("GOT: " + req.method + " " + req.url);
@@ -53,7 +62,7 @@ function handleRequest(req, res) {
       let startPath = "";
       switch (pathElements[1]) {
         case "":
-          fileResponse(res, "worker/index.html");
+          fileResponse(res, index_path);
           break;
         case "login.html":
           startPath += "worker/";
@@ -93,7 +102,7 @@ function handleRequest(req, res) {
               .then(user_info => hashing(user_info))
               .then(hashed_info => validify_new_user(hashed_info))
               .then(processed_info => handler(processed_info))
-              .then(_ => fileResponse(res, "worker/login.html"))
+              .then(_ => fileResponse(res, login_path))
               .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]))
           }
           catch (e) {
@@ -119,7 +128,7 @@ function throw_user(res, thrown_error, redirected_from){ // to be extended for 2
 
   switch (redirected_from){
     case "login-attempt":
-      fileresponse_path = "worker/login.html";
+      fileresponse_path = login_path;
       break;
     case "create-user":
       switch(thrown_error){
@@ -133,12 +142,12 @@ function throw_user(res, thrown_error, redirected_from){ // to be extended for 2
         console.log("Thrown_user: Passwords");
         break;
       }
-      fileresponse_path = "worker/create_user.html";
+      fileresponse_path = createUser_path;
       break;
     default:
-      console.log("an error occured, while directing users")
+      console.log("an error occured, while directing users");
   }
-  fileResponse(res, fileresponse_path)
+  fileResponse(res, fileresponse_path);
 }
 
 function extractForm(req) { //cg addin explanation due

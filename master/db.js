@@ -30,7 +30,7 @@ function connect_to_db() {
 function create_table(db){
     const insert = db.prepare('CREATE TABLE users(id INTEGER PRIMARY KEY,username,email,password)');
     insert.run();
-    insert_values("aa","em","pw");
+    //insert_values("un","em","pw");
 };
 
 function insert_values(mail, username, password){
