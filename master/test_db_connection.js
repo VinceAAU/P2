@@ -6,7 +6,6 @@ let sql;
 const db_path = './data.db';
 const db = connect_to_db();
 
-export {connect_to_db, search_db, insert_values, search_for_username, search_for_mail};
 
 function connect_to_db() {
     if (fs.existsSync(db_path)) {
@@ -43,35 +42,11 @@ function insert_values(username, mail, password){
     }    
 };
 
-function search_db(srch){
-    const db = connect_to_db();
-    console.log("get");
+function print_all(){
+    const stmt = db.prepare('SELECT * FROM users');
+    const cat = stmt.get();
 
-    const stmt = db.prepare('SELECT * FROM users WHERE username = ?').bind(srch);
-    const cat = stmt.get(); 
-    console.log(cat); 
-};
-
-
-// Returns true/false
-function search_for_mail(srch_m){
-    const stmt = db.prepare('SELECT * FROM users WHERE email = ?');
-    const mail = stmt.all(srch_m);
-    console.log('srch for mail:' + mail.length)
-    if(mail.length == 0) {
-        return false;
-    } else return true;
+    console.log(cat); // => 2
 }
 
-// Returns true/false
-function search_for_username(srch_u){
-    const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
-    const username_srch = stmt.all(srch_u);
-    console.log('srch for user:' + username_srch.length)
-    if(username_srch.length == 0) {
-        return false;
-    } else return true;
-}
-
-
-
+print_all()

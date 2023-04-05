@@ -82,7 +82,8 @@ function handleRequest(req, res) {
               .then(user_info => user_login_info(user_info))
               .then(worker_p => fileResponse(res, worker_p))
               .catch(login_path => fileResponse(res, login_path))
-          }
+              //create function that throws loginpage instead of having a fileresponse in post
+            }
           catch (e) { 
             console.log('Catched exception: ' + e);
             fileResponse(res, "./worker/login.html");
@@ -91,7 +92,7 @@ function handleRequest(req, res) {
         case "create-user":
           try {
             extractForm(req)
-              .then(user_info => create_user(user_info))
+              .then(user_info => validify_new_user(user_info))
               .catch(path => fileResponse(res, path))
           }
           catch (e) {
