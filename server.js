@@ -10,8 +10,9 @@ import path from "path";
 import process from "process";
 
 import qs from "querystring";
-import { user_login_info, create_user } from "./master/login.js"
+import { user_login_info, create_user} from "./master/login.js"
 export { fileResponse, requestHandler };
+import { connect_to_db } from "./master/db.js"
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -72,19 +73,19 @@ function handleRequest(req, res) {
     case "POST": {
       console.log("POST");
       let pathElements = queryPath.split("/");
+      let fileres = "./worker/worker_page.html"
       console.log(pathElements[pathElements.length - 1]); //to be looked at /cg
       switch (pathElements[pathElements.length - 1]) {
         case "login-attempt":
           try {
             extractForm(req)
               .then(user_info => user_login_info(user_info))
-              .catch(path => fileResponse(res, path))
+              .then(worker_p => fileResponse(res, worker_p))
+              .catch(login_path => console.log(login_path))
           }
           catch (e) {
             console.log('Catched exception: ' + e);
-          }
-          finally {
-            fileResponse(res, "worker/worker_page.html");
+            fileResponse(res, "./worker/login.html");
           }
           break;
         case "create-user":
@@ -231,6 +232,7 @@ function securePath(userPath) {
 
 server.listen(port, hostname, () => {
   console.log(`${rootFileSystem}`)
+  connect_to_db();
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 

@@ -1,19 +1,29 @@
 export {user_login_info, create_user};
-import {fileResponse, requestHandler} from "../server.js"
+import {fileResponse, requestHandler,} from "../server.js";
+import {search_db, insert_values} from "./db.js";
+
+
+
+
+//import {default as sqlite3InitModule} from "./jswasm/sqlite3.mjs";
+
+import fs from 'fs';
 
 //important fs
-import fs from 'fs'
-
-
-
+//import fs from 'fs'
 
 const ValidationError="Validation Error";
 const UserNotRecognized="User not recognized";
 const login_path="worker/login.html";
 const createUser_path="worker/create_user.html";
 const jsonPath="./master/users.json"
+const worker_path="./worker/worker_page.html"
 
 
+
+function create_table (db){
+  console.log("dummy function");
+}
 
 function readJSON() { //Needs variable inputs
   fs.readFile(jsonPath, 'utf-8', (err, jsonString) => {
@@ -59,8 +69,7 @@ function writeToJSON(){
           console.log('An error occurred, while uploading to JSON '+err);
         }
       })
-    
-      }
+    }
   });
 }
 
@@ -74,7 +83,7 @@ function user_login_info(user_info){
   let userExists = true;
   if(userExists == true){
     console.log("user exists");
-    return "success";
+    return(worker_path);
   }
   console.log("no user");
   throw(login_path);
