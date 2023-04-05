@@ -1,24 +1,22 @@
 export { user_login, validify_new_user, handler, hashing};
 import { search_db, insert_values, search_for_username, search_for_mail } from "./db.js";
 
-const login_path = "worker/login.html"; //temporary
-const worker_path = "./worker/worker_page.html" //temporary
 
-function user_login(user_info) {//temporary
-  //console.log(user_info['userName']); //temp
+//Purpose: To send data to be verified to database search function
+function user_login(user_info) {
   search_db(user_info['userName'], user_info['password']);
-  //let userExists = false;
-  //if (userExists == true) {
-  //  console.log("user exists");
-  //}
 };
 
+
+//Receives data from POST in server.js from create_user.html to be hashed
 function hashing(raw_data){ //to be made
   console.log("Hashing"); //blaze it
   let hashed = raw_data; //thats one way to do it
   return(hashed);
 };
 
+
+//Purpose: To look for unique credentials and matching passwords, returns data to be handled
 function validify_new_user(user_info){
   let return_object = {mail: user_info.mail, username: user_info.userName};
   console.log("validify new user");
@@ -43,6 +41,7 @@ function validify_new_user(user_info){
 };
 
 
+//checks the given data for reasons to fail, if none; proceeds to insert data
 function handler(new_user_info){
   switch (true){
     case new_user_info.mail_validity === false:

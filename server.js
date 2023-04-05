@@ -82,7 +82,6 @@ function handleRequest(req, res) {
     case "POST": {
       console.log("POST");
       let pathElements = queryPath.split("/");
-      console.log(pathElements[pathElements.length - 1]); //to be looked at /cg
       switch (pathElements[pathElements.length - 1]) {
         case "login-attempt":
           try {
@@ -90,7 +89,6 @@ function handleRequest(req, res) {
               .then(user_info => user_login(user_info))
               .then(_ => fileResponse(res, worker_path))
               .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]))
-              //create function that throws loginpage instead of having a fileresponse in post
             }
           catch (e) { 
             console.log('Error: ' + e);
@@ -122,7 +120,7 @@ function handleRequest(req, res) {
   }
 }
 
-function throw_user(res, thrown_error, redirected_from){ // to be extended for 2 fail modes for login
+function throw_user(res, thrown_error, redirected_from){ // to be fixed with post/DOM
   let fileresponse_path;
 
   switch (redirected_from){
