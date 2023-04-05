@@ -14,7 +14,7 @@ function user_login(user_info) {//temporary
 };
 
 function hashing(raw_data){ //to be made
-  console.log("Hashing");
+  console.log("Hashing"); //blaze it
   let hashed = raw_data; //thats one way to do it
   return(hashed);
 };
