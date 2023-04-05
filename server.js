@@ -1,6 +1,6 @@
 /**
  * This is the main entry point for the master server software. It can 
- * (ideally) be run with `node main.js`, and will then set up a web 
+ * (ideally) be run with `node server.js`, and will then set up a web 
  * server
  */
 
@@ -10,7 +10,7 @@ import path from "path";
 import process from "process";
 
 import qs from "querystring";
-import { user_login_info, create_user, validify_new_user} from "./master/login.js"
+import { user_login_info, create_user, validify_new_user, handler, hashing} from "./master/login.js"
 export { fileResponse, requestHandler };
 import { connect_to_db } from "./master/db.js"
 
@@ -19,7 +19,7 @@ const port = 3000;
 const NoResourceError = "No Such Resource";
 const ValidationError = "Validation Error";
 const InternalError = "Internal Error";
-const UserNotRecognized = "User not recognized";
+
 
 
 let rootFileSystem = process.cwd();
@@ -73,7 +73,6 @@ function handleRequest(req, res) {
     case "POST": {
       console.log("POST");
       let pathElements = queryPath.split("/");
-      let fileres = "./worker/worker_page.html"
       console.log(pathElements[pathElements.length - 1]); //to be looked at /cg
       switch (pathElements[pathElements.length - 1]) {
         case "login-attempt":
@@ -85,21 +84,20 @@ function handleRequest(req, res) {
               //create function that throws loginpage instead of having a fileresponse in post
             }
           catch (e) { 
-            console.log('Catched exception: ' + e);
-            fileResponse(res, "./worker/login.html");
+            console.log('Error: ' + e);
           }
           break;
         case "create-user":
           try {
             extractForm(req)
-              .then(user_info => validify_new_user(user_info))
-              .catch(path => fileResponse(res, path))
+              .then(user_info => hashing(user_info))
+              .then(hashed_info => validify_new_user(hashed_info))
+              .then(processed_info => handler(processed_info))
+              .then(_ => fileResponse(res, "worker/login.html"))
+              .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]))
           }
           catch (e) {
             console.log('Catched exception: ' + e);
-          }
-          finally {
-            fileResponse(res, "worker/login.html");
           }
           break;
         default:
@@ -113,6 +111,34 @@ function handleRequest(req, res) {
       break;
 
   }
+}
+
+function throw_user(res, thrown_error, redirected_from){ // to be extended for 2 fail modes for login
+
+  let fileresponse_path;
+
+  switch (redirected_from){
+    case "login-attempt":
+      fileresponse_path = "worker/login.html";
+      break;
+    case "create-user":
+      switch(thrown_error){
+        case "mail_exists":
+        console.log("Thrown_user: Mail");
+        break;
+        case "user_exists":
+        console.log("Thrown_user: User");
+        break;
+        case "passwords_inequal":
+        console.log("Thrown_user: Passwords");
+        break;
+      }
+      fileresponse_path = "worker/create_user.html";
+      break;
+    default:
+      console.log("an error occured, while directing users")
+  }
+  fileResponse(res, fileresponse_path)
 }
 
 function extractForm(req) { //cg addin explanation due
@@ -155,9 +181,6 @@ function collectPostBody(req) {//cg addin explanation due
   return new Promise(collectPostBodyExecutor);
 }
 
-function returnToLogin() {
-  console.log("well this sucks");
-}
 
 function reportError(res, error) {//cg addin explanation due
   console.log("error catched");
@@ -166,10 +189,6 @@ function reportError(res, error) {//cg addin explanation due
   }
   if (error.message === NoResourceError) {
     return errorResponse(res, 404, error.message);
-  }
-  if (error.message === UserNotRecognized) {
-    //fileResponse(res, "/worker/login.html"); //To be shined up
-    return Promise.reject(returnToLogin);
   }
   else {
     console.log(InternalError + ": " + error);

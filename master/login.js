@@ -1,6 +1,4 @@
-export { user_login_info, create_user, validify_new_user };
-  import { userInfo } from "os";
-import { fileResponse, requestHandler, } from "../server.js";
+export { user_login_info, create_user, validify_new_user, handler, hashing};
 import { search_db, insert_values, search_for_username, search_for_mail } from "./db.js";
 
 import fs from 'fs';
@@ -21,11 +19,17 @@ function user_login_info(user_info) {
   throw (login_path);
 }
 
+function hashing(raw_data){ //to be made
+  console.log("Hashing");
+  let hashed = raw_data; //thats one way to do it
+  return(hashed);
+};
+
 function validify_new_user(user_info){
   let return_object = {mail: user_info.mail, username: user_info.userName};
   console.log("validify new user");
   console.log(user_info);
-  if(search_for_mail(user_info.mail)==false){ //fix perhaps?
+  if(search_for_mail(user_info.mail)==false){ //fix perhaps? switch? default case case case case
     return_object["mail_validity"] = true;
   }else{
     return_object["mail_validity"] = false;
@@ -41,13 +45,25 @@ function validify_new_user(user_info){
   } else {
     return_object["password_match"] = false;
   }
+  return(return_object);
+};
 
-  console.log(user_info.mail);
-  console.log(return_object);
 
-  // check if mail
-  //reentering og password
-}
+function handler(new_user_info){
+  console.log("handler");
+  console.log(new_user_info)
+  //if((new_user_info.mail_validity == true) && (new_user_info.user_validity == true) && (new_user_info.password_match == true)){}
+  switch (true){
+    case new_user_info.mail_validity === false:
+      throw("mail_exists");
+    case new_user_info.user_validity === false:
+      throw("user_exists");
+    case new_user_info.password_match === false:
+      throw("passwords_inequal");
+    default:
+      insert_values(new_user_info.mail, new_user_info.username, new_user_info.password)
+  }; 
+};
 
 function create_user(user_info) { //create exception for already existing user
 

@@ -33,18 +33,20 @@ function create_table(db){
     insert_values("aa","em","pw");
 };
 
-function insert_values(username, mail, password){
-    let db = connect_to_db();
+function insert_values(mail, username, password){
+    console.log("insert values");
     const insert = db.prepare('INSERT INTO users(username,email,password) VALUES (?,?,?)');
     try {
-        insert.run(username, mail, password);
+        insert.run(mail, username, password);
+        console.log("Inserted");
+        console.log(mail, username, password);
     } catch (e) {
         console.error(e);
     }    
 };
 
 function search_db(srch){
-    const db = connect_to_db();
+
     console.log("get");
 
     const stmt = db.prepare('SELECT * FROM users WHERE username = ?').bind(srch);
