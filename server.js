@@ -10,7 +10,7 @@ import path from "path";
 import process from "process";
 
 import qs from "querystring";
-import { user_login_info, create_user} from "./master/login.js"
+import { user_login_info, create_user, validify_new_user} from "./master/login.js"
 export { fileResponse, requestHandler };
 import { connect_to_db } from "./master/db.js"
 
@@ -81,9 +81,9 @@ function handleRequest(req, res) {
             extractForm(req)
               .then(user_info => user_login_info(user_info))
               .then(worker_p => fileResponse(res, worker_p))
-              .catch(login_path => console.log(login_path))
+              .catch(login_path => fileResponse(res, login_path))
           }
-          catch (e) {
+          catch (e) { 
             console.log('Catched exception: ' + e);
             fileResponse(res, "./worker/login.html");
           }
