@@ -15,8 +15,89 @@
 html, body {
     margin: 0;
     padding: 0;
+    
+    background-color: #f4efe3;
+    align-self: center;
 }
+
+/* html, article{
+    width: 70%;
+    text-align: center;
+}  */
+
+/* html, fieldset {
+    border-color: aqua;
+    border-radius: 1cm;
+    text-shadow: #928566;
+    color: aqua;
+    background-color: aquamarine;
+} */
+
+section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
   
+  /* Style the fieldset */
+  fieldset {
+    border: 2px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    background-color: #ececec;
+  }
+  
+  /* Style the form title */
+  #id1 {
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
+  
+  /* Style the form labels */
+  label {
+    font-size: 20px;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  /* Style the form inputs */
+  input[type="text"],
+  input[type="password"] {
+    font-size: 18px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    width: 95%;
+  }
+  
+  /* Style the form submit button */
+  #submitBtn_id {
+    font-size: 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  /* Style the links */
+  a {
+    font-size: 18px;
+    color: #666;
+    text-decoration: none;
+    margin-top: 10px;
+    display: inline-block;
+  }
+  
+  a:hover {
+    color: #333;
+  }
+
 #header {
     position: fixed;  
     margin: 0px;

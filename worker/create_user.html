@@ -4,15 +4,16 @@
 <head>
   <meta charset="utf-8">
   <title>Create User</title>
-  <!-- <link rel="stylesheet" type="text/css" href="css/simple.css"> -->
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
-
   <section>
-    <h1 id="id1"> Create User </h1>
+    
     <form id="loginForm_id" action="create-user" method="post">
+      
       <fieldset>
+        <h1 id="id1"> Create User </h1>
         <div class="myFormLayout">
           <label for="name_id"> Enter mail: </label>
           <input type="text" name="mail" id="name_id" value="" required minlength="1" maxlength="30"> <br>
@@ -22,16 +23,11 @@
           <input type="password" name="password" id="password_id" value="" required minlength="1" maxlength="30"> <br>
           <label for="password_id"> Re-enter Password: </label>
           <input type="password" name="password" id="password_id" value="" required minlength="1" maxlength="30">
-          <input type="submit" id="submitBtn_id" value="Record">
-
-
+          <input type="submit" id="submitBtn_id" value="Create user">
         </div>
-        <!-- <a href="P2/worker/login.html">Create User</a>   <br>
-<a href="../customer/page.html">Forgot Password</a>   <br> -->
       </fieldset>
     </form>
   </section>
-
 </body>
 
 </html>
