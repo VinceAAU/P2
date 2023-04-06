@@ -2,7 +2,6 @@ const fileInput = document.querySelector('input');
 const preview = document.getElementById('preview');
 let csv;
 
-
 //Saves a csv file in arrays and splits it up by comma
 fileInput.addEventListener('change', () => {
     const fr = new FileReader();
@@ -37,4 +36,4 @@ function download() {
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
-}
+} 
