@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
-
+<head>
+    <link rel="stylesheet" href="../worker/style.css"> 
+</head>
 <body>
     <input type="file">
     <div id="preview"></div>
-        <button onclick = "download();">Download files</button>
 
-        <button class="indexbutton" type="button" name="login"
+        <button class="indexbutton" type="button" name="Worker"
         onclick="location.href='../worker/worker_page.html'">Worker</button>
         
+        <p id="numFiles">Number of files uploaded 0</p> <!-- Element to display the number of stored files -->
 </body>
 
 <script src="read.js"></script>
