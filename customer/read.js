@@ -1,7 +1,7 @@
 const fileInput = document.querySelector('input');
 const preview = document.getElementById('preview');
 let arrays = [];
-let files = []; // Array to store uploaded files
+let files = [];
 
 // Saves a csv file in arrays and splits it up by comma
 fileInput.addEventListener('change', () => {
@@ -26,9 +26,11 @@ fileInput.addEventListener('change', () => {
   
         const downloadBtn = document.createElement('button');
         downloadBtn.textContent = `Download File ${arrays.length}`;
+        downloadBtn.classList.add('download-button'); // Add a CSS class to the button
         downloadBtn.addEventListener('click', (event) => {
           const index = parseInt(event.target.textContent.split(' ')[2]) - 1;
           download(index);
+          document.getElementById('download-rdy').textContent = `Your file "${files[index].name}" is ready to be downloaded.`;
         });
   
         document.body.appendChild(downloadBtn);
