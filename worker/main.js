@@ -4,13 +4,13 @@
  */
 
 function toggleStartButton() {
-    var button = document.getElementById("start_button");
-    let hackerman = document.getElementById("hackerman");
-    if (button.innerHTML === "Start") {
-      button.innerHTML = "Disconnect";
-      hackerman.style.visibility="visible";
-    } else {
-      button.innerHTML = "Start";
-      hackerman.style.visibility="hidden";
-    }
+  let button = document.querySelector("#start_button");
+  let hackerman = document.querySelector("#hackerman");
+  if (button.textContent === "Start") {
+    button.textContent = "Disconnect";
+    hackerman.style.visibility="visible";
+  } else {
+    button.textContent = "Start";
+    hackerman.style.visibility="hidden";
   }
+}
