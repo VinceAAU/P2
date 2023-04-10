@@ -80,6 +80,7 @@ function search_for_mail(srch_m){
 
 // Returns true/false    //for the function create_user in login.js
 function search_for_username(srch_u){
+  console.log("stuck here?");
     const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
     const username_srch = stmt.all(srch_u);
     if(username_srch.length == 0) {

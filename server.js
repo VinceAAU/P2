@@ -14,9 +14,10 @@ import qs from "querystring";
 //function imports from other .js files
 import { user_login, validify_new_user, handler, hashing} from "./master/login.js"
 import { connect_to_db } from "./master/db.js"
+import { search } from "./master/forgot_password.js"
 
-//function exports
-export { fileResponse, requestHandler };
+//function and const exports
+export { fileResponse, requestHandler, forgotpassword2_path };
 
 //errors
 const NoResourceError = "No Such Resource";
@@ -24,10 +25,12 @@ const ValidationError = "Validation Error";
 const InternalError = "Internal Error";
 
 //paths
-const login_path = "worker/login.html";
-const createUser_path = "worker/create_user.html";
-const worker_path = "./worker/worker_page.html";
-const index_path = "worker/index.html";
+const login_path          = "./worker/login.html";
+const createUser_path     = "./worker/create_user.html";
+const worker_path         = "./worker/worker_page.html";
+const index_path          = "./worker/index.html";
+const forgotpassword_path = "./worker/forgot_password.html"
+const forgotpassword2_path = "./worker/forgot_password2.html"
 
 const hostname = '127.0.0.1';
 const port = 3000;
@@ -107,6 +110,18 @@ function handleRequest(req, res) {
             console.log('Catched exception: ' + e);
           }
           break;
+        case "forgot_password_post": //-------------
+          console.log("forgot password post case");
+          try {
+            extractForm(req)
+            .then(username => search(username))
+            .then(path_response => fileResponse(res, path_response))
+            .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]));
+          }
+          catch (e) {
+            console.log('Catched exception: ' + e);
+          }
+          break;
         default:
           console.error("Resource doesn't exist");
           reportError(res, new Error(NoResourceError));
@@ -148,6 +163,11 @@ function throw_user(res, thrown_error, redirected_from){ // to be fixed with pos
         break;
       }
       fileresponse_path = createUser_path;
+      break;
+    case "forgot_password_post":
+      console.log("Thrown user: User not found")
+      console.log(thrown_error);
+      fileresponse_path = forgotpassword_path;
       break;
     default:
       console.log("an error occured, while directing users");
