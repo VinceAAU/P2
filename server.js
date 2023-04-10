@@ -14,6 +14,7 @@ import qs from "querystring";
 //function imports from other .js files
 import { user_login, validify_new_user, handler, hashing} from "./master/login.js"
 import { connect_to_db } from "./master/db.js"
+import { start_data_stream} from "./master/send_data.js"
 
 //function exports
 export { fileResponse, requestHandler };
@@ -106,6 +107,16 @@ function handleRequest(req, res) {
           catch (e) {
             console.log('Catched exception: ' + e);
           }
+          break;
+          case "request-worktask":
+            try{
+              console.log("Node requested a task");
+              // insert path to appropriately sized CSV file, for one worker
+              start_data_stream("insert path", res);
+            }
+            catch (e) {
+              console.log("CAUGHT exception" + e);
+            }            
           break;
         default:
           console.error("Resource doesn't exist");
