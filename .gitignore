@@ -392,3 +392,15 @@ node_modules/yallist/LICENSE
 node_modules/yallist/package.json
 node_modules/yallist/README.md
 node_modules/yallist/yallist.js
+node_modules/.bin/prebuild-install
+node_modules/.bin/rc
+node_modules/.bin/semver
+node_modules/base64-js/base64js.min.js
+node_modules/tar-fs/test/fixtures/invalid.tar
+node_modules/tar-fs/test/fixtures/d/file1
+node_modules/tar-fs/test/fixtures/d/file2
+node_modules/tar-fs/test/fixtures/d/sub-dir/file5
+node_modules/tar-fs/test/fixtures/d/sub-files/file3
+node_modules/tar-fs/test/fixtures/d/sub-files/file4
+node_modules/tar-fs/test/fixtures/e/file
+node_modules/tar-fs/test/fixtures/e/directory/.ignore
