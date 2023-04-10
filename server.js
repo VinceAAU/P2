@@ -14,6 +14,7 @@ import qs from "querystring";
 //function imports from other .js files
 import { user_login, validify_new_user, handler, hashing} from "./master/login.js"
 import { connect_to_db } from "./master/db.js"
+import { start_data_stream} from "./master/send_data.js"
 import { search } from "./master/forgot_password.js"
 
 //function and const exports
@@ -110,19 +111,30 @@ function handleRequest(req, res) {
             console.log('Catched exception: ' + e);
           }
           break;
-        case "forgot_password_post": //-------------
-          console.log("forgot password post case");
-          try {
-            extractForm(req)
-            .then(username => search(username))
-            .then(path_response => fileResponse(res, path_response))
-            .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]));
-          }
-          catch (e) {
-            console.log('Catched exception: ' + e);
-          }
+          case "request-worktask":
+            try{
+              console.log("Node requested a task");
+              // insert path to appropriately sized CSV file, for one worker
+              start_data_stream("insert path", res);
+            }
+            catch (e) {
+              console.log("CAUGHT exception" + e);
+            }            
           break;
-        default:
+          case "forgot_password_post": //-------------
+            console.log("forgot password post case");
+            try {
+              extractForm(req)
+              .then(username => search(username))
+              .then(path_response => fileResponse(res, path_response))
+              .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]));
+            }
+            catch (e) {
+              console.log('Catched exception: ' + e);
+            }
+          break;
+          default:
+          
           console.error("Resource doesn't exist");
           reportError(res, new Error(NoResourceError));
       }
