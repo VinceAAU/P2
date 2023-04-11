@@ -10,10 +10,10 @@ import fs from "fs/promises";
 import path from "path";
 
 //function imports from other .js files
-import { user_login, validify_new_user, handler, hashing} from "master/login.js"
-import { connect_to_db } from "master/db.js"
-import { start_data_stream} from "master/send_data.js"
-import { search } from "master/forgot_password.js"
+import { user_login, validify_new_user, handler, hashing} from "./master/login.js"
+import { connect_to_db } from "./master/db.js"
+import { start_data_stream} from "./master/send_data.js"
+import { search } from "./master/forgot_password.js"
 
 //function exports
 export { fileResponse, requestHandler };
