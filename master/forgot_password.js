@@ -1,11 +1,11 @@
 import { search_db, search_for_username, update_password } from "./db.js";
-import { forgotpassword2_path } from "../server.js"
 export { search, passwords, update }
 
 import NodeCache from "node-cache";
 const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } );
 
 
+const forgotpassword2_path = "../worker/forgot_password2.html";
 
 function search(username) {
     if (search_for_username(username.userName) === false) { //username (from html side) returns: "userName = xyz" hence username.userName
