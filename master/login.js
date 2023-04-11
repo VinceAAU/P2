@@ -4,6 +4,7 @@ import { search_db, insert_values, search_for_username, search_for_mail } from "
 
 //Purpose: To send data to be verified to database search function
 function user_login(user_info) {
+  console.log(user_info);
   search_db(user_info['userName'], user_info['password']);
 };
 

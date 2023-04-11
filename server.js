@@ -8,6 +8,8 @@
 import http from 'http';
 import fs from "fs/promises";
 import path from "path";
+import qs from "querystring";
+
 
 //function imports from other .js files
 import { user_login, validify_new_user, handler, hashing } from "./master/login.js"
@@ -16,7 +18,7 @@ import { start_data_stream } from "./master/send_data.js"
 import { search, update, passwords } from "./master/forgot_password.js"
 
 //function and const exports
-export { fileResponse, requestHandler, forgotpassword2_path };
+export { fileResponse, requestHandler };
 
 
 const hostname = '127.0.0.1';
@@ -49,7 +51,7 @@ function requestHandler(req, res) {
       break;
 
     //POST stuff
-    case "/login-attempt": case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
+    case "/worker/login-attempt": //case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
       handleLogin(req, res);
       break;
     case "/create-user":
@@ -150,6 +152,7 @@ function securePath(userPath) {
  */
 
 function handleLogin(req, res){
+  console.log("handle login");
   extractForm(req)
   .then(user_info => user_login(user_info))
   .then(_ => fileResponse(res, "worker/worker_page.html"))
@@ -179,9 +182,9 @@ function extractForm(req) { //cg addin explanation due
 
 function throw_user(res, thrown_error, redirected_from){ // to be fixed with post/DOM
   let fileresponse_path = "FAKE PATH IN CASE THERE'S A CATASTROPHIC FAILURE";
-
+  console.log("throw user. (Err, from): "+ thrown_error, redirected_from);
   switch (redirected_from){
-    case "login-attempt":
+    case "login handler":
       switch(thrown_error){
         case "wrong-password":
           console.log("wrong-password");
