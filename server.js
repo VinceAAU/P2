@@ -54,18 +54,18 @@ function requestHandler(req, res) {
     case "/worker/login-attempt": //case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
       handleLogin(req, res);
       break;
-    case "/create-user":
+    case "/worker/create-user":
       handleUserCreation(req, res);
       break;
     case "/request-worktask":
       console.log("Node requested a task");
       start_data_stream("insert path", res); //TODO: refractor to camel_case
       break;
-    case "/forgot_password_post": //TODO: change underscores to hyphens for consistency in URL's
+    case "/worker/forgot_password_post": //TODO: change underscores to hyphens for consistency in URL's
       console.log("forgot password post case");
       handlePasswordPostCase(req, res);
       break;
-    case "enter_new_password":
+    case "/worker/enter_new_password":
       handleNewPassword(req, res);
       break;
     default:
@@ -160,6 +160,7 @@ function handleLogin(req, res){
 }
 
 function handleUserCreation(req, res){
+  console.log("handluser")
   extractForm(req)
   .then(user_info => hashing(user_info))
   .then(hashed_info => validify_new_user(hashed_info))
@@ -214,7 +215,7 @@ function throw_user(res, thrown_error, redirected_from){ // to be fixed with pos
       console.log(thrown_error);
       fileresponse_path = "worker/forgot_password.html";
       break;
-    case "enter_new_password":
+    case "new password handler thing i wonder what this will look like":
       switch(thrown_error) {
         case "passwords_unequal":
           console.log("Thrown user: passwords dont match");
@@ -222,8 +223,11 @@ function throw_user(res, thrown_error, redirected_from){ // to be fixed with pos
         case "update_fail":
           console.log("Thrown user: update db failed"); //Potential cache TTL timeout
           break;
+        case "TypeError: Cannot read properties of undefined (reading 'user')":
+          console.log("Cache timed out waiting for a response");
+          break;
       }
-      fileresponse_path = forgotpassword2_path;
+      fileresponse_path = "/worker/forgot_password2.html";
       break;
     default:
       console.log("an error occured, while directing users");
