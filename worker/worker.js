@@ -11,18 +11,16 @@ onmessage = function(e) {
       return array;
     }
   
-    var pivot = array[0];
-    
-    var left = []; 
-    var right = [];
+    let pivot = array[0];
+    let left = [], right = [];
   
-    for (var i = 1; i < array.length; i++) {
+    for (let i = 1; i < array.length; i++) {
       array[i] < pivot ? left.push(array[i]) : right.push(array[i]);
     }
   
     return quicksort(left).concat(pivot, quicksort(right));
   };
-  var resultArr = new Int32Array(quicksort(e.data));
+  let resultArr = new Int32Array(quicksort(e.data));
 
   // Experimenting with Transferrable objects.
   postMessage(resultArr, [resultArr.buffer]);
