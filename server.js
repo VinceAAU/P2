@@ -12,10 +12,10 @@ import process from "process";
 import qs from "querystring";
 
 //function imports from other .js files
-import { user_login, validify_new_user, handler, hashing} from "./master/login.js"
+import { user_login, validify_new_user, handler, hashing } from "./master/login.js"
 import { connect_to_db } from "./master/db.js"
-import { start_data_stream} from "./master/send_data.js"
-import { search } from "./master/forgot_password.js"
+import { start_data_stream } from "./master/send_data.js"
+import { search, update, passwords } from "./master/forgot_password.js"
 
 //function and const exports
 export { fileResponse, requestHandler, forgotpassword2_path };
@@ -26,10 +26,10 @@ const ValidationError = "Validation Error";
 const InternalError = "Internal Error";
 
 //paths
-const login_path          = "./worker/login.html";
-const createUser_path     = "./worker/create_user.html";
-const worker_path         = "./worker/worker_page.html";
-const index_path          = "./worker/index.html";
+const login_path = "./worker/login.html";
+const createUser_path = "./worker/create_user.html";
+const worker_path = "./worker/worker_page.html";
+const index_path = "./worker/index.html";
 const forgotpassword_path = "./worker/forgot_password.html"
 const forgotpassword2_path = "./worker/forgot_password2.html"
 
@@ -93,8 +93,8 @@ function handleRequest(req, res) {
               .then(user_info => user_login(user_info))
               .then(_ => fileResponse(res, worker_path))
               .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]))
-            }
-          catch (e) { 
+          }
+          catch (e) {
             console.log('Error: ' + e);
           }
           break;
@@ -111,30 +111,43 @@ function handleRequest(req, res) {
             console.log('Catched exception: ' + e);
           }
           break;
-          case "request-worktask":
-            try{
-              console.log("Node requested a task");
-              // insert path to appropriately sized CSV file, for one worker
-              start_data_stream("insert path", res);
-            }
-            catch (e) {
-              console.log("CAUGHT exception" + e);
-            }            
+        case "request-worktask":
+          try {
+            console.log("Node requested a task");
+            // insert path to appropriately sized CSV file, for one worker
+            start_data_stream("insert path", res);
+          }
+          catch (e) {
+            console.log("CAUGHT exception" + e);
+          }
           break;
-          case "forgot_password_post": //-------------
-            console.log("forgot password post case");
-            try {
-              extractForm(req)
+        case "forgot_password_post":
+          try {
+            extractForm(req)
               .then(username => search(username))
-              .then(path_response => fileResponse(res, path_response))
+              .then(path_response => fileResponse(res, path_response)) //.finally instead?
               .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]));
-            }
-            catch (e) {
-              console.log('Catched exception: ' + e);
-            }
+          }
+          catch (e) {
+            console.log('Catched exception: ' + e);
+          }
           break;
-          default:
-          
+        case "enter_new_password":
+          try {
+            extractForm(req)
+              .then(info => passwords(info))
+              .then(password => update(password))
+              .then(_ => fileResponse(res, worker_path))
+              .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]));
+          }
+          catch (e) {
+            console.log('Catched exception: ' + e);
+          }
+          break;
+
+
+        default:
+
           console.error("Resource doesn't exist");
           reportError(res, new Error(NoResourceError));
       }
@@ -147,12 +160,12 @@ function handleRequest(req, res) {
   }
 }
 
-function throw_user(res, thrown_error, redirected_from){ // to be fixed with post/DOM
+function throw_user(res, thrown_error, redirected_from) { // to be fixed with post/DOM
   let fileresponse_path;
 
-  switch (redirected_from){
+  switch (redirected_from) {
     case "login-attempt":
-      switch(thrown_error){
+      switch (thrown_error) {
         case "wrong-password":
           console.log("wrong-password");
           break;
@@ -163,16 +176,16 @@ function throw_user(res, thrown_error, redirected_from){ // to be fixed with pos
       fileresponse_path = login_path;
       break;
     case "create-user":
-      switch(thrown_error){
+      switch (thrown_error) {
         case "mail_exists":
-        console.log("Thrown_user: Mail");
-        break;
+          console.log("Thrown_user: Mail");
+          break;
         case "user_exists":
-        console.log("Thrown_user: User");
-        break;
-        case "passwords_inequal":
-        console.log("Thrown_user: Passwords");
-        break;
+          console.log("Thrown_user: User");
+          break;
+        case "passwords_unequal":
+          console.log("Thrown_user: Passwords");
+          break;
       }
       fileresponse_path = createUser_path;
       break;
@@ -180,6 +193,17 @@ function throw_user(res, thrown_error, redirected_from){ // to be fixed with pos
       console.log("Thrown user: User not found")
       console.log(thrown_error);
       fileresponse_path = forgotpassword_path;
+      break;
+    case "enter_new_password":
+      switch(thrown_error) {
+        case "passwords_unequal":
+          console.log("Thrown user: passwords dont match");
+          break;
+        case "update_fail":
+          console.log("Thrown user: update db failed"); //Potential cache TTL timeout
+          break;
+      }
+      fileresponse_path = forgotpassword2_path;
       break;
     default:
       console.log("an error occured, while directing users");
@@ -191,7 +215,7 @@ function extractForm(req) { //cg addin explanation due
   if (isFormEncoded(req.headers['content-type']))
     return collectPostBody(req).then(body => {
       const data = qs.parse(body);//LEGACY
-      //console.log(data);
+      //console.log(body);
       //let data=new URLSearchParams(body);
       return data;
     });
