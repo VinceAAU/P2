@@ -15,7 +15,7 @@ async function toggleStartButton() {
     startWorker();  //  I guess we run the worker some place like here.
 
     const response = await fetch('request-worktask', {
-      method: 'POST'
+      method: 'GET'
     });
     const stream = response.body;
     const reader = stream.getReader();

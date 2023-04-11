@@ -14,7 +14,7 @@ import qs from "querystring";
 //function imports from other .js files
 import { user_login, validify_new_user, handler, hashing } from "./master/login.js"
 import { connect_to_db } from "./master/db.js"
-import { start_data_stream } from "./master/send_data.js"
+import { startDataStream } from "./master/send_data.js"
 import { search, update, passwords } from "./master/forgot_password.js"
 
 //function and const exports
@@ -49,6 +49,10 @@ function requestHandler(req, res) {
     case "/worker/login.html":
       fileResponse(res, "worker/login.html");
       break;
+    case "/worker/request-worktask":
+      console.log("Node requested a task");
+      startDataStream("insert path", res); //TODO: refractor to camel_case
+      break;
 
     //POST stuff
     case "/worker/login-attempt": //case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
@@ -56,10 +60,6 @@ function requestHandler(req, res) {
       break;
     case "/worker/create-user":
       handleUserCreation(req, res);
-      break;
-    case "/request-worktask":
-      console.log("Node requested a task");
-      start_data_stream("insert path", res); //TODO: refractor to camel_case
       break;
     case "/worker/forgot_password_post": //TODO: change underscores to hyphens for consistency in URL's
       console.log("forgot password post case");
