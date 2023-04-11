@@ -12,7 +12,7 @@ async function toggleStartButton() {
     button.textContent = "Disconnect";
     hackerman.style.visibility = "visible";
 
-    //  startWorker();  //  I guess we run the worker some place like here.
+    startWorker();  //  I guess we run the worker some place like here.
 
     const response = await fetch('request-worktask', {
       method: 'POST'
@@ -34,7 +34,7 @@ async function toggleStartButton() {
   }
 }
 
-
+let testArr = new Int32Array([5, 2, 3, 9, 900, 1, 1111, 111, 3]);
 // Move to where it should be, and adjust functionality accordingly
 function startWorker() {
   if (window.Worker) {
@@ -42,11 +42,13 @@ function startWorker() {
 
     /*  Somehow feed the array of numbers to sort to the worker.
         For now, a static array of number is fed to test.         */
-    workerSort.postMessage([5, 2, 3, 9, 900, 1, 1111, 111, 3]);
+    workerSort.postMessage(testArr, [testArr.buffer]);
     console.log("Block of work posted to the worker. ");
 
     workerSort.onmessage = function (e) {
-      console.log("Worker returned the sorted list: " + e.data);
+      let arrR = new Int32Array(e.data);
+      console.log("Worker returned the sorted list: ");
+      arrR.forEach(x => console.log(x));
     }
   } else {
     console.log("Browser does not support webworkers. ");

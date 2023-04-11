@@ -1,39 +1,31 @@
-/*  The worker takes an array and performs standard MergeSort on it; 
+/*  The worker takes an array and performs QuickSort on it; 
     returns the sorted array.                                         */
 
-onmessage = function (e) {
-  console.log("Worker received unsorted list: " + e.data);
+onmessage = function(e) {
+  console.log("Worker: received block of work. ");
+  console.log("Unsorted: " + e.data);
 
-  //  Merges two subarrays of e.data (a left and a right sub-array)
-  function merge(l, r) {
-    let result = [];            //  Temp array for storing the result.
-    let lIndex = rIndex = 0;
-
-    //  Filling the temp array.
-    while (lIndex < l.length && rIndex < r.length) {
-      if (l[lIndex] < r[rIndex]) {
-        result.push(l[lIndex]);
-        lIndex++;
-      } else {
-        result.push(r[rIndex]);
-        rIndex++;
-      }
+  //  Trying out QuickSort.
+  function quicksort(array) {
+    if (array.length <= 1) {
+      return array;
     }
-
-    return result.concat(l.slice(lIndex)).concat(r.slice(rIndex));
-  }
-
-  function mergeSort(arr) {
-    if (arr.length === 1) return arr;
-
-    //  Finding the middle index, the left, and the right indices.
-    const m = Math.floor(arr.length / 2);
-    const l = arr.slice(0, m);
-    const r = arr.slice(m);
+  
+    var pivot = array[0];
     
-    return merge(mergeSort(l), mergeSort(r));
-  }
+    var left = []; 
+    var right = [];
+  
+    for (var i = 1; i < array.length; i++) {
+      array[i] < pivot ? left.push(array[i]) : right.push(array[i]);
+    }
+  
+    return quicksort(left).concat(pivot, quicksort(right));
+  };
+  var resultArr = new Int32Array(quicksort(e.data));
 
-  //  Posting the worker result.
-  postMessage(mergeSort(e.data, 0, e.data - 1));
-};
+  // Experimenting with Transferrable objects.
+  postMessage(resultArr, [resultArr.buffer]);
+
+}
+  
