@@ -36,8 +36,8 @@ function create_table(db){
 function insert_values(mail, username, password){
     const insert = db.prepare('INSERT INTO users(username,email,password) VALUES (?,?,?)');
     try {
-        insert.run(mail, username, password);
-        console.log(mail, username, password);
+        insert.run(username, mail, password);
+        console.log(username, mail, password);
     } catch (e) {
         console.error(e);
     }    
@@ -45,7 +45,7 @@ function insert_values(mail, username, password){
 
 //crooked function, needs explanation
 function search_db(srch_un, srch_pw){
-  
+  console.log("srchdb: "+srch_un, srch_pw)
   const stmt = db.prepare('SELECT * FROM users WHERE username = ?').bind(srch_un);
   const got = stmt.get(); 
 
