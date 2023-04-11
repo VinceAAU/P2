@@ -31,32 +31,39 @@ function requestHandler(req, res) {
 
   switch(url.pathname){
     //GET stuff
-    case "": case "index.html":
+    case "/": case "/index.html":
       fileResponse(res, 'worker/index.html');
       break;
-    case "login.html":
+    case "/login.html":
       fileResponse(res, 'worker/login.html');
       break;
-    case "page.html":
+    case "/page.html":
       fileResponse(res, 'customer/page.html');
+      break;
+    case "/worker/style.css":
+      fileResponse(res, "worker/style.css");
+      break;
+    case "/worker/login.html":
+      fileResponse(res, "worker/login.html");
       break;
 
     //POST stuff
-    case "login-attempt":
+    case "/login-attempt": case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
       handleLogin(req, res);
       break;
-    case "create-user":
+    case "/create-user":
       handleUserCreation(req, res);
       break;
-    case "request-worktask":
+    case "/request-worktask":
       console.log("Node requested a task");
       start_data_stream("insert path", res); //TODO: refractor to camel_case
       break;
-    case "forgot_password_post": //TODO: change underscores to hyphens for consistency in URL's
+    case "/forgot_password_post": //TODO: change underscores to hyphens for consistency in URL's
       console.log("forgot password post case");
       handlePasswordPostCase(req, res);
     default:
-      errorResponse(res, 404, "Resource not found");
+      fileResponse(res, "." + url.pathname); //TODO: DELETE THIS LINE AND UNCOMMENT THE NEXT ONE
+      //errorResponse(res, 404, "Resource not found");
   }
 }
 
@@ -123,8 +130,8 @@ function securePath(userPath) {
   }
   userPath = path.normalize(userPath).replace(/^(\.\.(\/|\\|$))+/, '');
 
-  let p = path.join(rootFileSystem, path.normalize(userPath));
-  //console.log("The path is:"+p);
+  let p = path.join("./", path.normalize(userPath)); 
+  //console.log("The path is:"+p); 
   return p;
 }
 
@@ -141,7 +148,7 @@ function handleLogin(req, res){
   extractForm(req)
   .then(user_info => user_login(user_info))
   .then(_ => fileResponse(res, "worker/worker_page.html"))
-  .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]))
+  .catch(thrown_error => throw_user(res, thrown_error, "login handler"));
 }
 
 function handleUserCreation(req, res){
@@ -149,8 +156,8 @@ function handleUserCreation(req, res){
   .then(user_info => hashing(user_info))
   .then(hashed_info => validify_new_user(hashed_info))
   .then(processed_info => handler(processed_info))
-  .then(_ => fileResponse(res, login_path))
-  .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]));
+  .then(_ => fileResponse(res, "worker/login.html"))
+  .catch(thrown_error => throw_user(res, thrown_error, "user creator"));
 }
 
 function extractForm(req) { //cg addin explanation due
@@ -166,7 +173,7 @@ function extractForm(req) { //cg addin explanation due
 }
 
 function throw_user(res, thrown_error, redirected_from){ // to be fixed with post/DOM
-  let fileresponse_path;
+  let fileresponse_path = "FAKE PATH IN CASE THERE'S A CATASTROPHIC FAILURE";
 
   switch (redirected_from){
     case "login-attempt":
@@ -178,7 +185,7 @@ function throw_user(res, thrown_error, redirected_from){ // to be fixed with pos
           console.log("user not found");
           break;
       }
-      fileresponse_path = login_path;
+      fileresponse_path = "worker/login.html";
       break;
     case "create-user":
       switch(thrown_error){
@@ -192,15 +199,16 @@ function throw_user(res, thrown_error, redirected_from){ // to be fixed with pos
         console.log("Thrown_user: Passwords");
         break;
       }
-      fileresponse_path = createUser_path;
+      fileresponse_path = "worker/create_user.html";
       break;
     case "forgot_password_post":
       console.log("Thrown user: User not found")
       console.log(thrown_error);
-      fileresponse_path = forgotpassword_path;
+      fileresponse_path = "worker/forgot_password.html";
       break;
     default:
       console.log("an error occured, while directing users");
+      fileresponse_path = "/"; //Idk where else to go
   }
   fileResponse(res, fileresponse_path);
 }
@@ -213,12 +221,32 @@ function handlePasswordPostCase(req, res){
   extractForm(req)
   .then(username => search(username))
   .then(path_response => fileResponse(res, path_response))
-  .catch(thrown_error => throw_user(res, thrown_error, pathElements[pathElements.length - 1]));
+  .catch(thrown_error => throw_user(res, thrown_error, "password post case thing"));
+}
+function collectPostBody(req) {//cg addin explanation due
+  function collectPostBodyExecutor(resolve, reject) {
+    let bodyData = [];
+    let length = 0;
+    req.on('data', (chunk) => {
+      bodyData.push(chunk);
+      length += chunk.length;
+
+      if (length > 10000000) {
+        req.connection.destroy();
+        reject(new Error(MessageTooLongError));
+      }
+    }).on('end', () => {
+      bodyData = Buffer.concat(bodyData).toString();
+      console.log(bodyData);
+      resolve(bodyData);
+    });
+    //Exceptions raised will reject the promise
+  }
+  return new Promise(collectPostBodyExecutor);
 }
 
 
 server.listen(port, hostname, () => {
-  console.log(`${rootFileSystem}`)
   connect_to_db();
   console.log(`Server running at http://${hostname}:${port}/`);
 });
