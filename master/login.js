@@ -49,7 +49,7 @@ function handler(new_user_info){
     case new_user_info.user_validity === false:
       throw("user_exists");
     case new_user_info.password_match === false:
-      throw("passwords_inequal");
+      throw("passwords_unequal");
     default:
       insert_values(new_user_info.mail, new_user_info.username, new_user_info.password)
   }; 

@@ -6,7 +6,7 @@ let sql;
 const db_path = './data.db';
 const db = connect_to_db();
 
-export {connect_to_db, search_db, insert_values, search_for_username, search_for_mail};
+export {connect_to_db, search_db, insert_values, search_for_username, search_for_mail, update_password};
 
 function connect_to_db() {
     if (fs.existsSync(db_path)) {
@@ -34,11 +34,9 @@ function create_table(db){
 };
 
 function insert_values(mail, username, password){
-    console.log("insert values");
     const insert = db.prepare('INSERT INTO users(username,email,password) VALUES (?,?,?)');
     try {
         insert.run(mail, username, password);
-        console.log("Inserted");
         console.log(mail, username, password);
     } catch (e) {
         console.error(e);
@@ -80,10 +78,22 @@ function search_for_mail(srch_m){
 
 // Returns true/false    //for the function create_user in login.js
 function search_for_username(srch_u){
-  console.log("stuck here?");
     const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
     const username_srch = stmt.all(srch_u);
     if(username_srch.length == 0) {
         return false;
     } else return true;
+};
+
+//SQL syntax for updating:
+// ('UPDATE table SET column1 = value1 WHERE column2 = value2')
+// Better-Sqlite allows for '?' to be placeholders for values to insert in SQL statement
+function update_password(new_password, user){
+  try {
+    const stmt = db.prepare('UPDATE users SET password = ? WHERE username = ?');
+    const updates = stmt.run(new_password, user);  
+  }
+  catch{
+    throw("update_fail");
+  }
 };
