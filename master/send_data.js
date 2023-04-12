@@ -1,4 +1,6 @@
 import fs from "fs";
+import { Readable } from "stream";
+
 
 export function startDataStream(path, res) {
 
@@ -14,3 +16,20 @@ export function startDataStream(path, res) {
     });
 
 }
+
+export function streamArray(res, array) {
+    const jsonString = JSON.stringify(array);
+    const buffer = Buffer.from(jsonString, "utf-8");
+    const readable = new Readable();
+  
+    readable._read = () => {};
+    readable.push(buffer);
+    readable.push(null);
+  
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+      "Content-Length": buffer.length,
+    });
+  
+    readable.pipe(res);
+  }

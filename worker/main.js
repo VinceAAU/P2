@@ -14,19 +14,14 @@ async function toggleStartButton() {
 
     startWorker();  //  I guess we run the worker some place like here.
 
-    const response = await fetch('request-worktask', {
-      method: 'GET'
-    });
-    const stream = response.body;
-    const reader = stream.getReader();
-    let data = '';
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) break;
-      data += value;
-    }
-
-    console.log(data); // TODO: needs to be parsed using something like "papaparse"
+    console.log("Fetching array from server...");
+    fetch('request-worktask')
+      .then(response => response.json())
+      .then(data => {
+        console.log("Received array from server:");
+        console.log(data);
+      })
+      .catch(error => console.error(error));
 
   } else {
     button.textContent = "Start";

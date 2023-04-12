@@ -14,7 +14,7 @@ import qs from "querystring";
 //function imports from other .js files
 import { user_login, validify_new_user, handler, hashing } from "./master/login.js"
 import { connect_to_db } from "./master/db.js"
-import { startDataStream } from "./master/send_data.js"
+import { startDataStream, streamArray } from "./master/send_data.js"
 import { search, update, passwords } from "./master/forgot_password.js"
 
 //function and const exports
@@ -50,8 +50,7 @@ function requestHandler(req, res) {
       fileResponse(res, "worker/login.html");
       break;
     case "/worker/request-worktask":
-      console.log("Node requested a task");
-      startDataStream("insert path", res); //TODO: refractor to camel_case
+      streamArray(res,[5,2,1,2,2,5,5,5,5,5,5,5,5,5,6]); // Example array
       break;
 
     //POST stuff
