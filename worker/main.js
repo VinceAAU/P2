@@ -12,16 +12,17 @@ async function toggleStartButton() {
     button.textContent = "Disconnect";
     hackerman.style.visibility = "visible";
 
-    startWorker();  //  I guess we run the worker some place like here.
-
-    console.log("Fetching array from server...");
     fetch('request-worktask')
-      .then(response => response.json())
-      .then(data => {
-        console.log("Received array from server:");
-        console.log(data);
-      })
-      .catch(error => console.error(error));
+    .then(response => response.json())
+    .then(data => {
+      console.log("Received array from server:");
+      console.log(data);
+      const convertedArray = new Int32Array(data);
+      console.log("Array as Int32Array:");
+      console.log(convertedArray);
+      startWorker(convertedArray);
+    })
+    .catch(error => console.error(error));
 
   } else {
     button.textContent = "Start";
@@ -29,15 +30,15 @@ async function toggleStartButton() {
   }
 }
 
-let testArr = new Int32Array([5, 2, 3, 9, 900, 1, 1111, 111, 3]);
+// let testArr = new Int32Array([5, 2, 3, 9, 900, 1, 1111, 111, 3]);
 // Move to where it should be, and adjust functionality accordingly
-function startWorker() {
+function startWorker(receivedArray) {
   if (window.Worker) {
     const workerSort = new Worker("../worker.js");
 
     /*  Somehow feed the array of numbers to sort to the worker.
         For now, a static array of number is fed to test.         */
-    workerSort.postMessage(testArr, [testArr.buffer]);
+    workerSort.postMessage(receivedArray, [receivedArray.buffer]);
     console.log("Block of work posted to the worker. ");
 
     workerSort.onmessage = function (e) {
