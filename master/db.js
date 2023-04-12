@@ -44,15 +44,15 @@ function insert_values(mail, username, password){
 };
 
 //crooked function, needs explanation
-function search_db(srch_un, srch_pw){
-  console.log("srchdb: "+srch_un, srch_pw)
-  const stmt = db.prepare('SELECT * FROM users WHERE username = ?').bind(srch_un);
+function search_db(searchUsername, searchPassword){
+  console.log("srchdb: "+searchUsername, searchPassword)
+  const stmt = db.prepare('SELECT * FROM users WHERE username = ?').bind(searchUsername);
   const got = stmt.get(); 
 
   try{  //If nothing is return with 'better-sqlite3', throws an error, hence the try-statement
-    switch (got.password == srch_pw){
+    switch (got.password == searchPassword){
       case true: //
-        console.log("Welcome "+srch_un);
+        console.log("Welcome "+searchUsername);
         break;
       case false:
         throw("_");

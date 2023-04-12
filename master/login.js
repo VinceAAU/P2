@@ -5,7 +5,7 @@ import { search_db, insert_values, search_for_username, search_for_mail } from "
 //Purpose: To send data to be verified to database search function
 function user_login(user_info) {
   console.log(user_info);
-  search_db(user_info['userName'], user_info['password']);
+  search_db(user_info['username'], user_info['password']);
 };
 
 
@@ -19,7 +19,7 @@ function hashing(raw_data){ //to be made
 
 //Purpose: To look for unique credentials and matching passwords, returns data to be handled
 function validify_new_user(user_info){
-  let return_object = {mail: user_info.mail, username: user_info.userName};
+  let return_object = {mail: user_info.mail, username: user_info.username};
   console.log("validify new user");
   console.log(user_info);
   if(search_for_mail(user_info.mail)==false){ //fix perhaps? switch? default case case case case
@@ -27,7 +27,7 @@ function validify_new_user(user_info){
   }else{
     return_object["mail_validity"] = false;
   };
-  if(search_for_username(user_info.userName)==false){
+  if(search_for_username(user_info.username)==false){
     return_object["user_validity"] = true;
   }else{
     return_object["user_validity"] = false;

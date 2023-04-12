@@ -4,6 +4,16 @@
  * server
  */
 
+const loginPath = 'worker/html/login.html';
+const workerPath = 'worker/html/workerPage.html';
+const createUserPath = 'worker/html/createUser.html';
+const forgotPasswordPath = 'worker/html/forgotPassword.html';
+const changePasswordPath = 'worker/html/changePassword.html';
+const indexPath = 'worker/html/index.html';
+const customerPagePath = 'customer/customerPage.html';
+const CSSPath = 'worker/style.css';
+
+
 //Library imports
 import http from 'http';
 import fs from "fs/promises";
@@ -35,37 +45,35 @@ function requestHandler(req, res) {
 
   switch(url.pathname){
     //GET stuff
-    case "/": case "/index.html":
-      fileResponse(res, 'worker/index.html');
+    case "/": 
+    case "/index.html":
+      fileResponse(res, indexPath);
       break;
     case "/login.html":
-      fileResponse(res, 'worker/login.html');
+    case "/worker/login.html":
+      fileResponse(res, loginPath);
       break;
     case "/page.html":
-      fileResponse(res, 'customer/page.html');
+      fileResponse(res, customerPagePath);
       break;
     case "/worker/style.css":
-      fileResponse(res, "worker/style.css");
+      fileResponse(res, CSSPath);
       break;
-    case "/worker/login.html":
-      fileResponse(res, "worker/login.html");
-      break;
-    case "/worker/request-worktask":
+    case "/worker/html/request-worktask":
       streamArray(res,[5,2,1,2,2,5,5,5,5,5,5,5,5,5,6]); // Example array
       break;
 
     //POST stuff
-    case "/worker/login-attempt": //case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
+    case "/worker/html/login-attempt": //case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
       handleLogin(req, res);
       break;
-    case "/worker/create-user":
+    case "/worker/html/create-user":
       handleUserCreation(req, res);
       break;
-    case "/worker/forgot_password_post": //TODO: change underscores to hyphens for consistency in URL's
-      console.log("forgot password post case");
+    case "/worker/html/forgot-password-post": //TODO: change underscores to hyphens for consistency in URL's
       handlePasswordPostCase(req, res);
       break;
-    case "/worker/enter_new_password":
+    case "/worker/html/enter-new-password":
       handleNewPassword(req, res);
       break;
     default:
@@ -152,36 +160,32 @@ function securePath(userPath) {
  */
 
 function handleLogin(req, res){
-  console.log("handle login");
   extractForm(req)
   .then(user_info => user_login(user_info))
-  .then(_ => fileResponse(res, "worker/worker_page.html"))
+  .then(_ => fileResponse(res, workerPath))
   .catch(thrown_error => throw_user(res, thrown_error, "login handler"));
 }
 
 function handleUserCreation(req, res){
-  console.log("handluser")
   extractForm(req)
   .then(user_info => hashing(user_info))
   .then(hashed_info => validify_new_user(hashed_info))
   .then(processed_info => handler(processed_info))
-  .then(_ => fileResponse(res, "worker/login.html"))
+  .then(_ => fileResponse(res, loginPath))
   .catch(thrown_error => throw_user(res, thrown_error, "user creator"));
 }
 
 function extractForm(req) { //cg addin explanation due
   if (isFormEncoded(req.headers['content-type']))
     return collectPostBody(req).then(body => {
-      const data = qs.parse(body);//LEGACY
-      //console.log(body);
-      //let data=new URLSearchParams(body);
+      const data = qs.parse(body);
       return data;
     });
   else
-    return Promise.reject(new Error(ValidationError));  //create a rejected promise
+    return Promise.reject(new Error(ValidationError));
 }
 
-function throw_user(res, thrown_error, redirected_from){ // to be fixed with post/DOM
+function throw_user(res, thrown_error, redirected_from){
   let fileresponse_path = "FAKE PATH IN CASE THERE'S A CATASTROPHIC FAILURE";
   console.log("throw user. (Err, from): "+ thrown_error, redirected_from);
   switch (redirected_from){
@@ -194,7 +198,7 @@ function throw_user(res, thrown_error, redirected_from){ // to be fixed with pos
           console.log("user not found");
           break;
       }
-      fileresponse_path = "worker/login.html";
+      fileresponse_path = loginPath;
       break;
     case "create-user":
       switch(thrown_error){
@@ -208,12 +212,12 @@ function throw_user(res, thrown_error, redirected_from){ // to be fixed with pos
         console.log("Thrown_user: Passwords");
         break;
       }
-      fileresponse_path = "worker/create_user.html";
+      fileresponse_path = createUserPath;
       break;
-    case "forgot_password_post":
+    case "forgot-password-post":
       console.log("Thrown user: User not found")
       console.log(thrown_error);
-      fileresponse_path = "worker/forgot_password.html";
+      fileresponse_path = forgotPasswordPath;
       break;
     case "new password handler thing i wonder what this will look like":
       switch(thrown_error) {
@@ -221,13 +225,13 @@ function throw_user(res, thrown_error, redirected_from){ // to be fixed with pos
           console.log("Thrown user: passwords dont match");
           break;
         case "update_fail":
-          console.log("Thrown user: update db failed"); //Potential cache TTL timeout
+          console.log("Thrown user: update db failed");
           break;
         case "TypeError: Cannot read properties of undefined (reading 'user')":
           console.log("Cache timed out waiting for a response");
           break;
       }
-      fileresponse_path = "/worker/forgot_password2.html";
+      fileresponse_path = changePasswordPath;
       break;
     default:
       console.log("an error occured, while directing users");
@@ -243,7 +247,7 @@ function isFormEncoded(contentType) {//cg addin explanation due
 function handlePasswordPostCase(req, res){
   extractForm(req)
   .then(username => search(username))
-  .then(path_response => fileResponse(res, path_response))
+  .then(_ => fileResponse(res, changePasswordPath))
   .catch(thrown_error => throw_user(res, thrown_error, "password post case thing"));
 }
 function collectPostBody(req) {//cg addin explanation due
@@ -271,7 +275,7 @@ function handleNewPassword(req, res){
   extractForm(req)
   .then(info => passwords(info))
   .then(password => update(password))
-  .then(_ => fileResponse(res, "worker/worker_page.html"))
+  .then(_ => fileResponse(res, workerPath))
   .catch(thrown_error => throw_user(res, thrown_error, "new password handler thing i wonder what this will look like"));
 
 }
