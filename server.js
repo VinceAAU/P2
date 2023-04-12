@@ -278,7 +278,6 @@ function handleNewPassword(req, res){
 
 
 server.listen(port, hostname, () => {
-  connect_to_db();
   console.log(`Server running at http://${hostname}:${port}/`);
 });
 
