@@ -21,7 +21,6 @@ fileInput.addEventListener('change', () => {
         });
         arrays.push(array);
         files.push(file); // Store the uploaded file in the files array
-        addTaskCustomerQueue(file);
   
         document.getElementById('numFiles').textContent = `Number of files uploaded ${arrays.length}`;
   
