@@ -12,7 +12,9 @@ onmessage = function(e) {
     }
   
     let pivot = array[0];
-    let left = [], right = [];
+    
+    let left = []; 
+    let right = [];
   
     for (let i = 1; i < array.length; i++) {
       array[i] < pivot ? left.push(array[i]) : right.push(array[i]);
@@ -26,4 +28,3 @@ onmessage = function(e) {
   postMessage(resultArr, [resultArr.buffer]);
 
 }
-  

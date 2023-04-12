@@ -31,9 +31,11 @@ let customerQueue = new queue
 
 function addTaskCustomerQueue(customerTask){
     customerQueue.enqueue(customerTask);
-    //console.log(customerQueue.lenght()); for now only used for debugging
+    console.log(customerQueue.lenght()); //for now only used for debugging
+    console.log(customerQueue.peek()); //more debugging
 } 
 
 function removeTaskCustomerQueue(){ // will presumably be run when a task is finished
     customerQueue.dequeue;
 }
+

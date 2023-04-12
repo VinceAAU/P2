@@ -14,9 +14,9 @@ import qs from "querystring";
 //function imports from other .js files
 import { user_login, validify_new_user, handler, hashing } from "./master/login.js"
 import { connect_to_db } from "./master/db.js"
-import { streamArray } from "./master/send_data.js"
-import { search, update, passwords } from "./master/forgot_password.js"
-import { splitData } from './master/split_data.js';
+import { streamArray } from "./master/sendData.js"
+import { search, update, passwords } from "./master/forgotPassword.js"
+import { splitData } from './master/splitData.js';
 
 //function and const exports
 export { fileResponse, requestHandler };
