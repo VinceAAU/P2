@@ -1,4 +1,4 @@
-class queue {
+class Queue {
 
     constructor() {
         this.elements = {};
@@ -22,16 +22,16 @@ class queue {
         return this.elements[this.head];
     }
 
-    lenght() {
+    length() {
         return this.tail - this.head;
     }
 }
 
-let customerQueue = new queue
+let customerQueue = new Queue();
 
 function addTaskCustomerQueue(customerTask){
     customerQueue.enqueue(customerTask);
-    console.log(customerQueue.lenght()); //for now only used for debugging
+    console.log(customerQueue.length()); //for now only used for debugging
     console.log(customerQueue.peek()); //more debugging
 } 
 
