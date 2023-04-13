@@ -18,11 +18,15 @@ University's Software course.
 Running
 ---
 As a prerequisite, you must first install dependencies:
+
     npm install
 
-Then, you can simply run our program as
+Then, you can simply run our program as:
+
     node .
+
 or
+
     node server.js
 
 
@@ -44,10 +48,6 @@ Alternatively, you can contact us at our individual emails:
 | Martin Phutsorn Nielsen   | mpni22@student.aau.dk   |
 | Viktor Dahl Johnsen       | vjohns22@student.aau.dk |
 | Vincent Kosteyev Bechmann | vbechm22@student.aau.dk |
-
-    node .
-or
-    node server.js
 
 
 Contact
