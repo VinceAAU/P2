@@ -26,7 +26,7 @@ import { user_login, validify_new_user, handler, hashing } from "./master/login.
 import { connect_to_db } from "./master/db.js"
 import { streamArray } from "./master/sendData.js"
 import { search, update, passwords } from "./master/forgotPassword.js"
-import { splitData } from './master/splitData.js';
+import { taskSplitter } from './master/splitData.js';
 
 //function and const exports
 export { fileResponse, requestHandler };

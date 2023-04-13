@@ -1,7 +1,7 @@
 
 //  The following actions are illegal and purely for educational purposes.
 
-export { splitData };
+export { taskSplitter };
 import fs from "fs";
 
 /**
