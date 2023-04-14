@@ -15,7 +15,7 @@ function readFile(path) {
         if (err) throw err;
         entireFile += data;
       });
-      return entireFile;
+      return entireFile; 
 }
 
 /**
@@ -24,7 +24,10 @@ function readFile(path) {
  */
 function splitFile(byteArray) {
 
-  //Perform some operations on the bytearray here.
+  //  Perform some operations on the bytearray here.
+  //  To start: Split into lists of roughly 10 million elements.
+
+  //  Return an array of arrays (each array being a task)
 
 }
 
@@ -32,14 +35,19 @@ function splitFile(byteArray) {
  * If we want to implement some sort of back-up of the split-tasks, in case of server restart etc.
  * That would be implemented here, I suppose.
  */
-function saveTasksToSystem() {
+/*function saveTasksToSystem() {
 
-}
+}  This functionality is deprioritised --> in the first place this will not be added. */
 
 /**
  * Unsure about the naming, but this could be the main function, that is called and runs the functions of the document.
  */
 function taskSplitter() {
+  //  Perhaps here we call some queue function, that tells us the path of the queue #1,
+  //  then we call the split file on this path, splitfile gives the path to readfile.
 
+  
+
+  //  Return the results?
 }
 

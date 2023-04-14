@@ -44,7 +44,7 @@ function startWorker(receivedArray) {
     workerSort.onmessage = function (e) {
       let arrR = new Int32Array(e.data);
       console.log("Worker returned the sorted list: ");
-      arrR.forEach(x => console.log(x));
+      console.log(arrR);
     }
   } else {
     console.log("Browser does not support webworkers. ");

@@ -26,7 +26,7 @@ onmessage = function(e) {
     const pivot = arr[pivotIndex];
 
     //  ------------------------ For debugging. ------------------------
-    console.log(`Pivot for run #${amountOfRecursions} is ${pivotIndex}`); 
+    //  console.log(`Pivot for run #${amountOfRecursions} is ${pivotIndex}`); 
     amountOfRecursions++;
 
     //  Partition the array into two subarrays.
