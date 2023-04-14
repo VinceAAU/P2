@@ -16,7 +16,7 @@ html, body {
     margin: 0;
     padding: 0;
     
-    background-color: #f4efe3;
+    background-color: beige;
     align-self: center;
 }
 
@@ -116,23 +116,4 @@ section {
     text-decoration: underline;
     text-align: center;
     padding: 20px;
-}
-
-#worker_btn{
-  font-size: 48px; 
-  padding: 20px 40px; 
-  margin-right: 50px; 
-}
-
-#numFiles{
-  font-size: 48px; 
-  margin-top: 200px;
-}
-
-.download-button {
-  font-size: 24px; 
-  padding: 10px 20px; 
-  display: flex; 
-  flex-direction: column; 
-  margin-bottom: 10px; 
 }

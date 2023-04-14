@@ -2,7 +2,7 @@
   "name": "p2",
   "version": "1.0.0",
   "description": "P2 project by group 12 from software AAU",
-  "main": "main.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,6 +14,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "better-sqlite3": "^8.2.0"
+    "better-sqlite3": "^8.3.0",
+    "node-cache": "^5.1.2"
   }
 }

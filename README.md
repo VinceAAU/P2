@@ -2,7 +2,25 @@ P2
 ===
 
 This is our Semester Project for the second semester of Aalborg 
-University's Software course. It is currently empty.
+University's Software course.
+
+Running
+---
+As a prerequisite, you must first install dependencies:
+
+    npm install
+
+Then, you can simply run our program as:
+
+    node .
+
+or
+
+    node server.js
+
+
+Contact
+---
 
 This repository is not public yet, so you probably don't have any 
 questions. If, by any chance, GitHub has a security breach that allows 
