@@ -5,7 +5,6 @@ onmessage = function(e) {
   console.log("Worker: received block of work. ");
   console.log("Unsorted: " + e.data);
 
-  const veryBigPrime = 1000000000039;
   let amountOfRecursions = 0; //  Keeping track of how many times QuickSort is called, for science!
 
   /**
@@ -22,12 +21,12 @@ onmessage = function(e) {
       return; //  Stops the recursive call-chain.
     }
     
-    //  Choosing a unpredictable pivot point.
-    const pivotIndex = veryBigPrime % arr.length;
+    //  Choosing a random pivot to decrease likelihood of worst-case running time.
+    const pivotIndex = getRandomInt(left, right);
     const pivot = arr[pivotIndex];
 
     //  ------------------------ For debugging. ------------------------
-    //  console.log(`Pivot for run #${amountOfRecursions} is ${pivotIndex}`); 
+    console.log(`Pivot for run #${amountOfRecursions} is ${pivotIndex}`); 
     amountOfRecursions++;
 
     //  Partition the array into two subarrays.
@@ -74,6 +73,16 @@ onmessage = function(e) {
   
     //  Return the index of the partition point.
     return i;
+  }
+  
+  /**
+   * Getting a random integer from the specific range (in this case, defined by the left and right indices).
+   * @param {*} min The lower bound of the range.
+   * @param {*} max The upper bound of the range.
+   * @returns A random integer from the range (min and max included).
+   */
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
   
   /**
