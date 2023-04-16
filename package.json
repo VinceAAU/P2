@@ -4,6 +4,7 @@
   "description": "P2 project by group 12 from software AAU",
   "main": "server.js",
   "scripts": {
+    "devStart":"nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,6 +16,7 @@
   "type": "module",
   "dependencies": {
     "better-sqlite3": "^8.3.0",
-    "node-cache": "^5.1.2"
+    "node-cache": "^5.1.2",
+    "nodemon": "^2.0.22"
   }
 }
