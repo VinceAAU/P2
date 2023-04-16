@@ -1,6 +1,7 @@
 import fs from 'fs';
 import sqlite3 from 'better-sqlite3';
 import Database from 'better-sqlite3';
+//import bcrypt from 'bcrypt';
 let sql;
 
 const db_path = './data.db';
@@ -23,28 +24,32 @@ function connect_to_db() {
       };
     };
     console.log("Connection with SQLite has been established");
-    //return db;
   };
 
-
+//Function is only run, if connect_to_db() creates new database
 function create_table(db){
     const insert = db.prepare('CREATE TABLE users(id INTEGER PRIMARY KEY,username,email,password)');
     insert.run();
-    //insert_values("un","em","pw");
 };
 
+function hash(password){
+  console.log("hashed password")
+  return(password);
+}
+
+//For createUser.js
 function insert_values(mail, username, password){
-  console.log(mail, username, password)
+  let protectedPassword = hash(password)
     const insert = db.prepare('INSERT INTO users(username,email,password) VALUES (?,?,?)');
     try {
-        insert.run(username, mail, password);
-        console.log(username, mail, password);
+        insert.run(username, mail, protectedPassword);
+        console.log(username, mail, protectedPassword);
     } catch (e) {
         console.error(e);
     }    
 };
 
-//crooked function, needs explanation
+//For login.js
 function search_db(searchUsername, searchPassword){
   console.log("srchdb: "+searchUsername, searchPassword)
   const stmt = db.prepare('SELECT * FROM users WHERE username = ?').bind(searchUsername);
@@ -90,9 +95,10 @@ function search_for_username(srch_u){
 // ('UPDATE table SET column1 = value1 WHERE column2 = value2')
 // Better-Sqlite allows for '?' to be placeholders for values to insert in SQL statement
 function update_password(new_password, user){
+  let protectedPassword = hash(new_password);
   try {
     const stmt = db.prepare('UPDATE users SET password = ? WHERE username = ?');
-    const updates = stmt.run(new_password, user);  
+    const updates = stmt.run(protectedPassword, user);  
   }
   catch{
     throw("update_fail");
