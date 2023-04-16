@@ -4,7 +4,7 @@
  * server
  */
 
-const loginPath = 'worker/html/login.html';
+const loginPath = '/worker/html/login.html';
 const workerPath = 'worker/html/workerPage.html';
 const createUserPath = 'worker/html/createUser.html';
 const forgotPasswordPath = 'worker/html/forgotPassword.html';
@@ -23,14 +23,14 @@ import qs from "querystring";
 
 //function imports from other .js files
 import { user_login } from "./master/login.js"
-//import { connect_to_db } from "./master/db.js"
+import { search_db } from "./master/db.js"
 import { streamArray } from "./master/sendData.js"
 import { search, passwords } from "./master/forgotPassword.js"
 import { validateNewUser } from "./master/createUser.js"
 //import { taskSplitter } from './master/splitData.js';
 
 //function and const exports
-export { fileResponse, requestHandler };
+export { fileResponse, requestHandler, asyncThrow, throw_user };
 
 
 const hostname = '127.0.0.1';
@@ -83,11 +83,17 @@ function requestHandler(req, res) {
   }
 }
 
+function asyncThrow(req, res){
+  throw_user(res, "wrong-password", "login.js")
+}
+
+//login
 function handleLogin(req, res){
   extractForm(req)
-  .then(user_info => user_login(user_info))
+  .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
   .then(_ => fileResponse(res, workerPath))
   .catch(thrown_error => throw_user(res, thrown_error, "login handler"));
+  //.catch(err => console.log(err))
 }
 
 //Function for creating new users
@@ -103,7 +109,7 @@ function handlePasswordPostCase(req, res){
   extractForm(req)
   .then(username => search(username)) //in forgotPassword.js
   .then(_ => fileResponse(res, changePasswordPath))
-  .catch(thrown_error => throw_user(res, thrown_error, "password post case thing"));
+  .catch(thrown_error => throw_user(res, thrown_error, "forgot-password-post"));
 }
 
 //Function for adding new password
@@ -115,9 +121,12 @@ function handleNewPassword(req, res){
 }
 
 async function fileResponse(res, filename) {
+  console.log("fileresponse: "+filename)
   const sPath = securePath(filename);
+  console.log(sPath)
 
   if(!await fileExists(sPath)){
+    console.log("errorres");
     errorResponse(res, 404, 'Resource not found');
     return;
   }
@@ -131,6 +140,7 @@ async function fileResponse(res, filename) {
     res.write(data);
     res.end('\n');
   } catch (err){
+    console.log("in fileres, error")
     console.log(err);
     errorResponse(res, 500, 'Internal error')
   }
@@ -217,6 +227,17 @@ function throw_user(res, thrown_error, redirected_from){
       }
       fileresponse_path = loginPath;
       break;
+    case "login.js":
+      switch(thrown_error){
+        case "wrong-password":
+          console.log("wrong-password2");
+          break;
+        case "no-user":
+          console.log("user not found2");
+          break;
+      }
+      fileresponse_path = './worker/html/login.html';
+      break;
     case "create-user":
       switch(thrown_error){
         case "mail_exists":
@@ -231,7 +252,7 @@ function throw_user(res, thrown_error, redirected_from){
       }
       fileresponse_path = createUserPath;
       break;
-    case "forgot-password-post":
+    case "forgot-password-post": //newpassword
       console.log("Thrown user: User not found")
       console.log(thrown_error);
       fileresponse_path = forgotPasswordPath;
