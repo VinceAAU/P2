@@ -88,9 +88,6 @@ function requestHandler(req, res) {
 
     //Copy the uploaded file to a custom folder
     fs.rename(filePath, newPath, function () {
-      //Send a NodeJS file upload confirmation message
-      res.write('NodeJS File Upload Success!');
-      res.end();
     });
   });
       break;
