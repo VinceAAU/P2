@@ -22,10 +22,11 @@ import qs from "querystring";
 
 
 //function imports from other .js files
-import { user_login, validify_new_user, handler, hashing } from "./master/login.js"
-import { connect_to_db } from "./master/db.js"
+import { user_login } from "./master/login.js"
+//import { connect_to_db } from "./master/db.js"
 import { streamArray } from "./master/sendData.js"
-import { search, update, passwords } from "./master/forgotPassword.js"
+import { search, passwords } from "./master/forgotPassword.js"
+import { validateNewUser } from "./master/createUser.js"
 //import { taskSplitter } from './master/splitData.js';
 
 //function and const exports
@@ -89,11 +90,10 @@ function handleLogin(req, res){
   .catch(thrown_error => throw_user(res, thrown_error, "login handler"));
 }
 
+//Function for creating new users
 function handleUserCreation(req, res){
   extractForm(req)
-  .then(user_info => hashing(user_info))
-  .then(hashed_info => validify_new_user(hashed_info))
-  .then(processed_info => handler(processed_info))
+  .then(user_info => validateNewUser(user_info))
   .then(_ => fileResponse(res, loginPath))
   .catch(thrown_error => throw_user(res, thrown_error, "user creator"));
 }
@@ -106,13 +106,12 @@ function handlePasswordPostCase(req, res){
   .catch(thrown_error => throw_user(res, thrown_error, "password post case thing"));
 }
 
-//function for adding new password
+//Function for adding new password
 function handleNewPassword(req, res){
   extractForm(req)
   .then(info => passwords(info)) //in forgotPassword.js
   .then(_ => fileResponse(res, workerPath))
   .catch(thrown_error => throw_user(res, thrown_error, "new password handler thing i wonder what this will look like"));
-
 }
 
 async function fileResponse(res, filename) {
