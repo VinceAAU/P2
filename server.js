@@ -23,22 +23,19 @@ import formidable from 'formidable';
 
 
 //function imports from other .js files
-import { user_login } from "./master/login.js"
 import { search_db } from "./master/db.js"
 import { streamArray } from "./master/sendData.js"
 import { search, passwords } from "./master/forgotPassword.js"
 import { validateNewUser } from "./master/createUser.js"
-import { taskSplitter } from './master/splitData.js';
+//import { taskSplitter } from './master/splitData.js';
 
 //function and const exports
-export { fileResponse, requestHandler, asyncThrow, throw_user };
-
+export { fileResponse, requestHandler, throw_user };
 
 const hostname = '127.0.0.1';
 const port = 3000;
 
 const server = http.createServer(requestHandler);
-
 
 function requestHandler(req, res) {
   console.log("New request: " + req.method + " " + req.url);
@@ -98,9 +95,6 @@ function requestHandler(req, res) {
   }
 }
 
-function asyncThrow(req, res){
-  throw_user(res, "wrong-password", "login.js")
-}
 
 //login
 function handleLogin(req, res){
@@ -116,7 +110,7 @@ function handleUserCreation(req, res){
   extractForm(req)
   .then(user_info => validateNewUser(user_info))
   .then(_ => fileResponse(res, loginPath))
-  .catch(thrown_error => throw_user(res, thrown_error, "user creator"));
+  .catch(thrown_error => throw_user(res, thrown_error, "create-user"));
 }
 
 //Function for forgot password page
@@ -136,12 +130,9 @@ function handleNewPassword(req, res){
 }
 
 async function fileResponse(res, filename) {
-  console.log("fileresponse: "+filename)
   const sPath = securePath(filename);
-  console.log(sPath)
 
   if(!await fileExists(sPath)){
-    console.log("errorres");
     errorResponse(res, 404, 'Resource not found');
     return;
   }
@@ -155,7 +146,6 @@ async function fileResponse(res, filename) {
     res.write(data);
     res.end('\n');
   } catch (err){
-    console.log("in fileres, error")
     console.log(err);
     errorResponse(res, 500, 'Internal error')
   }
