@@ -1,59 +1,64 @@
-import fs from "fs";
+import fs from "fs/promises";
 /*import { queueHead } from "./queue.js";
           assuming there will be some function in queue.js 
           that returns the filepath of the #1 spot in the queue.*/
+export { taskSplitter };
 
 
 /**
  * The idea here is to read a given file from the server's filesystem, given a path from the Queue.
  * @param {*} path The filepath specified in the first position of the Queue (or some arbitrary path provided).
- * @returns Returns the contents of the filepath -- turns a CSV into a falt array of values.
+ * @returns Returns the contents of the filepath -- turns a CSV into a flat array of values.
  */
-export function readFile(path) {
-  fs.readFile(path, 'utf8', (err, data) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-  
-    const rows = data.trim().split('\r\n'); // split the data into an array of rows
-    const values = rows.map(row => row.split(',')); // split each row into an array of values
-    const resultArray = values.flat();  // flatten the array of arrays into a single array
+async function readDataFile(filePath) {
+  try {
+    let data = await fs.readFile(filePath, 'utf8'); // read file
+    let rows = data.trim().split('\r\n'); // split the data into an array of rows
+    let values = rows.map(row => row.split(',')); // split each row into an array of values
+    let fileArray = values.flat(); // flatten the array of arrays into a single array
 
-    // Do something with the resulting array of values
-    console.log(resultArray); // Probably running splitFile() here.
-  });
-  
+    return fileArray; // return the flattened array of values / the file as an array.
+  } catch (err) {
+    console.error(err); // print any errors
+  }
 }
 
 /**
- * This function should take a file and split it into smaller files that are more fit for 
- * @param {*} byteArray A bytearray containing the information of a file.
+ * This function should take an array and split it into smaller arrays that are more fit for 
+ * being distributed. As a start: Split into lists of roughly 10 million elements.
+ * @param {*} filePath Filepath to give to the readDataFile function to get the whole file as an array in return.
  */
-function splitFile(byteArray) {
+async function splitArray(filePath) {
 
-  //  Perform some operations on the bytearray here.
-  //  As a start: Split into lists of roughly 10 million elements.
+  const taskSize = 10000000; //  How many elements we want in each task (primitive, yet effective).
+  let tasks = []; //  Array to contain arrays (tasks) ready to be scheduled.
 
-  //  Return an array of arrays (each array being a task)
+  //  Call the function to read the data file
+  let data = await readDataFile(filePath);
+  
+  while (data.length) {
+    tasks.push(data.splice(0, taskSize));
+  }
 
+  return(tasks);  //  Return an array of arrays (each array being a task)
 }
-
-/**
- * If we want to implement some sort of back-up of the split-tasks, in case of server restart etc.
- * That would be implemented here, I suppose.
- */
-/*function saveTasksToSystem() {
-
-}  This functionality is deprioritised --> in the first place this will not be added. */
 
 /**
  * Unsure about the naming, but this could be the main function, that is called and runs the functions of the document.
+ * Pretty useless right now, but perhaps there is a use for it in the future.
  */
-export function taskSplitter() {
-  /*
+async function taskSplitter() {
 
-  return newTasks = splitFile(readFile(queueHead()));
+  /*      Works if queueHead is a valid path. Commented due to lack of queueHead existing.
+  
+  let filePath = queueHead(); 
+  let tasks = await splitArray(queueHead());
+
+  console.log(tasks);  // Just prints all the arrays(tasks) to show it works. Call it in server.js.
+
+  */      
+
+  /*
   
    Something like this; this could return an array of split-up tasks. 
    This would need a "queueHead()" or equivalent function to return
