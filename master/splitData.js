@@ -50,7 +50,7 @@ function splitFile(byteArray) {
 /**
  * Unsure about the naming, but this could be the main function, that is called and runs the functions of the document.
  */
-export default function taskSplitter() {
+export function taskSplitter() {
   /*
 
   return newTasks = splitFile(readFile(queueHead()));
