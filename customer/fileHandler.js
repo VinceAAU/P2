@@ -1,23 +1,3 @@
-const fileInput = document.querySelector('input');
-//Change skal måske ændres til submit
-fileInput.addEventListener("change", e => {
-  e.preventDefault();
-
-  const endpoint = "../master/queue.js";
-  const formData = new FormData();
-
-  console.log(fileInput.files);
-  formData.append("fileInput", fileInput.files[0])
-
-  fetch(endpoint, {
-    method: "post",
-    body: formData
-  }).catch(console.error);
-})
-
-
-
-
 function download(index) {
   const downloadLink = document.createElement('a');
 
@@ -34,7 +14,7 @@ function download(index) {
   document.body.removeChild(downloadLink);
 }
 
-function Button() {
+/*function Button() {
   let arrays = 0;
   const downloadBtn = document.createElement('button');
   downloadBtn.textContent = `Download File ${arrays.length}`;
@@ -46,7 +26,4 @@ function Button() {
     document.getElementById('download-rdy').textContent = `Your file "${files[index].name}" is ready to be downloaded.`; //To be changed later
   })
   document.body.appendChild(downloadBtn);
-}
-
-
-
+}*/

@@ -4,15 +4,18 @@
     <link rel="stylesheet" href="../worker/style.css"> 
 </head>
 <body>
-    <input type="file">
-
-        <button class="indexbutton" type="button" name="Worker"
+    <button class="indexbutton" type="button" name="Worker"
         onclick="location.href='../worker/html/workerPage.html'">Worker</button>
         
-        <button onclick="Button();">Button</button>
+    <form action="/customer/costumerPage/upload" method="post" enctype="multipart/form-data">
+        <!-- HTML5 file upload selector-->
+        <input type="file" name="fileupload">
+        <br>
+        <input type="submit" value="Upload File">
+      </form>
 
         <p id="numFiles">Number of files uploaded 0</p> <!-- Element to display the number of stored files -->
 </body>
-
 <script src="fileHandler.js"></script>
+
 </html>
