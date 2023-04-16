@@ -26,7 +26,7 @@ import { user_login, validify_new_user, handler, hashing } from "./master/login.
 import { connect_to_db } from "./master/db.js"
 import { streamArray } from "./master/sendData.js"
 import { search, update, passwords } from "./master/forgotPassword.js"
-import { taskSplitter } from './master/splitData.js';
+//import { taskSplitter } from './master/splitData.js';
 
 //function and const exports
 export { fileResponse, requestHandler };
@@ -98,17 +98,18 @@ function handleUserCreation(req, res){
   .catch(thrown_error => throw_user(res, thrown_error, "user creator"));
 }
 
+//Function for forgot password page
 function handlePasswordPostCase(req, res){
   extractForm(req)
-  .then(username => search(username))
+  .then(username => search(username)) //in forgotPassword.js
   .then(_ => fileResponse(res, changePasswordPath))
   .catch(thrown_error => throw_user(res, thrown_error, "password post case thing"));
 }
 
+//function for adding new password
 function handleNewPassword(req, res){
   extractForm(req)
-  .then(info => passwords(info))
-  .then(password => update(password))
+  .then(info => passwords(info)) //in forgotPassword.js
   .then(_ => fileResponse(res, workerPath))
   .catch(thrown_error => throw_user(res, thrown_error, "new password handler thing i wonder what this will look like"));
 
