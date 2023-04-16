@@ -34,6 +34,7 @@ function create_table(db){
 };
 
 function insert_values(mail, username, password){
+  console.log(mail, username, password)
     const insert = db.prepare('INSERT INTO users(username,email,password) VALUES (?,?,?)');
     try {
         insert.run(username, mail, password);

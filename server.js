@@ -82,6 +82,38 @@ function requestHandler(req, res) {
   }
 }
 
+function handleLogin(req, res){
+  extractForm(req)
+  .then(user_info => user_login(user_info))
+  .then(_ => fileResponse(res, workerPath))
+  .catch(thrown_error => throw_user(res, thrown_error, "login handler"));
+}
+
+function handleUserCreation(req, res){
+  extractForm(req)
+  .then(user_info => hashing(user_info))
+  .then(hashed_info => validify_new_user(hashed_info))
+  .then(processed_info => handler(processed_info))
+  .then(_ => fileResponse(res, loginPath))
+  .catch(thrown_error => throw_user(res, thrown_error, "user creator"));
+}
+
+function handlePasswordPostCase(req, res){
+  extractForm(req)
+  .then(username => search(username))
+  .then(_ => fileResponse(res, changePasswordPath))
+  .catch(thrown_error => throw_user(res, thrown_error, "password post case thing"));
+}
+
+function handleNewPassword(req, res){
+  extractForm(req)
+  .then(info => passwords(info))
+  .then(password => update(password))
+  .then(_ => fileResponse(res, workerPath))
+  .catch(thrown_error => throw_user(res, thrown_error, "new password handler thing i wonder what this will look like"));
+
+}
+
 async function fileResponse(res, filename) {
   const sPath = securePath(filename);
 
@@ -159,21 +191,6 @@ function securePath(userPath) {
  * statement, and I don't particuarly feel like crying today again
  */
 
-function handleLogin(req, res){
-  extractForm(req)
-  .then(user_info => user_login(user_info))
-  .then(_ => fileResponse(res, workerPath))
-  .catch(thrown_error => throw_user(res, thrown_error, "login handler"));
-}
-
-function handleUserCreation(req, res){
-  extractForm(req)
-  .then(user_info => hashing(user_info))
-  .then(hashed_info => validify_new_user(hashed_info))
-  .then(processed_info => handler(processed_info))
-  .then(_ => fileResponse(res, loginPath))
-  .catch(thrown_error => throw_user(res, thrown_error, "user creator"));
-}
 
 function extractForm(req) { //cg addin explanation due
   if (isFormEncoded(req.headers['content-type']))
@@ -244,12 +261,7 @@ function isFormEncoded(contentType) {//cg addin explanation due
   ctType = ctType.trim();
   return (ctType === "application/x-www-form-urlencoded");
 }
-function handlePasswordPostCase(req, res){
-  extractForm(req)
-  .then(username => search(username))
-  .then(_ => fileResponse(res, changePasswordPath))
-  .catch(thrown_error => throw_user(res, thrown_error, "password post case thing"));
-}
+
 function collectPostBody(req) {//cg addin explanation due
   function collectPostBodyExecutor(resolve, reject) {
     let bodyData = [];
@@ -271,15 +283,6 @@ function collectPostBody(req) {//cg addin explanation due
   }
   return new Promise(collectPostBodyExecutor);
 }
-function handleNewPassword(req, res){
-  extractForm(req)
-  .then(info => passwords(info))
-  .then(password => update(password))
-  .then(_ => fileResponse(res, workerPath))
-  .catch(thrown_error => throw_user(res, thrown_error, "new password handler thing i wonder what this will look like"));
-
-}
-
 
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);

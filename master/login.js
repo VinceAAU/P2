@@ -19,7 +19,7 @@ function hashing(raw_data){ //to be made
 
 //Purpose: To look for unique credentials and matching passwords, returns data to be handled
 function validify_new_user(user_info){
-  let return_object = {mail: user_info.mail, username: user_info.username};
+  let return_object = {mail: user_info.mail, username: user_info.userName};
   console.log("validify new user");
   console.log(user_info);
   if(search_for_mail(user_info.mail)==false){ //fix perhaps? switch? default case case case case
@@ -38,6 +38,7 @@ function validify_new_user(user_info){
   } else {
     return_object["password_match"] = false;
   }
+  console.log(return_object)
   return(return_object);
 };
 
@@ -52,6 +53,7 @@ function handler(new_user_info){
     case new_user_info.password_match === false:
       throw("passwords_unequal");
     default:
-      insert_values(new_user_info.mail, new_user_info.username, new_user_info.password)
+      console.log("handler: m,u,p: "+new_user_info['mail'])
+      insert_values(new_user_info['mail'], new_user_info['username'], new_user_info['password'])
   }; 
 };
