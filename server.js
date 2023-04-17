@@ -195,8 +195,8 @@ function authenticateToken(req, res, next) {
 function returnTokenErr(req, res, err) {
   console.log(err)
   res.statusCode = 500;
-  res.setHeader('Content-Type', 'text/txt');
-  res.write("Fatal error: You gon die");
+  //res.setHeader('Content-Type', 'text/txt');
+  //res.write("Fatal error: You gon die");
   res.end("\n");
 }
 
@@ -230,7 +230,7 @@ function handlePasswordPostCase(req, res) {
 function handleNewPassword(req, res) {
   extractForm(req)
     .then(info => passwords(info)) //in forgotPassword.js
-    .then(_ => fileResponse(res, workerPath))
+    .then(_ => fileResponse(res, loginPath))
     .catch(thrown_error => throw_user(res, thrown_error, "new password handler thing i wonder what this will look like"));
 }
 

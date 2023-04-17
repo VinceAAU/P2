@@ -23,26 +23,29 @@ async function toggleLogin(event) { // async await
     fetch('/worker/html/test-fetch', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: bodyData
-    })
+      })
         .then((response) => {
-            console.log(response);
-            response.json().then((data) => {
-                console.log(data);
-                returnToken(data)
-                    .then(response => {
-                        if (response.ok) {
-                            window.location.href = "/page.html";
-                        } else {
-                            console.log("Response not ok");
-                        }
-                    })
-                    .catch(error => console.log(error));
-
-            });
-        });
+          if (!response.ok) {
+            throwError()
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          returnToken(data)
+            .then((response) => {
+              if (response.ok) {
+                window.location.href = '/page.html';
+              } else {
+                console.log('Response not ok');
+              }
+            })
+            .catch((error) => console.log(error));
+        })
+        .catch((error) => console.error(error));
 }
 
 function returnToken(data) {
