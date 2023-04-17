@@ -27,7 +27,13 @@ async function toggleLogin(event){ // async await
     },
     body: bodyData
     })
-    .then(response => console.log(response))    
+    // var body = await response.json();
+    //console.log(body
+        
+    
+    .then(res => console.log(res))
+    // .then(response => console.log(response.body))
+    // .catch(err => console.log("err"))  
 
     //var responsedata = response.stringify() //response.body 
     //.then(response => console.log(response))
@@ -35,7 +41,7 @@ async function toggleLogin(event){ // async await
     //console.log(response);
     //console.log(responsedata);
  
-}
+}   
 
 async function fetchData(bodyData){
     

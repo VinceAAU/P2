@@ -20,6 +20,7 @@ import fs from "fs/promises";
 import path from "path";
 import qs from "querystring";
 import formidable from 'formidable';
+import jwt from 'jsonwebtoken'
 
 
 //function imports from other .js files
@@ -132,7 +133,7 @@ function isFormEncoded(contentType) {//cg addin explanation due
 
 //
 function returnToken(req, res, user){
-  res.statusCode = 200;
+  res.statusCode = 201;
   res.setHeader('Content-Type', 'text/txt');
   res.write(user);
   res.end("\n");
@@ -141,7 +142,7 @@ function returnToken(req, res, user){
 function returnTokenErr(req, res){
   res.statusCode = 500;
   res.setHeader('Content-Type', 'text/txt');
-  res.write("reasonkjshdfksjdfh");
+  res.write("Fatal error: You gon die");
   res.end("\n");
 }
 
