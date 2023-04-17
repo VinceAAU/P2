@@ -65,8 +65,23 @@ function requestHandler(req, res) {
       break;
 
     //POST stuff
-    case "/worker/html/login-attempt": //case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
-      handleLogin(req, res);
+    case "/worker/html/test-fetch": //case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
+      console.log("post login-attempt")
+      extractForm(req)
+        .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
+        .then(user => returnToken(req, res, user))
+        .catch(thrown_error => returnTokenErr(req, res));  
+
+      
+      //let user = validateUser()
+      //returnToken(req, res, user)
+    
+    //handleLogin(req, res);
+      //extractForm(req)
+      //let user = validateUser()
+      //returnToken(req, res, user)
+      //.then(user => returnToken(req, res, user))
+      //.catch(err => console.log(err))
       break;
     case "/worker/html/create-user":
       handleUserCreation(req, res);
@@ -97,12 +112,45 @@ function requestHandler(req, res) {
   }
 }
 
+function extractForm(req) { //cg addin explanation due
+  console.log(req.headers)
+  if (isFormEncoded(req.headers['content-type']))
+    return collectPostBody(req).then(body => {
+      const data = qs.parse(body);
+      return data;
+    });
+  else
+    return Promise.reject(new Error(ValidationError));
+}
 
-//login
-function handleLogin(req, res) {
+function isFormEncoded(contentType) {//cg addin explanation due
+  console.log(contentType);
+  let ctType = contentType.split(";")[0];
+  ctType = ctType.trim();
+  return (ctType === "application/x-www-form-urlencoded");
+}
+
+//
+function returnToken(req, res, user){
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/txt');
+  res.write(user);
+  res.end("\n");
+}
+
+function returnTokenErr(req, res){
+  res.statusCode = 500;
+  res.setHeader('Content-Type', 'text/txt');
+  res.write("reasonkjshdfksjdfh");
+  res.end("\n");
+}
+
+
+//not in use
+function validateUser(req, res) {
   extractForm(req)
     .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
-    .then(_ => fileResponse(res, workerPath))
+    .then(user => {return(user)})
     .catch(thrown_error => throw_user(res, thrown_error, "login handler"));
   //.catch(err => console.log(err))
 }
@@ -209,15 +257,7 @@ function securePath(userPath) {
  */
 
 
-function extractForm(req) { //cg addin explanation due
-  if (isFormEncoded(req.headers['content-type']))
-    return collectPostBody(req).then(body => {
-      const data = qs.parse(body);
-      return data;
-    });
-  else
-    return Promise.reject(new Error(ValidationError));
-}
+
 
 function throw_user(res, thrown_error, redirected_from) {
   let fileresponse_path = "FAKE PATH IN CASE THERE'S A CATASTROPHIC FAILURE";
@@ -284,11 +324,7 @@ function throw_user(res, thrown_error, redirected_from) {
   }
   fileResponse(res, fileresponse_path);
 }
-function isFormEncoded(contentType) {//cg addin explanation due
-  let ctType = contentType.split(";")[0];
-  ctType = ctType.trim();
-  return (ctType === "application/x-www-form-urlencoded");
-}
+
 
 function collectPostBody(req) {//cg addin explanation due
   function collectPostBodyExecutor(resolve, reject) {
