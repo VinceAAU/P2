@@ -84,28 +84,25 @@ function requestHandler(req, res) {
     case "/worker/html/request-worktask":
       streamArray(res, [5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]); // Example array
       break;
-    case "/worker/html/posts":
-      authenticateToken(req, res)
-      // res.writeHead(301, {
-      //   Location: "/page.html"
-      // }).end();
-      fileResponse(res, customerPagePath)
-      
-      //log session with db?
-      break;
-    //POST stuff
+      case "/worker/html/posts":
+        authenticateToken(req, res);
+        res.writeHead(302, {
+          Location: "/page.html"
+        });
+        res.end();
+        break;
     case "/worker/html/test-fetch": //case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
       console.log("post login-attempt")
       extractForm(req)
         .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
         .then(user => returnToken(req, res, user))
-        .catch(thrown_error => returnTokenErr(req, res, thrown_error));  
+        .catch(thrown_error => returnTokenErr(req, res, thrown_error));
 
-      
+
       //let user = validateUser()
       //returnToken(req, res, user)
-    
-    //handleLogin(req, res);
+
+      //handleLogin(req, res);
       //extractForm(req)
       //let user = validateUser()
       //returnToken(req, res, user)
@@ -161,10 +158,10 @@ function isFormEncoded(contentType) {//cg addin explanation due
 }
 
 //
-function returnToken(req, res, username){
-  console.log("return token with user: "+username)
+function returnToken(req, res, username) {
+  console.log("return token with user: " + username)
   const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0';
-  const user = { name: username}
+  const user = { name: username }
   //console.log(process.env.ACCESS_TOKEN_SECRET)
 
 
@@ -172,22 +169,22 @@ function returnToken(req, res, username){
   res.statusCode = 201;
 
   res.setHeader('Content-Type', 'text/txt');
-  res.write(JSON.stringify({ accessToken: accessToken}));
+  res.write(JSON.stringify({ accessToken: accessToken }));
   res.end("\n");
 }
 
-function authenticateToken(req, res, next){
+function authenticateToken(req, res, next) {
   const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0';
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-  
+
   // console.log('req.headers', req.headers);
   // console.log('authHeader:', authHeader);
   // console.log('token:', token);  
   // console.log('req.user', req.user)
-  
-  if(token == null) return res.sendStatus(401)
-  
+
+  if (token == null) return res.sendStatus(401)
+
   jwt.verify(token, str, (err, user) => {
     if (err) return errorResponse(res, 403, err)
     req.user = user;
@@ -195,7 +192,7 @@ function authenticateToken(req, res, next){
 };
 
 
-function returnTokenErr(req, res, err){
+function returnTokenErr(req, res, err) {
   console.log(err)
   res.statusCode = 500;
   res.setHeader('Content-Type', 'text/txt');
@@ -208,7 +205,7 @@ function returnTokenErr(req, res, err){
 function validateUser(req, res) {
   extractForm(req)
     .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
-    .then(user => {return(user)})
+    .then(user => { return (user) })
     .catch(thrown_error => throw_user(res, thrown_error, "login handler"));
   //.catch(err => console.log(err))
 }
@@ -216,9 +213,9 @@ function validateUser(req, res) {
 //Function for creating new users
 function handleUserCreation(req, res) {
   extractForm(req)
-  .then(user_info => validateNewUser(user_info))
-  .then(_ => fileResponse(res, loginPath))
-  .catch(thrown_error => throw_user(res, thrown_error, "create-user"));
+    .then(user_info => validateNewUser(user_info))
+    .then(_ => fileResponse(res, loginPath))
+    .catch(thrown_error => throw_user(res, thrown_error, "create-user"));
 }
 
 //Function for forgot password page
@@ -241,7 +238,7 @@ async function fileResponse(res, filename) {
   console.log("fileresponse");
   const sPath = securePath(filename);
 
-  if(!await fileExists(sPath)){
+  if (!await fileExists(sPath)) {
     errorResponse(res, 404, 'Resource not found');
     return;
   }
@@ -256,7 +253,7 @@ async function fileResponse(res, filename) {
     console.log(res.headers)
     res.write(data);
     res.end('\n');
-  } catch (err){
+  } catch (err) {
     console.log(err);
     errorResponse(res, 500, 'Internal error')
   }
@@ -266,7 +263,7 @@ async function fileResponse2(res, filename) {
   console.log("fileresponse");
   const sPath = securePath(filename);
 
-  if(!await fileExists(sPath)){
+  if (!await fileExists(sPath)) {
     errorResponse(res, 404, 'Resource not found');
     return;
   }
@@ -281,7 +278,7 @@ async function fileResponse2(res, filename) {
     console.log(res.headers)
     res.write(data);
     res.end('\n');
-  } catch (err){
+  } catch (err) {
     console.log(err);
     errorResponse(res, 500, 'Internal error')
   }
