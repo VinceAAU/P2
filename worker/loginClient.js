@@ -14,7 +14,7 @@ async function toggleLogin(event){ // async await
     
     var username = document.getElementById("name_id");
     var password = document.getElementById("password_id");
-    console.log(username['value'] + password['value'])
+    //console.log(username['value'] + password['value'])
 
     const bodyData = new URLSearchParams();
     bodyData.append('username', username['value']);
@@ -27,32 +27,27 @@ async function toggleLogin(event){ // async await
     },
     body: bodyData
     })
-    // var body = await response.json();
-    //console.log(body
-        
-    
-    //.then(res => console.log(res.body))
     .then((response) => {
         console.log(response);
         response.json().then((data) => {
             console.log(data);
+            returnToken(data)
+
         });
     });
-    // .then(response => console.log(response.body))
-    // .catch(err => console.log("err"))  
-
-    //var responsedata = response.stringify() //response.body 
-    //.then(response => console.log(response))
-    //.catch(err => console.log(err));
-    //console.log(response);
-    //console.log(responsedata);
- 
 }   
 
-async function fetchData(bodyData){
+function returnToken(data) {
+    const requestOptions = {
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${data.accessToken}` }
+    };
+  
+    return fetch('http://localhost:3000/worker/html/posts', requestOptions)
     
-    return(response);
-}
+    .then(data => console.log(data))
+    .catch(error => console.log(error));
+  }
 
 function throwError(){
     let warn = "preventDefault() won't let you check this!<br>";

@@ -51,6 +51,14 @@ const port = 3000;
 const server = http.createServer(requestHandler);
 
 function requestHandler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:3000');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    res.writeHead(200);
+    res.end();
+    return;
+  }
   console.log("New request: " + req.method + " " + req.url);
 
   let baseURL = 'http://' + req.headers.host + '/';
@@ -76,7 +84,15 @@ function requestHandler(req, res) {
     case "/worker/html/request-worktask":
       streamArray(res, [5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]); // Example array
       break;
-
+    case "/worker/html/posts":
+      authenticateToken(req, res)
+      // res.writeHead(301, {
+      //   Location: "/page.html"
+      // }).end();
+      fileResponse(res, customerPagePath)
+      
+      //log session with db?
+      break;
     //POST stuff
     case "/worker/html/test-fetch": //case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
       console.log("post login-attempt")
@@ -104,6 +120,7 @@ function requestHandler(req, res) {
       break;
     case "/worker/html/enter-new-password":
       handleNewPassword(req, res);
+      fileResponse(res, customerPagePath);
       break;
     case "/customer/costumerPage/upload":
       //Process the file upload in Node
@@ -126,7 +143,7 @@ function requestHandler(req, res) {
 }
 
 function extractForm(req) { //cg addin explanation due
-  console.log(req.headers)
+  //console.log(req.headers)
   if (isFormEncoded(req.headers['content-type']))
     return collectPostBody(req).then(body => {
       const data = qs.parse(body);
@@ -158,6 +175,25 @@ function returnToken(req, res, username){
   res.write(JSON.stringify({ accessToken: accessToken}));
   res.end("\n");
 }
+
+function authenticateToken(req, res, next){
+  const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0';
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  
+  // console.log('req.headers', req.headers);
+  // console.log('authHeader:', authHeader);
+  // console.log('token:', token);  
+  // console.log('req.user', req.user)
+  
+  if(token == null) return res.sendStatus(401)
+  
+  jwt.verify(token, str, (err, user) => {
+    if (err) return errorResponse(res, 403, err)
+    req.user = user;
+  });
+};
+
 
 function returnTokenErr(req, res, err){
   console.log(err)
@@ -202,6 +238,7 @@ function handleNewPassword(req, res) {
 }
 
 async function fileResponse(res, filename) {
+  console.log("fileresponse");
   const sPath = securePath(filename);
 
   if(!await fileExists(sPath)){
@@ -215,6 +252,33 @@ async function fileResponse(res, filename) {
     const data = await fs.readFile(sPath);
     res.statusCode = 200;
     res.setHeader('Content-Type', guessMimeType(sPath));
+    console.log('Content-Type', guessMimeType(sPath))
+    console.log(res.headers)
+    res.write(data);
+    res.end('\n');
+  } catch (err){
+    console.log(err);
+    errorResponse(res, 500, 'Internal error')
+  }
+}
+
+async function fileResponse2(res, filename) {
+  console.log("fileresponse");
+  const sPath = securePath(filename);
+
+  if(!await fileExists(sPath)){
+    errorResponse(res, 404, 'Resource not found');
+    return;
+  }
+
+  try {
+    //In the future, we could work with buffers et cetera
+    //However, our files are small (so far), so it doesn't really matter
+    const data = await fs.readFile(sPath);
+    res.statusCode = 200;
+    res.setHeader('Content-Type', guessMimeType(sPath));
+    console.log('Content-Type', guessMimeType(sPath))
+    console.log(res.headers)
     res.write(data);
     res.end('\n');
   } catch (err){
