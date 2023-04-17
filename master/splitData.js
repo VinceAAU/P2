@@ -1,7 +1,6 @@
 import fs from "fs/promises";
-/*import { queueHead } from "./queue.js";
-          assuming there will be some function in queue.js 
-          that returns the filepath of the #1 spot in the queue.*/
+import { getTaskQueueHead } from "./queue";
+
 export { taskSplitter };
 
 
@@ -48,22 +47,11 @@ async function splitArray(filePath) {
  * Pretty useless right now, but perhaps there is a use for it in the future.
  */
 async function taskSplitter() {
-
-  /*      Works if queueHead is a valid path. Commented due to lack of queueHead existing.
   
-  let filePath = queueHead(); 
-  let tasks = await splitArray(queueHead());
+  let filePath = getTaskQueueHead(); 
+  let tasks = await splitArray(filePath);
 
   console.log(tasks);  // Just prints all the arrays(tasks) to show it works. Call it in server.js.
-
-  */      
-
-  /*
   
-   Something like this; this could return an array of split-up tasks. 
-   This would need a "queueHead()" or equivalent function to return
-   the #1 queue filepath. 
-
-   */
 }
 
