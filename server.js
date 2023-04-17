@@ -20,7 +20,19 @@ import fs from "fs/promises";
 import path from "path";
 import qs from "querystring";
 import formidable from 'formidable';
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+import { env } from 'process';
+// import * as dotenv from 'dotenv';
+// dotenv.config();
+
+
+// export class JwtStrategy extends PassportStrategy(Strategy) {
+//   constructor() {
+//     super({
+//       secretOrKey: process.env.JWT_SECRET,
+//     });
+//   }
+// }
 
 
 //function imports from other .js files
@@ -71,7 +83,7 @@ function requestHandler(req, res) {
       extractForm(req)
         .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
         .then(user => returnToken(req, res, user))
-        .catch(thrown_error => returnTokenErr(req, res));  
+        .catch(thrown_error => returnTokenErr(req, res, thrown_error));  
 
       
       //let user = validateUser()
@@ -132,14 +144,23 @@ function isFormEncoded(contentType) {//cg addin explanation due
 }
 
 //
-function returnToken(req, res, user){
+function returnToken(req, res, username){
+  console.log("return token with user: "+username)
+  const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0';
+  const user = { name: username}
+  //console.log(process.env.ACCESS_TOKEN_SECRET)
+
+
+  const accessToken = jwt.sign(user, str);
   res.statusCode = 201;
+
   res.setHeader('Content-Type', 'text/txt');
-  res.write(user);
+  res.write(JSON.stringify({ accessToken: accessToken}));
   res.end("\n");
 }
 
-function returnTokenErr(req, res){
+function returnTokenErr(req, res, err){
+  console.log(err)
   res.statusCode = 500;
   res.setHeader('Content-Type', 'text/txt');
   res.write("Fatal error: You gon die");

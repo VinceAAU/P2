@@ -3,9 +3,6 @@ POST http://localhost:3000/penis
 ###
 
 POST http://localhost:3000/worker/html/test-fetch
-content-type: application/x-www-form-urlencoded
+content-Type: application/x-www-form-urlencoded
 
-{
-    "name_id": "admin",
-    "password_id": "admin"
-}
+{"name_id": "admin","password_id": "admin"}
