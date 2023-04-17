@@ -31,7 +31,13 @@ async function toggleLogin(event){ // async await
     //console.log(body
         
     
-    .then(res => console.log(res))
+    //.then(res => console.log(res.body))
+    .then((response) => {
+        console.log(response);
+        response.json().then((data) => {
+            console.log(data);
+        });
+    });
     // .then(response => console.log(response.body))
     // .catch(err => console.log("err"))  
 
