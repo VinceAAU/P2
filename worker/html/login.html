@@ -13,6 +13,11 @@
     <form id="loginForm_id">
       <fieldset name="login_field">
         <h1 id="id1"> Log in to continue </h1>
+        
+        <div id="login-error-msg-holder">
+          <p id="login-error-msg">Invalid username <span id="error-msg-second-line">and/or password</span></p>
+        </div>
+        
         <div class="myFormLayout">
         <label for="name_id"> Username: </label>
         <input type="text"  name="username" id="name_id" value="admin" required minlength="1" maxlength="30"> <br>
@@ -20,8 +25,7 @@
         <input type="password" name="password" id="password_id" value="admin" required minlength="1" maxlength="30"> <br>
         <a href="./createUser.html">Create User</a>   <br>
         <a href="./forgotPassword.html">Forgot Password</a>   <br>
-        <!-- <input type="submit" id="submitBtn_id" value="Log in"> -->
-        <button id="startButton">Start2</button>
+        <button id="submitBtn_id">Log in</button>
         </div>
       </fieldset> 
     </form>

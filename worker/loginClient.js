@@ -1,5 +1,6 @@
 console.log("init");
-const checkbox = document.querySelector("#startButton");
+const checkbox = document.querySelector("#submitBtn_id");
+const loginErrorMsg = document.getElementById("login-error-msg");
 
 checkbox.addEventListener("click", checkboxClick, false);
 
@@ -58,6 +59,7 @@ function returnToken(data) {
 }
 
 function throwError() {
-    let warn = "preventDefault() won't let you check this!<br>";
-    document.getElementById("id1").innerHTML += warn;
+    loginErrorMsg.style.opacity = 1;
+    //let warn = "preventDefault() won't let you check this!<br>";
+    //document.getElementById("id1").innerHTML += warn;
 }
