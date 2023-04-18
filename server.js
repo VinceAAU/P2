@@ -22,17 +22,7 @@ import qs from "querystring";
 import formidable from 'formidable';
 import jwt from 'jsonwebtoken';
 import { env } from 'process';
-// import * as dotenv from 'dotenv';
-// dotenv.config();
-
-
-// export class JwtStrategy extends PassportStrategy(Strategy) {
-//   constructor() {
-//     super({
-//       secretOrKey: process.env.JWT_SECRET,
-//     });
-//   }
-// }
+import NodeCache from "node-cache";
 
 
 //function imports from other .js files
@@ -49,6 +39,7 @@ const hostname = '127.0.0.1';
 const port = 3000;
 
 const server = http.createServer(requestHandler);
+const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 function requestHandler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:3000');
@@ -84,31 +75,32 @@ function requestHandler(req, res) {
     case "/worker/html/request-worktask":
       streamArray(res, [5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]); // Example array
       break;
-      case "/worker/html/posts":
-        authenticateToken(req, res);
-        res.writeHead(302, {
-          Location: "/page.html"
-        });
-        res.end();
-        break;
+    case "/worker/html/posts":
+      authenticateToken(req, res);
+      console.log('cachew path::::');
+      // res.writeHead(302, {
+      //   Location: "/page.html"
+      // });
+      res.end();
+      break;
     case "/worker/html/test-fetch": //case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
       console.log("post login-attempt")
       extractForm(req)
         .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
         .then(user => returnToken(req, res, user))
         .catch(thrown_error => returnTokenErr(req, res, thrown_error));
-
-
-      //let user = validateUser()
-      //returnToken(req, res, user)
-
-      //handleLogin(req, res);
-      //extractForm(req)
-      //let user = validateUser()
-      //returnToken(req, res, user)
-      //.then(user => returnToken(req, res, user))
-      //.catch(err => console.log(err))
       break;
+    case "/workerPage":
+      saveCachePath(workerPath)
+      redirect(req, res, loginPath)
+      break;
+    case "/customerPage":
+      saveCachePath(workerPath)
+      redirect(req, res, loginPath)
+      break;
+      case "/loggedIn":
+        redirect(req, res, getCache())
+        break;
     case "/worker/html/create-user":
       handleUserCreation(req, res);
       break;
@@ -138,6 +130,35 @@ function requestHandler(req, res) {
     //errorResponse(res, 404, "Resource not found");
   }
 }
+function getCache(){
+  let cache = myCache.get( "myPath" );
+  if ( cache == undefined ){
+      console.log("key not found");
+  } else {
+      console.log(cache);
+  }
+  return(cache.path)
+}
+
+function saveCachePath(path) {
+  let cache = myCache.get( "myPath" );
+  if ( cache != undefined ){
+    console.log("resetting cache");
+    let success = myCache.set("myPath", null, 10000);
+    saveCachePath(path);
+  }else {
+    let obj = { path: path };
+    let success = myCache.set("myPath", obj, 10000);
+    console.log('path saved as: ', path)
+  }
+}
+
+function redirect(req, res, path){
+  res.writeHead(302, {
+    Location: path
+  });
+  res.end();
+}
 
 function extractForm(req) { //cg addin explanation due
   //console.log(req.headers)
@@ -151,7 +172,7 @@ function extractForm(req) { //cg addin explanation due
 }
 
 function isFormEncoded(contentType) {//cg addin explanation due
-  console.log(contentType);
+  //console.log(contentType);
   let ctType = contentType.split(";")[0];
   ctType = ctType.trim();
   return (ctType === "application/x-www-form-urlencoded");
@@ -235,7 +256,7 @@ function handleNewPassword(req, res) {
 }
 
 async function fileResponse(res, filename) {
-  console.log("fileresponse");
+  //console.log("fileresponse");
   const sPath = securePath(filename);
 
   if (!await fileExists(sPath)) {
@@ -249,33 +270,8 @@ async function fileResponse(res, filename) {
     const data = await fs.readFile(sPath);
     res.statusCode = 200;
     res.setHeader('Content-Type', guessMimeType(sPath));
-    console.log('Content-Type', guessMimeType(sPath))
-    console.log(res.headers)
-    res.write(data);
-    res.end('\n');
-  } catch (err) {
-    console.log(err);
-    errorResponse(res, 500, 'Internal error')
-  }
-}
-
-async function fileResponse2(res, filename) {
-  console.log("fileresponse");
-  const sPath = securePath(filename);
-
-  if (!await fileExists(sPath)) {
-    errorResponse(res, 404, 'Resource not found');
-    return;
-  }
-
-  try {
-    //In the future, we could work with buffers et cetera
-    //However, our files are small (so far), so it doesn't really matter
-    const data = await fs.readFile(sPath);
-    res.statusCode = 200;
-    res.setHeader('Content-Type', guessMimeType(sPath));
-    console.log('Content-Type', guessMimeType(sPath))
-    console.log(res.headers)
+    //console.log('Content-Type', guessMimeType(sPath))
+    //console.log(res.headers)
     res.write(data);
     res.end('\n');
   } catch (err) {
@@ -297,7 +293,7 @@ async function fileExists(filename) {
 
 function guessMimeType(fileName) {
   const fileExtension = fileName.split('.').pop().toLowerCase();
-  console.log(fileExtension);
+  //console.log(fileExtension);
   const ext2Mime = {
     "txt": "text/txt",
     "html": "text/html",

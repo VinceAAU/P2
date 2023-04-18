@@ -1,4 +1,3 @@
-console.log("init");
 const checkbox = document.querySelector("#submitBtn_id");
 const loginErrorMsg = document.getElementById("login-error-msg");
 
@@ -39,7 +38,7 @@ async function toggleLogin(event) { // async await
           returnToken(data)
             .then((response) => {
               if (response.ok) {
-                window.location.href = '/page.html';
+                window.location.href = '/loggedIn';// getCache();//'/page.html';
               } else {
                 console.log('Response not ok');
               }
@@ -48,6 +47,15 @@ async function toggleLogin(event) { // async await
         })
         .catch((error) => console.error(error));
 }
+// function getCache(){
+//   let cache = myCache.get( "myPath" );
+//   if ( cache == undefined ){
+//       console.log("key not found");
+//   } else {
+//       console.log(cache);
+//   }
+//   return(cache.path)
+// }
 
 function returnToken(data) {
     const requestOptions = {
