@@ -57,7 +57,7 @@ function returnToken(data) {
     headers: { 'Authorization': `Bearer ${data.accessToken}` }
   };
 
-  return fetch('http://localhost:3000/worker/html/posts', requestOptions);
+  return fetch('/worker/html/posts', requestOptions);
 }
 
 function throwError() {
