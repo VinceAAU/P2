@@ -57,7 +57,7 @@ function requestHandler(req, res) {
   let form = new formidable.IncomingForm();
 
   switch (url.pathname) {
-    //GET stuff
+    //GET 
     case "/":
     case "/index.html":
       fileResponse(res, indexPath);
@@ -78,6 +78,8 @@ function requestHandler(req, res) {
     case "/worker/html/posts":
       authenticateToken(req, res);
       break;
+
+      //POST
     case "/worker/html/fetchUser": 
       console.log("post login-attempt")
       extractForm(req)
