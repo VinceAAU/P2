@@ -47,15 +47,6 @@ async function toggleLogin(event) { // async await
         })
         .catch((error) => console.error(error));
 }
-// function getCache(){
-//   let cache = myCache.get( "myPath" );
-//   if ( cache == undefined ){
-//       console.log("key not found");
-//   } else {
-//       console.log(cache);
-//   }
-//   return(cache.path)
-// }
 
 function returnToken(data) {
     const requestOptions = {
@@ -68,6 +59,4 @@ function returnToken(data) {
 
 function throwError() {
     loginErrorMsg.style.opacity = 1;
-    //let warn = "preventDefault() won't let you check this!<br>";
-    //document.getElementById("id1").innerHTML += warn;
 }

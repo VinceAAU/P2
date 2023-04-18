@@ -39,7 +39,7 @@ const hostname = '127.0.0.1';
 const port = 3000;
 
 const server = http.createServer(requestHandler);
-const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
+const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 }); //Cache config
 
 function requestHandler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:3000');
@@ -177,7 +177,7 @@ function isFormEncoded(contentType) {//cg addin explanation due
 //
 function returnToken(req, res, username) {
   console.log("return token with user: " + username)
-  const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0';
+  const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0'; //to be put in .env
   const user = { name: username }
   //console.log(process.env.ACCESS_TOKEN_SECRET)
 
@@ -191,7 +191,7 @@ function returnToken(req, res, username) {
 }
 
 function authenticateToken(req, res, next) {
-  const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0';
+  const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0'; //to be put in .env
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
