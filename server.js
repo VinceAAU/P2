@@ -77,13 +77,8 @@ function requestHandler(req, res) {
       break;
     case "/worker/html/posts":
       authenticateToken(req, res);
-      console.log('cachew path::::');
-      // res.writeHead(302, {
-      //   Location: "/page.html"
-      // });
-      res.end();
       break;
-    case "/worker/html/test-fetch": //case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
+    case "/worker/html/fetchUser": 
       console.log("post login-attempt")
       extractForm(req)
         .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
@@ -95,7 +90,7 @@ function requestHandler(req, res) {
       redirect(req, res, loginPath)
       break;
     case "/customerPage":
-      saveCachePath(workerPath)
+      saveCachePath(customerPagePath)
       redirect(req, res, loginPath)
       break;
       case "/loggedIn":
@@ -154,6 +149,7 @@ function saveCachePath(path) {
 }
 
 function redirect(req, res, path){
+  console.log("redirecting to: ", path)
   res.writeHead(302, {
     Location: path
   });
@@ -216,19 +212,7 @@ function authenticateToken(req, res, next) {
 function returnTokenErr(req, res, err) {
   console.log(err)
   res.statusCode = 500;
-  //res.setHeader('Content-Type', 'text/txt');
-  //res.write("Fatal error: You gon die");
   res.end("\n");
-}
-
-
-//not in use
-function validateUser(req, res) {
-  extractForm(req)
-    .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
-    .then(user => { return (user) })
-    .catch(thrown_error => throw_user(res, thrown_error, "login handler"));
-  //.catch(err => console.log(err))
 }
 
 //Function for creating new users

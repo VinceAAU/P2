@@ -20,7 +20,7 @@ async function toggleLogin(event) { // async await
     bodyData.append('username', username['value']);
     bodyData.append('password', password['value']);
 
-    fetch('/worker/html/test-fetch', {
+    fetch('/worker/html/fetchUser', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
