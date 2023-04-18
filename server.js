@@ -20,6 +20,9 @@ import fs from "fs/promises";
 import path from "path";
 import qs from "querystring";
 import formidable from 'formidable';
+import jwt from 'jsonwebtoken';
+import { env } from 'process';
+import NodeCache from "node-cache";
 
 
 //function imports from other .js files
@@ -37,8 +40,17 @@ const hostname = '127.0.0.1';
 const port = 3000;
 
 const server = http.createServer(requestHandler);
+const myCache = new NodeCache({ stdTTL: 100, checkperiod: 120 }); //Cache config
 
 function requestHandler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:3000');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    res.writeHead(200);
+    res.end();
+    return;
+  }
   console.log("New request: " + req.method + " " + req.url);
 
   let baseURL = 'http://' + req.headers.host + '/';
@@ -46,7 +58,7 @@ function requestHandler(req, res) {
   let form = new formidable.IncomingForm();
 
   switch (url.pathname) {
-    //GET stuff
+    //GET 
     case "/":
     case "/index.html":
       fileResponse(res, indexPath);
@@ -64,11 +76,29 @@ function requestHandler(req, res) {
     case "/worker/html/request-worktask":
       streamArray(res, [5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]); // Example array
       break;
-
-    //POST stuff
-    case "/worker/html/login-attempt": //case "/worker/login-attempt": //TODO: Figure out which one of these is redundant
-      handleLogin(req, res);
+    case "/worker/html/posts":
+      authenticateToken(req, res);
       break;
+
+      //POST
+    case "/worker/html/fetchUser": 
+      console.log("post login-attempt")
+      extractForm(req)
+        .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
+        .then(user => returnToken(req, res, user))
+        .catch(thrown_error => returnTokenErr(req, res, thrown_error));
+      break;
+    case "/workerPage":
+      saveCachePath(workerPath)
+      redirect(req, res, loginPath)
+      break;
+    case "/customerPage":
+      saveCachePath(customerPagePath)
+      redirect(req, res, loginPath)
+      break;
+      case "/loggedIn":
+        redirect(req, res, getCache())
+        break;
     case "/worker/html/create-user":
       handleUserCreation(req, res);
       break;
@@ -77,6 +107,7 @@ function requestHandler(req, res) {
       break;
     case "/worker/html/enter-new-password":
       handleNewPassword(req, res);
+      fileResponse(res, customerPagePath);
       break;
     case "/customer/costumerPage/upload":
       //Process the file upload in Node
@@ -97,23 +128,102 @@ function requestHandler(req, res) {
     //errorResponse(res, 404, "Resource not found");
   }
 }
+function getCache(){
+  let cache = myCache.get( "myPath" );
+  if ( cache == undefined ){
+      console.log("key not found");
+  } else {
+      console.log(cache);
+  }
+  return(cache.path)
+}
+
+function saveCachePath(path) {
+  let cache = myCache.get( "myPath" );
+  if ( cache != undefined ){
+    console.log("resetting cache");
+    let success = myCache.set("myPath", null, 10000);
+    saveCachePath(path);
+  }else {
+    let obj = { path: path };
+    let success = myCache.set("myPath", obj, 10000);
+    console.log('path saved as: ', path)
+  }
+}
+
+function redirect(req, res, path){
+  console.log("redirecting to: ", path)
+  res.writeHead(302, {
+    Location: path
+  });
+  res.end();
+}
+
+function extractForm(req) { //cg addin explanation due
+  //console.log(req.headers)
+  if (isFormEncoded(req.headers['content-type']))
+    return collectPostBody(req).then(body => {
+      const data = qs.parse(body);
+      return data;
+    });
+  else
+    return Promise.reject(new Error(ValidationError));
+}
+
+function isFormEncoded(contentType) {//cg addin explanation due
+  //console.log(contentType);
+  let ctType = contentType.split(";")[0];
+  ctType = ctType.trim();
+  return (ctType === "application/x-www-form-urlencoded");
+}
+
+//
+function returnToken(req, res, username) {
+  console.log("return token with user: " + username)
+  const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0'; //to be put in .env
+  const user = { name: username }
+  //console.log(process.env.ACCESS_TOKEN_SECRET)
 
 
-//login
-function handleLogin(req, res) {
-  extractForm(req)
-    .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
-    .then(_ => fileResponse(res, workerPath))
-    .catch(thrown_error => throw_user(res, thrown_error, "login handler"));
-  //.catch(err => console.log(err))
+  const accessToken = jwt.sign(user, str);
+  res.statusCode = 201;
+
+  res.setHeader('Content-Type', 'text/txt');
+  res.write(JSON.stringify({ accessToken: accessToken }));
+  res.end("\n");
+}
+
+function authenticateToken(req, res, next) {
+  const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0'; //to be put in .env
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  // console.log('req.headers', req.headers);
+  // console.log('authHeader:', authHeader);
+  // console.log('token:', token);  
+  // console.log('req.user', req.user)
+
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token, str, (err, user) => {
+    if (err) return errorResponse(res, 403, err)
+    req.user = user;
+  });
+};
+
+
+function returnTokenErr(req, res, err) {
+  console.log(err)
+  res.statusCode = 500;
+  res.end("\n");
 }
 
 //Function for creating new users
 function handleUserCreation(req, res) {
   extractForm(req)
-  .then(user_info => validateNewUser(user_info))
-  .then(_ => fileResponse(res, loginPath))
-  .catch(thrown_error => throw_user(res, thrown_error, "create-user"));
+    .then(user_info => validateNewUser(user_info))
+    .then(_ => fileResponse(res, loginPath))
+    .catch(thrown_error => throw_user(res, thrown_error, "create-user"));
 }
 
 //Function for forgot password page
@@ -128,14 +238,15 @@ function handlePasswordPostCase(req, res) {
 function handleNewPassword(req, res) {
   extractForm(req)
     .then(info => passwords(info)) //in forgotPassword.js
-    .then(_ => fileResponse(res, workerPath))
+    .then(_ => fileResponse(res, loginPath))
     .catch(thrown_error => throw_user(res, thrown_error, "new password handler thing i wonder what this will look like"));
 }
 
 async function fileResponse(res, filename) {
+  //console.log("fileresponse");
   const sPath = securePath(filename);
 
-  if(!await fileExists(sPath)){
+  if (!await fileExists(sPath)) {
     errorResponse(res, 404, 'Resource not found');
     return;
   }
@@ -146,9 +257,11 @@ async function fileResponse(res, filename) {
     const data = await fs.readFile(sPath);
     res.statusCode = 200;
     res.setHeader('Content-Type', guessMimeType(sPath));
+    //console.log('Content-Type', guessMimeType(sPath))
+    //console.log(res.headers)
     res.write(data);
     res.end('\n');
-  } catch (err){
+  } catch (err) {
     console.log(err);
     errorResponse(res, 500, 'Internal error')
   }
@@ -167,7 +280,7 @@ async function fileExists(filename) {
 
 function guessMimeType(fileName) {
   const fileExtension = fileName.split('.').pop().toLowerCase();
-  console.log(fileExtension);
+  //console.log(fileExtension);
   const ext2Mime = {
     "txt": "text/txt",
     "html": "text/html",
@@ -210,15 +323,7 @@ function securePath(userPath) {
  */
 
 
-function extractForm(req) { //cg addin explanation due
-  if (isFormEncoded(req.headers['content-type']))
-    return collectPostBody(req).then(body => {
-      const data = qs.parse(body);
-      return data;
-    });
-  else
-    return Promise.reject(new Error(ValidationError));
-}
+
 
 function throw_user(res, thrown_error, redirected_from) {
   let fileresponse_path = "FAKE PATH IN CASE THERE'S A CATASTROPHIC FAILURE";
@@ -285,11 +390,7 @@ function throw_user(res, thrown_error, redirected_from) {
   }
   fileResponse(res, fileresponse_path);
 }
-function isFormEncoded(contentType) {//cg addin explanation due
-  let ctType = contentType.split(";")[0];
-  ctType = ctType.trim();
-  return (ctType === "application/x-www-form-urlencoded");
-}
+
 
 function collectPostBody(req) {//cg addin explanation due
   function collectPostBodyExecutor(resolve, reject) {

@@ -66,6 +66,7 @@ async function search_db(searchUsername, searchPassword){
 
   try{
     if(await bcrypt.compare(searchPassword, got.password)==true){ //function to unhash, with salt and compare with got.password
+      return(searchUsername);
     }
     else {
       throw("wrong-password")
