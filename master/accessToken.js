@@ -14,5 +14,7 @@ fetch('/protectedResource', { headers })
     
       // Redirect the user to the login page if the access token is invalid or has expired
       window.location.href = '/401';
+    } else {
+      console.log(accessToken)
     }
   });
