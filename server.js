@@ -63,14 +63,13 @@ function requestHandler(req, res) {
     case "/index.html":
       fileResponse(res, indexPath);
       break;
-    case "/login.html":
-    case "/worker/login.html":
+    case "/login":
       fileResponse(res, loginPath);
       break;
     case "/page.html":
       fileResponse(res, customerPagePath);
       break;
-    case "/worker/style.css":
+    case "/style.css":
       fileResponse(res, CSSPath);
       break;
     case "/worker/html/request-worktask":
@@ -80,16 +79,10 @@ function requestHandler(req, res) {
       console.log("posts")
       authenticateToken(req, res);
       break;
-
-      //POST
-    case "/worker/html/fetchUser": 
-      console.log("post login-attempt")
-      extractForm(req)
-        .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
-        .then(user => returnToken(req, res, user))
-        .catch(thrown_error => returnTokenErr(req, res, thrown_error));
+    case "/401": //called from hrefs
+      redirect(req, res, loginPath)
       break;
-    case "/workerPage":
+    case "/workerPage": //called from hrefs
       saveCachePath(workerPath)
       redirect(req, res, loginPath)
       break;
@@ -97,7 +90,22 @@ function requestHandler(req, res) {
       saveCachePath(customerPagePath)
       redirect(req, res, loginPath)
       break;
-      case "/loggedIn":
+
+
+      //POST
+    case "/protectedResource": //called from
+      console.log("protectedResource called")
+      authenticateToken(req, res)
+      break;
+    case "/worker/html/fetchUser": 
+      console.log("post login-attempt")
+      extractForm(req)
+        .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
+        .then(user => returnToken(req, res, user))
+        .catch(thrown_error => returnTokenErr(req, res, 500));
+      break;
+    
+    case "/loggedIn":
         redirect(req, res, getCache())
         break;
     case "/worker/html/create-user":
@@ -139,16 +147,21 @@ function getCache(){
   return(cache.path)
 }
 
-function saveCachePath(path) {
+function saveCachePath(cachePath) {
+
+  // let obj = { path: cachePath };
+  // let success = myCache.set("myPath", obj, 10000);
+  // console.log('path saved as: ', cachePath)
+
   let cache = myCache.get( "myPath" );
   if ( cache != undefined ){
-    console.log("resetting cache");
+    console.log("resetting cache from: ", cachePath);
     let success = myCache.set("myPath", null, 10000);
-    saveCachePath(path);
+    saveCachePath(cachePath);
   }else {
-    let obj = { path: path };
+    let obj = { path: cachePath };
     let success = myCache.set("myPath", obj, 10000);
-    console.log('path saved as: ', path)
+    console.log('path saved as: ', cachePath)
   }
 }
 
@@ -161,7 +174,7 @@ function redirect(req, res, path){
 }
 
 function extractForm(req) { //cg addin explanation due
-  //console.log(req.headers)
+  console.log(req.headers)
   if (isFormEncoded(req.headers['content-type']))
     return collectPostBody(req).then(body => {
       const data = qs.parse(body);
@@ -172,7 +185,7 @@ function extractForm(req) { //cg addin explanation due
 }
 
 function isFormEncoded(contentType) {//cg addin explanation due
-  //console.log(contentType);
+  console.log(contentType);
   let ctType = contentType.split(";")[0];
   ctType = ctType.trim();
   return (ctType === "application/x-www-form-urlencoded");
@@ -194,7 +207,7 @@ function returnToken(req, res, username) {
   res.end("\n");
 }
 
-function authenticateToken(req, res, next) {
+function authenticateToken(req, res) {
   console.log("authenticate token function")
   const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0'; //to be put in .env
   const authHeader = req.headers['authorization'];
@@ -204,12 +217,12 @@ function authenticateToken(req, res, next) {
   // console.log('authHeader:', authHeader);
   // console.log('token:', token);  
   // console.log('req.user', req.user)
-
-  if (token == null) return res.sendStatus(401)
-
+  console.log(token == null)
+  //if (token == null) return res.sendStatus(401)
+  
   jwt.verify(token, str, (err, user) => {
-    if (err) return errorResponse(res, 403, err)
-    req.user = 'admin';
+    if (err) return returnTokenErr(req, res, 401)
+    req.user = user;
     console.log("token authenticated")
     res.statusCode = 200;
     res.end("\n");
@@ -217,9 +230,9 @@ function authenticateToken(req, res, next) {
 };
 
 
-function returnTokenErr(req, res, err) {
-  console.log(err)
-  res.statusCode = 500;
+function returnTokenErr(req, res, code) {
+  console.log(code)
+  res.statusCode = code;
   res.end("\n");
 }
 

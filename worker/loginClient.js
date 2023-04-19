@@ -29,18 +29,20 @@ async function toggleLogin(event) {
     });
 
     if (!response.ok) {
+      console.log("response not ok")
       throwError();
     }
 
     const data = await response.json();
-    console.log(data);
+    console.log(data.accessToken);
 
     const tokenResponse = await returnToken(data);
 
-    console.log(tokenResponse);
+    console.log(tokenResponse['accessToken']);
 
     if (tokenResponse.ok) {
       console.log("response OK")
+      saveAccessToken(data.accessToken)
       window.location.href = '/loggedIn';// getCache();//'/page.html';
     } else {
       console.log('Response not ok');
@@ -58,6 +60,12 @@ function returnToken(data) {
   };
 
   return fetch('/worker/html/posts', requestOptions);
+}
+
+function saveAccessToken(accessToken) {
+  // Save the access token in local storage
+  localStorage.setItem('accessToken', accessToken);
+  console.log("saved accesstoken")
 }
 
 function throwError() {
