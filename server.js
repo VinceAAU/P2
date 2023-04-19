@@ -90,6 +90,12 @@ function requestHandler(req, res) {
       saveCachePath(customerPagePath)
       redirect(req, res, loginPath)
       break;
+    case "/loggedIn":
+        redirect(req, res, getCache())
+        break;
+    case "/logOut": //called from 
+      redirect(req, res, indexPath)
+      break;
 
 
       //POST
@@ -104,10 +110,6 @@ function requestHandler(req, res) {
         .then(user => returnToken(req, res, user))
         .catch(thrown_error => returnTokenErr(req, res, 500));
       break;
-    
-    case "/loggedIn":
-        redirect(req, res, getCache())
-        break;
     case "/worker/html/create-user":
       handleUserCreation(req, res);
       break;
