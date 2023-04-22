@@ -21,7 +21,7 @@ const indexPath = '/worker/html/index.html';
 const customerPagePath = '/customer/customerPage.html';
 const CSSPath = 'worker/style.css';
 
-const myCache = new NodeCache({ stdTTL: 1000, checkperiod: 120 }); //Cache config
+const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
 
 
 function requestHandler(req, res) {
@@ -190,9 +190,10 @@ function getCache() {
     let cache = myCache.get("myPath");
     if (cache == undefined) {
         console.log("key not found");
+        redirect(req, res, indexPath);
     } else {
         console.log(cache);
-    }
-    return (cache.path)
+        return (cache.path);
+    }   
 }
 
