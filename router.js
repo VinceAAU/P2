@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import NodeCache from "node-cache";
 //import { env } from 'process';
 
-export { requestHandler }
+export { requestHandler, fileResponse }
 
 //function imports from other .js files
 import { search_db } from "./master/db.js"
@@ -15,8 +15,7 @@ import { securePath, throw_user, errorResponse, guessMimeType, redirect, extract
 
 const loginPath = '/worker/html/login.html';
 const workerPath = '/worker/html/workerPage.html';
-const createUserPath = '/worker/html/createUser.html';
-const forgotPasswordPath = '/worker/html/forgotPassword.html';
+
 const changePasswordPath = '/worker/html/changePassword.html';
 const indexPath = '/worker/html/index.html';
 const customerPagePath = '/customer/customerPage.html';

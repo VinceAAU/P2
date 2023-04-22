@@ -9,19 +9,20 @@
 import http from 'http';
 import path from "path";
 import qs from "querystring";
-import { requestHandler } from './router.js';
+import { requestHandler, fileResponse } from './router.js';
 
 
 //function and const exports
 export { throw_user, securePath, errorResponse, guessMimeType, redirect, extractForm };
 
+
 const hostname = '127.0.0.1';
 const port = 3000;
-
 const server = http.createServer(requestHandler);
+const createUserPath = '/worker/html/createUser.html';
+const forgotPasswordPath = '/worker/html/forgotPassword.html';
+const changePasswordPath = '/worker/html/changePassword.html';
 
-
-//stay
 function redirect(req, res, path) {
   console.log("redirecting to: ", path)
   res.writeHead(302, {
@@ -30,7 +31,6 @@ function redirect(req, res, path) {
   res.end();
 }
 
-//stay
 function extractForm(req) { //cg addin explanation due
   //console.log(req.headers)
   if (isFormEncoded(req.headers['content-type']))
