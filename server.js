@@ -20,7 +20,7 @@ import fs from "fs/promises";
 import path from "path";
 import qs from "querystring";
 import formidable from 'formidable';
-import jwt from 'jsonwebtoken';
+//import jwt from 'jsonwebtoken';
 import { env } from 'process';
 import NodeCache from "node-cache";
 
@@ -30,6 +30,7 @@ import { search_db } from "./master/db.js"
 import { streamArray } from "./master/sendData.js"
 import { search, passwords } from "./master/forgotPassword.js"
 import { validateNewUser } from "./master/createUser.js"
+import { returnToken, authenticateToken } from './master/tokenHandler.js';
 //import { taskSplitter } from './master/splitData.js';
 //import { saveQueue, addCustomerQueue, removeCustomerQueue, getTaskQueueHead, getUserQueueHead } from './master/queue.js';
 
@@ -87,7 +88,7 @@ function requestHandler(req, res) {
       extractForm(req)
         .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
         .then(user => returnToken(req, res, user))
-        .catch(thrown_error => returnTokenErr(req, res, thrown_error));
+        .catch(thrown_error => returnTokenErr(req, res, 401, thrown_error)); //401: unauthorized
       break;
     case "/workerPage":
       saveCachePath(workerPath)
@@ -176,51 +177,6 @@ function isFormEncoded(contentType) {//cg addin explanation due
   let ctType = contentType.split(";")[0];
   ctType = ctType.trim();
   return (ctType === "application/x-www-form-urlencoded");
-}
-
-//
-function returnToken(req, res, username) {
-  console.log("return token with user: " + username)
-  const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0'; //to be put in .env
-  const user = { name: username }
-  //console.log(process.env.ACCESS_TOKEN_SECRET)
-
-
-  const accessToken = jwt.sign(user, str);
-  res.statusCode = 201;
-
-  res.setHeader('Content-Type', 'text/txt');
-  res.write(JSON.stringify({ accessToken: accessToken }));
-  res.end("\n");
-}
-
-function authenticateToken(req, res, next) {
-  console.log("authenticate token function")
-  const str = '473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0'; //to be put in .env
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  // console.log('req.headers', req.headers);
-  // console.log('authHeader:', authHeader);
-  // console.log('token:', token);  
-  // console.log('req.user', req.user)
-
-  if (token == null) return res.sendStatus(401)
-
-  jwt.verify(token, str, (err, user) => {
-    if (err) return errorResponse(res, 403, err)
-    req.user = 'admin';
-    console.log("token authenticated")
-    res.statusCode = 200;
-    res.end("\n");
-  });
-};
-
-
-function returnTokenErr(req, res, err) {
-  console.log(err)
-  res.statusCode = 500;
-  res.end("\n");
 }
 
 //Function for creating new users
