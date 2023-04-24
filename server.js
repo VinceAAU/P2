@@ -17,7 +17,7 @@ const CSSPath = 'worker/style.css';
 //Library imports
 import http from 'http';
 import fs from "fs/promises";
-import fsfs from "fs";
+import fsfs from "fs"; // temporary fix until login stuff is moved out. fs/promises is not enough for streams, but it breaks if changed to fs, so idk.
 import path from "path";
 import qs from "querystring";
 import formidable from 'formidable';
