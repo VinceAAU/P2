@@ -206,3 +206,15 @@ function getCache() {
     }   
 }
 
+async function handleFileQueue(req, res) {
+    const authHeader = req.headers['authorization'];
+    const tempToken = authHeader.split(' ')[1];
+    const user = tempToken.split('.')[0];
+    //console.log(user);
+  
+    let userTaskArray = await getTaskByUser(user);
+    console.log("Test");
+    console.log(userTaskArray);
+    streamArray(res, userTaskArray);
+  }
+
