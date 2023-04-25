@@ -128,7 +128,7 @@ function requestHandler(req, res) {
       handleUpload(form, req, res);
       break;
     case "/get-task-list-by-user":
-      handleFileQueue(req,res);
+      handleFileQueue(req, res);
       break;
 
     default:
@@ -431,7 +431,7 @@ function collectPostBody(req) {//cg addin explanation due
   }
   return new Promise(collectPostBodyExecutor);
 }
-async function handleFileQueue(req,res){
+async function handleFileQueue(req, res) {
   const authHeader = req.headers['authorization'];
   const tempToken = authHeader.split(' ')[1];
   const user = tempToken.split('.')[0];

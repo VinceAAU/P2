@@ -5,13 +5,13 @@ const headers = {
 };
 
 fetch('/get-task-list-by-user', { headers })
-.then(response => response.json())
-    .then(data => {
-      console.log("Received array from server:");
-      console.log(data);
-      
-    })
-    .catch(error => console.error(error));
+  .then(response => response.json())
+  .then(data => {
+    console.log("Received array from server:");
+    console.log(data);
+
+  })
+  .catch(error => console.error(error));
 
 
 
