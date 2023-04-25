@@ -50,19 +50,20 @@ onmessage = function(e) {
     let j = right + 1;
   
     while (true) {
+
+      do {
+        j--;
+      } while (e.data[j] <= pivot);
+
       do {
         i++;
-      } while (e.data[i] < pivot);
+      } while (e.data[i] >= pivot);
 
-      do{
-        j--;
-      } while (e.data[j] > pivot);
-
-      if (i >= j) {
-        return j;
+      if (i < j) {
+        swap(i, j);
       }
 
-      swap(i, j);
+      return j;
     }
   }
   
