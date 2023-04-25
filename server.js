@@ -32,7 +32,7 @@ function redirect(req, res, path) {
 }
 
 function extractForm(req) { //cg addin explanation due
-  //console.log(req.headers)
+  console.log(req.headers)
   if (isFormEncoded(req.headers['content-type']))
     return collectPostBody(req).then(body => {
       const data = qs.parse(body);
@@ -45,7 +45,7 @@ function extractForm(req) { //cg addin explanation due
 
 //stay
 function isFormEncoded(contentType) {//cg addin explanation due
-  //console.log(contentType);
+  console.log(contentType);
   let ctType = contentType.split(";")[0];
   ctType = ctType.trim();
   return (ctType === "application/x-www-form-urlencoded");
@@ -189,8 +189,18 @@ function collectPostBody(req) {//cg addin explanation due
   }
   return new Promise(collectPostBodyExecutor);
 }
+async function handleFileQueue(req, res) {
+  const authHeader = req.headers['authorization'];
+  const tempToken = authHeader.split(' ')[1];
+  const user = tempToken.split('.')[0];
+  //console.log(user);
+
+  let userTaskArray = await getTaskByUser(user);
+  console.log("Test");
+  console.log(userTaskArray);
+  streamArray(res, userTaskArray);
+}
 
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
-

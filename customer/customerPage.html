@@ -2,10 +2,13 @@
 <html>
 <head>
     <link rel="stylesheet" href="../worker/style.css"> 
+    <script type="module" defer src="../master/accessToken.js"></script>
 </head>
 <body>
     <button class="indexbutton" type="button" name="Worker"
         onclick="location.href='../worker/html/workerPage.html'">Worker</button>
+    <button class="indexbutton" type="button"
+        onclick="location.href='/'">Log out</button>
         
     <form action="/customer/costumerPage/upload" method="post" enctype="multipart/form-data">
         <!-- HTML5 file upload selector-->
