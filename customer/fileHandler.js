@@ -1,3 +1,22 @@
+const accessToken = localStorage.getItem('accessToken');
+
+const headers = {
+  'Authorization': `Bearer ${accessToken}`
+};
+
+fetch('/get-task-list-by-user', { headers })
+.then(response => response.json())
+    .then(data => {
+      console.log("Received array from server:");
+      console.log(data);
+      
+    })
+    .catch(error => console.error(error));
+
+
+
+
+
 function download(index) {
   const downloadLink = document.createElement('a');
 

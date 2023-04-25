@@ -31,7 +31,7 @@ import { streamArray, handleUpload } from "./master/exchangeData.js"
 import { search, passwords } from "./master/forgotPassword.js"
 import { validateNewUser } from "./master/createUser.js"
 //import { taskSplitter } from './master/splitData.js';
-import { savePendingQueue, addCustomerQueue, removeCustomerQueue, getTaskQueueHead, getUserQueueHead, pendingQueueToFinishedQueue } from './master/queue.js'
+import { savePendingQueue, addCustomerQueue, removeCustomerQueue, getTaskQueueHead, getUserQueueHead, pendingQueueToFinishedQueue, getTaskByUser } from './master/queue.js'
 
 //function and const exports
 export { fileResponse, requestHandler, throw_user };
@@ -127,6 +127,10 @@ function requestHandler(req, res) {
       //Process the file upload in Node
       handleUpload(form, req, res);
       break;
+    case "/get-task-list-by-user":
+      handleFileQueue(req,res);
+      break;
+
     default:
       fileResponse(res, "." + url.pathname); //TODO: DELETE THIS LINE AND UNCOMMENT THE NEXT ONE
     //errorResponse(res, 404, "Resource not found");
@@ -427,8 +431,18 @@ function collectPostBody(req) {//cg addin explanation due
   }
   return new Promise(collectPostBodyExecutor);
 }
+async function handleFileQueue(req,res){
+  const authHeader = req.headers['authorization'];
+  const tempToken = authHeader.split(' ')[1];
+  const user = tempToken.split('.')[0];
+  //console.log(user);
+
+  let userTaskArray = await getTaskByUser(user);
+  console.log("Test");
+  console.log(userTaskArray);
+  streamArray(res, userTaskArray);
+}
 
 server.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
-
