@@ -1,8 +1,0 @@
-GET http://localhost:4000/cookie
-
-###
-
-POST http://localhost:3000/worker/html/test-fetch
-content-Type: application/x-www-form-urlencoded
-
-{"name_id": "admin","password_id": "admin"}
