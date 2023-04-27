@@ -1,17 +1,25 @@
 import { taskSplitter } from "splitData.js";
 
-async function assignWorkToWorker() {
+let allTasks = [];
+let availableTasks = [];
 
-    let allTasks = await taskSplitter();
+async function assignWorkToWorker(userID) {
 
-    let availableTasks = Array.from({length: allTasks.length}, (e, i) => i);
+    if (allTasks.length === 0) {
+        allTasks = await taskSplitter();
+        availableTasks = Array.from({length: allTasks.length}, (_, i) => i);
+    }
 
     /*
         Implement Queue system on "availableTasks"
     */
 
+    
 
     /*
         Call a 'reserved' function here, to add an assigned task to the reservation system.
     */
+
+    
+
 }
