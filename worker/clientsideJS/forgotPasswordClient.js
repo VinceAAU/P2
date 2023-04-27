@@ -41,7 +41,7 @@ async function toggleSearch(event) {
 
 function noUser() {
     console.log("func nouser")
-    errorMessage.textContent = "User not found";
+    errorMessage.textContent = "User not found.";
     errorMessage.style.opacity = 1;
 }
 
