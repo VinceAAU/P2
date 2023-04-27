@@ -1,7 +1,7 @@
 const checkbox = document.querySelector("#submitBtn_id");
 const loginErrorMsg = document.getElementById("login-error-msg");
 const errorMessage = document.getElementById('error-message');
-      
+
 
 checkbox.addEventListener("click", checkboxClick, false);
 
@@ -21,32 +21,29 @@ async function toggleLogin(event) {
     bodyData.append('mail', mail['value']);
     bodyData.append('password', password['value']);
     bodyData.append('passwordConfirmation', passwordConfirmation['value']);
-    
+
     try {
         const response = await fetch('/createUser', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: bodyData
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: bodyData
         });
-    
+
         if (!response.ok) {
-          console.log(response.status)
-          switch (response.status){
-            case 409:
-                alreadyExists();
-                break;
-            case 400:
-                unevenPasswords();
-                break;
-            default:
-                errorHandler()
-                break;
-          }
+            console.log(response.status)
+            switch (response.status) {
+                case 409:
+                    alreadyExists();
+                    break;
+                case 400:
+                    unevenPasswords();
+                    break;
+            }
         } else {
             console.log("response OK")
-            window.location.href = '/login.html';// getCache();//'/page.html';
+            window.location.href = '/login.html';
         }
     } catch (error) {
         console.error(error);
@@ -54,14 +51,14 @@ async function toggleLogin(event) {
 
 }
 
-function unevenPasswords(){
+function unevenPasswords() {
     errorMessage.textContent = "Passwords are not equal";
 }
 
-function alreadyExists(){
+function alreadyExists() {
     errorMessage.textContent = "Mail or user already exists";
 }
 
-function errorHandler(){
+function errorHandler() {
     errorMessage.textContent = "An error occurred";
 }
