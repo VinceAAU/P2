@@ -41,7 +41,7 @@ function requestHandler(req, res) {
     //let form = new formidable.IncomingForm();
     const maxFileSizeGB = 20;
     const form = new formidable.IncomingForm({
-      maxFileSize: maxFileSizeGB * 1024 * 1024 * 1024 // 10 GB limit
+      maxFileSize: maxFileSizeGB * 1024 * 1024 * 1024 // 20 GB limit
     });
 
     switch (url.pathname) {
@@ -109,7 +109,16 @@ function requestHandler(req, res) {
             break;
         case "/customer/costumerPage/upload":
             //Process the file upload in Node
-            handleUpload(form, req, res);
+            const authHeader = req.headers['authorization'];
+            const tempToken = authHeader.split(' ')[1];
+            const user = tempToken.split('.')[0];
+            handleUpload(form, req, user);
+            console.log("Received file from: " + user);
+
+            res.writeHead(204);
+            res.end();
+
+            // get user ID token thingy for the requester
             break;
         case "/get-task-list-by-user":
             handleFileQueue(req, res);

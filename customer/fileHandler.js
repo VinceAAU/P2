@@ -13,7 +13,27 @@ fetch('/get-task-list-by-user', { headers })
   })
   .catch(error => console.error(error));
 
+  const form = document.querySelector('#upload-form');
 
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const fileInput = document.querySelector('input[name="fileupload"]');
+    const formData = new FormData();
+    formData.append('fileupload', fileInput.files[0]);
+
+    try {
+      const response = await fetch('/customer/costumerPage/upload', {
+        method: 'POST',
+        headers,
+        body: formData
+      });
+
+      // handle response
+    } catch (error) {
+      // handle error
+    }
+  });
 
 
 
