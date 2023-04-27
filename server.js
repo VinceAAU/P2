@@ -136,24 +136,21 @@ function throw_user(res, thrown_error, redirected_from) {
           errorResponse(res, 409, thrown_error); //409 = conflict
           break;
         case "passwords_unequal":
-          errorResponse(res, 400, thrown_error); //400 = conflict
+          errorResponse(res, 400, thrown_error); //400 = Bad Request
           break;
       }
       break;
-    case "forgot-password-post": //newpassword
-      console.log("Thrown user: User not found")
-      console.log(thrown_error);
-      fileresponse_path = forgotPasswordPath;
+    case "forgot-password-post": //User not found
+      errorResponse(res, 400, thrown_error);
       break;
     case "new password handler thing i wonder what this will look like":
       switch (thrown_error) {
         case "passwords_unequal":
           console.log("Thrown user: passwords dont match");
-          break;
-        case "update_fail":
-          console.log("Thrown user: update db failed");
+          errorResponse(res, 400, thrown_error);
           break;
         case "TypeError: Cannot read properties of undefined (reading 'user')":
+          errorResponse(res, 408, thrown_error); //request timeout
           console.log("Cache timed out waiting for a response");
           break;
       }

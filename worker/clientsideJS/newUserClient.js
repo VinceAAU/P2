@@ -1,5 +1,4 @@
 const checkbox = document.querySelector("#submitBtn_id");
-const loginErrorMsg = document.getElementById("login-error-msg");
 const errorMessage = document.getElementById('error-message');
 
 
@@ -43,7 +42,7 @@ async function toggleLogin(event) {
             }
         } else {
             console.log("response OK")
-            window.location.href = '/login.html';
+            window.location.href = '/worker/html/login.html';
         }
     } catch (error) {
         console.error(error);
@@ -53,12 +52,15 @@ async function toggleLogin(event) {
 
 function unevenPasswords() {
     errorMessage.textContent = "Passwords are not equal";
+    errorMessage.style.opacity = 1;
 }
 
 function alreadyExists() {
     errorMessage.textContent = "Mail or user already exists";
+    errorMessage.style.opacity = 1;
 }
 
 function errorHandler() {
     errorMessage.textContent = "An error occurred";
+    errorMessage.style.opacity = 1;
 }

@@ -70,6 +70,9 @@ function requestHandler(req, res) {
         case "/logOut": //called from 
             redirect(req, res, indexPath)
             break;
+        case "/enterNewPassword":
+            fileResponse(res, changePasswordPath)
+            break;
 
         //POST
         case "/createUser":
@@ -100,15 +103,12 @@ function requestHandler(req, res) {
         case "/loggedIn":
             redirect(req, res, getCache())
             break;
-        // case "/worker/html/create-user":
-        //     handleUserCreation(req, res);
-        //     break;
         case "/worker/html/forgot-password-post": //TODO: change underscores to hyphens for consistency in URL's
             handlePasswordPostCase(req, res);
             break;
         case "/worker/html/enter-new-password":
             handleNewPassword(req, res);
-            fileResponse(res, customerPagePath);
+            //fileResponse(res, customerPagePath);
             break;
         case "/customer/costumerPage/upload":
             //Process the file upload in Node
@@ -141,7 +141,12 @@ function handleUserCreation(req, res) {
 function handlePasswordPostCase(req, res) {
     extractForm(req)
         .then(username => search(username)) //in forgotPassword.js
-        .then(_ => fileResponse(res, changePasswordPath))
+        .then(_ => {
+            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.write('User found');
+            res.end();
+        })
+        //.then(_ => fileResponse(res, changePasswordPath))
         .catch(thrown_error => throw_user(res, thrown_error, "forgot-password-post"));
 }
 
@@ -149,12 +154,15 @@ function handlePasswordPostCase(req, res) {
 function handleNewPassword(req, res) {
     extractForm(req)
         .then(info => passwords(info)) //in forgotPassword.js
-        .then(_ => fileResponse(res, loginPath))
+        .then(_ => {
+            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.write('User found');
+            res.end();
+        })
         .catch(thrown_error => throw_user(res, thrown_error, "new password handler thing i wonder what this will look like"));
 }
 
 async function fileResponse(res, filename) {
-    //console.log("fileresponse");
     const sPath = securePath(filename);
 
     if (!await fileExists(sPath)) {

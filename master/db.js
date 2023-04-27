@@ -60,7 +60,6 @@ function insert(mail, username, password){
 
 //For login.js
 async function search_db(searchUsername, searchPassword){
-  console.log("srchdb: "+searchUsername, searchPassword)
   const stmt = db.prepare('SELECT * FROM users WHERE username = ?').bind(searchUsername);
   const got = stmt.get(); 
 
@@ -87,8 +86,9 @@ function search_for_mail(srch_m){
 
 // Returns true/false    //for the function create_user in login.js
 function search_for_username(srch_u){
+    console.log("searching")
     const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
-    const username_srch = stmt.all(srch_u);
+    const username_srch = stmt.all(srch_u.username); //username (from html side) returns: "userName = xyz" hence .userName
     if(username_srch.length == 0) {
         return false;
     } else return true;
@@ -99,14 +99,14 @@ function search_for_username(srch_u){
 // Better-Sqlite allows for '?' to be placeholders for values to insert in SQL statement
 function update_password(new_password, user){
   hash(new_password)
-  .then(protectedPassword => update(protectedPassword, user))
+  .then(protectedPassword => update(protectedPassword, user.username))
   .catch(err => console.log(err))
 };
 
 function update(password, user){
   try {
     const stmt = db.prepare('UPDATE users SET password = ? WHERE username = ?');
-    const updates = stmt.run(password, user);  
+    const updates = stmt.run(password, user.username);  
   }
   catch{
     throw("update_fail");
