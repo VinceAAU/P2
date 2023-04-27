@@ -51,7 +51,7 @@ async function taskSplitter() {
   let filePath = getTaskQueueHead(); 
   let tasks = await splitArray(filePath);
 
-  console.log(tasks);  // Just prints all the arrays(tasks) to show it works. Call it in server.js.
+  return(tasks);  // Just prints all the arrays(tasks) to show it works. Call it in server.js.
   
 }
 
