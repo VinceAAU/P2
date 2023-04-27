@@ -29,6 +29,7 @@ async function assignWorkToWorker(userID) {
 
     if (qHead === qTail) {
         console.log("Queue is empty.");
+        return null;
     } else {
         let taskForWorker = dequeueTask();
         // Call reservedTasks(userID, taskForWorker); function here
