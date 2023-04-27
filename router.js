@@ -67,9 +67,6 @@ function requestHandler(req, res) {
             console.log("posts")
             authenticateToken(req, res);
             break;
-        case "/logOut": //called from 
-            redirect(req, res, indexPath)
-            break;
         case "/enterNewPassword":
             fileResponse(res, changePasswordPath)
             break;
