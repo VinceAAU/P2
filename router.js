@@ -72,6 +72,9 @@ function requestHandler(req, res) {
             break;
 
         //POST
+        case "/createUser":
+            handleUserCreation(req, res);
+            break;
         case "/protectedResource": //called from
             console.log("protectedResource called")
             authenticateToken(req, res)
@@ -97,9 +100,9 @@ function requestHandler(req, res) {
         case "/loggedIn":
             redirect(req, res, getCache())
             break;
-        case "/worker/html/create-user":
-            handleUserCreation(req, res);
-            break;
+        // case "/worker/html/create-user":
+        //     handleUserCreation(req, res);
+        //     break;
         case "/worker/html/forgot-password-post": //TODO: change underscores to hyphens for consistency in URL's
             handlePasswordPostCase(req, res);
             break;
@@ -126,7 +129,11 @@ function requestHandler(req, res) {
 function handleUserCreation(req, res) {
     extractForm(req)
         .then(user_info => validateNewUser(user_info))
-        .then(_ => fileResponse(res, loginPath))
+        .then(_ => {
+            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.write('User created successfully');
+            res.end();
+        })
         .catch(thrown_error => throw_user(res, thrown_error, "create-user"));
 }
 

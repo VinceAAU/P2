@@ -130,16 +130,15 @@ function throw_user(res, thrown_error, redirected_from) {
     case "create-user":
       switch (thrown_error) {
         case "mail_exists":
-          console.log("Thrown_user: Mail");
+          errorResponse(res, 409, thrown_error); //409 = conflict
           break;
         case "user_exists":
-          console.log("Thrown_user: User");
+          errorResponse(res, 409, thrown_error); //409 = conflict
           break;
         case "passwords_unequal":
-          console.log("Thrown_user: Passwords");
+          errorResponse(res, 400, thrown_error); //400 = conflict
           break;
       }
-      fileresponse_path = createUserPath;
       break;
     case "forgot-password-post": //newpassword
       console.log("Thrown user: User not found")
@@ -164,7 +163,7 @@ function throw_user(res, thrown_error, redirected_from) {
       console.log("an error occured, while directing users");
       fileresponse_path = "/"; //Idk where else to go
   }
-  fileResponse(res, fileresponse_path);
+  //fileResponse(res, fileresponse_path);
 }
 
 
