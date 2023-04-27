@@ -13,8 +13,16 @@ fetch('/get-task-list-by-user', { headers })
   })
   .catch(error => console.error(error));
 
+//Gives a warning when user inputs a non csv file
+  const fileupload = document.querySelector('input');
+  fileupload.addEventListener('change', (event) => {
+  const file = event.target.files[0];
 
-
+  if (file.type !== 'text/csv')
+  {
+    alert("Please pick a csv file");
+  }
+  })
 
 
 function download(index) {
