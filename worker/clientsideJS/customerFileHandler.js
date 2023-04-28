@@ -14,7 +14,7 @@ fetch('/get-task-list-by-user', { headers })
     console.log(data);
 
   })
-  .catch(error => console.log("pik"));
+  .catch(error => console.log(error));
 
 //Gives a warning when user inputs a non csv file
 const fileupload = document.querySelector('input');
