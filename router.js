@@ -264,11 +264,11 @@ function saveCachePath(path) {
     let cache = myCache.get("myPath");
     if (cache != undefined) {
         console.log("resetting cache");
-        let success = myCache.set("myPath", null, 10000);
+        let success = myCache.set("myPath", null, 1);
         saveCachePath(path);
     } else {
         let obj = { path: path };
-        let success = myCache.set("myPath", obj, 10000);
+        let success = myCache.set("myPath", obj, 1);
         console.log('path saved as: ', path)
     }
 }
@@ -277,7 +277,7 @@ function getCache() {
     let cache = myCache.get("myPath");
     if (cache == undefined) {
         console.log("key not found");
-        redirect(req, res, indexPath);
+        return("/index.html")
     } else {
         console.log(cache);
         return (cache.path);

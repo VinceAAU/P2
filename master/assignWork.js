@@ -1,26 +1,29 @@
 import { taskSplitter } from "./splitData.js";
-export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue };
+export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, reservedObject };
 
 let allTasks = [];
 let availableTaskIndices = [];
+let reservedObject = {}; //reserved.UUID = task - delete
+
+
 
 let qHead;
 let qTail;
 
 function enqueueTask(taskIndex) {
     availableTaskIndices[qTail] = taskIndex;
-    qTail = (qTail + 1) % availableTaskIndices.length;
+    qTail = (qTail + 1) % availableTaskIndices.length + 1;
 }
 
 // In case a task fails, this task skips to the front of the queue.
 function addToBeginningOfQueue(taskIndex) {
-    qHead = (qHead - 1) % availableTaskIndices.length;
+    qHead = (qHead - 1) % availableTaskIndices.length + 1;
     availableTaskIndices[qHead] = taskIndex;
 }
 
 function dequeueTask() {
     let task = availableTaskIndices[qHead];
-    qHead = (qHead + 1) % availableTaskIndices.length;
+    qHead = (qHead + 1) % availableTaskIndices.length + 1;
     return task;
 }
 
@@ -37,7 +40,7 @@ async function assignWorkToWorker(userID) {
         throw new Error("Queue is empty.");
     } else {
         let taskForWorker = dequeueTask();
-        // Call reservedTasks(userID, taskForWorker); function here
+        // Call a function here to add userID and taskForWorker to a form of reservation list.
         return allTasks[taskForWorker];
     }
 }
