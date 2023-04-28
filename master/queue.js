@@ -66,7 +66,7 @@ async function savePendingQueue() {      //Saves the pending queue to the server
         Task: pendingTaskQueue
     }
     let csvPendingQueueFileName = "pendingQueue";
-    let csvPendingQueueData = csvMaker(pendingQueueData);
+    let csvPendingQueueData = await csvMaker(pendingQueueData);
     await serverDownloadCsv(csvPendingQueueData, csvPendingQueueFileName);
 }
 
@@ -76,7 +76,7 @@ async function saveFinishedQueue() {     //Save the Finished queue to the server
         Task: finishedTaskQueue
     }
     let csvFinishedQueueFileName = "finishedQueue";
-    let csvFinishedQueueData = csvMaker(finishedQueueData);
+    let csvFinishedQueueData = await csvMaker(finishedQueueData);
     await serverDownloadCsv(csvFinishedQueueData, csvFinishedQueueFileName);
 }
 
