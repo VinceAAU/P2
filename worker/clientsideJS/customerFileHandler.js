@@ -21,8 +21,8 @@ const fileupload = document.querySelector('input');
 fileupload.addEventListener('change', (event) => {
   const file = event.target.files[0];
   if (file.type !== 'text/csv') {
-    alert("Please pick a csv file");
     fileupload.value = "";
+    alert("Please pick a csv file");
   }
 })
 
@@ -39,7 +39,8 @@ form.addEventListener('submit', async (event) => {
       headers,
       body: formData
     });
-    if (!response.status.ok) {
+    if (response.status !== 204) {
+      console.log(response.status)
       logError()
     }
   } catch (error) {
