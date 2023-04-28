@@ -11,6 +11,7 @@ async function heartbeat(){
         if(pings[uuid] < Date.getTime()+timeout){
             console.log(`Worker ${uuid} is dead!!!!`);
             //TODO: Reassign task
+            delete pings[uuid];
         }
     }
 
@@ -26,6 +27,6 @@ function addWorker(uuid){
  * @param worker The worker
  * @returns The response
  */
-async function pong(worker){
-    
+async function pong(uuid){
+    pings[uuid] = Date.getTime();
 }
