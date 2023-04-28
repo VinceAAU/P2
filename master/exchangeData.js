@@ -39,7 +39,7 @@ function streamArray(res, array) {
   async function handleUpload(form, req, user) { //please dont do export like this
     try {
       const uploadedFile = await downloadFile(form, req);
-      addCustomerQueue(user,uploadedFile);
+      addCustomerQueue(user, uploadedFile);
     }
     catch{
       throw(422) //Unprocessable Entity
