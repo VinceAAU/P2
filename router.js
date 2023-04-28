@@ -1,6 +1,9 @@
 import formidable from 'formidable';
 import fs from "fs/promises";
 import NodeCache from "node-cache";
+import fs2 from "fs"
+import path from "path";
+import http from 'http';
 //import { env } from 'process';asd
 
 export { requestHandler, fileResponse }
@@ -14,13 +17,25 @@ import { returnToken, authenticateToken, returnTokenErr } from './master/tokenHa
 import { securePath, throw_user, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
 import { savePendingQueue, addCustomerQueue, removeCustomerQueue, getTaskQueueHead, getUserQueueHead, pendingQueueToFinishedQueue, getTaskByUser } from './master/queue.js'
 
+//HTML and CSS file paths
 const loginPath = '/worker/html/login.html';
 const workerPath = '/worker/html/workerPage.html';
-
 const changePasswordPath = '/worker/html/changePassword.html';
 const indexPath = '/worker/html/index.html';
-const customerPagePath = '/customer/customerPage.html';
+const customerPagePath = '/worker/html/customerPage.html';
 const CSSPath = 'worker/style.css';
+const createUserPath = '/worker/html/createUser.html';
+const forgotPasswordPath = '/worker/html/forgotPassword.html';
+
+//Javascript file paths
+const loginClientPath = '/worker/clientsideJS/loginClient.js';
+const costumerFileHandlerPath = '/worker/clientsideJS/customerFileHandler.js';
+const accessTokenPath = '/master/accessToken.js'
+const mainJSPath = '/worker/main.js'
+const webWorkerPath = '/worker/worker.js'
+const newUserClientPath = '/worker/clientsideJS/newUserClient.js';
+const forgotPasswordClientPath = '/worker/clientsideJS/forgotPasswordClient.js';
+const changePasswordClientPath = '/worker/clientsideJS/changePasswordClient.js';
 
 const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
 
@@ -41,35 +56,73 @@ function requestHandler(req, res) {
     //let form = new formidable.IncomingForm();
     const maxFileSizeGB = 20;
     const form = new formidable.IncomingForm({
-      maxFileSize: maxFileSizeGB * 1024 * 1024 * 1024 // 10 GB limit
+        maxFileSize: maxFileSizeGB * 1024 * 1024 * 1024 // 10 GB limit
     });
 
     switch (url.pathname) {
         //GET 
+        //HTML GET calls
         case "/":
         case "/index.html":
             fileResponse(res, indexPath);
             break;
         case "/login.html":
-        case "/worker/login.html":
             fileResponse(res, loginPath);
             break;
-        case "/page.html":
+        case "/customerPage.html":
             fileResponse(res, customerPagePath);
             break;
+        case "/workerPage.html":
+            fileResponse(res, workerPath);
+            break;
+        case "/createUser.html":
+            fileResponse(res, createUserPath)
+            break;
+        case "/forgotPassword.html":
+            fileResponse(res, forgotPasswordPath);
+            break;
+
+        //Javascript GET calls
+        case "/loginClient.js":
+            fileResponse(res, loginClientPath);
+            break;
+        case "/customerFileHandler.js":
+            fileResponse(res, costumerFileHandlerPath);
+            break;
+        case "/accessToken.js":
+            fileResponse(res, accessTokenPath);
+            break;
+        case "/main.js":
+            fileResponse(res, mainJSPath);
+            break;
+        case "/worker.js":
+            fileResponse(res, webWorkerPath);
+            break;
+        case "/newUserClient.js":
+            fileResponse(res, newUserClientPath);
+            break;
+        case "/forgotPasswordClient.js":
+            fileResponse(res, forgotPasswordClientPath);
+            break;
+        case "/changePasswordClient.js":
+            fileResponse(res, changePasswordClientPath)
+            break;
+        //CSS GET calls
         case "/style.css":
             fileResponse(res, CSSPath);
             break;
-        case "/worker/html/request-worktask":
+
+        case "/request-worktask":
             streamArray(res, [5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]); // Example array
             break;
-        case "/worker/html/posts":
+        case "/posts":
             console.log("posts")
             authenticateToken(req, res);
             break;
         case "/enterNewPassword":
             fileResponse(res, changePasswordPath)
             break;
+
 
         //POST
         case "/createUser":
@@ -87,37 +140,41 @@ function requestHandler(req, res) {
                 .catch(thrown_error => returnTokenErr(req, res, 401, thrown_error)); //401: unauthorized
             break;
         case "/401": //called from hrefs
-            redirect(req, res, loginPath)
+            redirect(req, res, "/login.html")
             break;
-        case "/workerPage":
-            saveCachePath(workerPath)
-            redirect(req, res, loginPath)
+        case "/worker":
+            saveCachePath("/workerPage.html")
+            redirect(req, res, "/login.html")
             break;
-        case "/customerPage":
-            saveCachePath(customerPagePath)
-            redirect(req, res, loginPath)
+        case "/customer":
+            saveCachePath("/customerPage.html")
+            redirect(req, res, "/login.html")
             break;
         case "/loggedIn":
             redirect(req, res, getCache())
             break;
-        case "/worker/html/forgot-password-post": //TODO: change underscores to hyphens for consistency in URL's
+        case "/forgot-password-post": //TODO: change underscores to hyphens for consistency in URL's
             handlePasswordPostCase(req, res);
             break;
-        case "/worker/html/enter-new-password":
+        case "/enter-new-password":
             handleNewPassword(req, res);
             //fileResponse(res, customerPagePath);
             break;
-        case "/customer/costumerPage/upload":
+        case "/upload":
             //Process the file upload in Node
             handleUpload(form, req, res);
             break;
         case "/get-task-list-by-user":
             handleFileQueue(req, res);
             break;
+        case "/download":
+            downloadFile(req, res);
+            break;
 
         default:
-            fileResponse(res, "." + url.pathname); //TODO: DELETE THIS LINE AND UNCOMMENT THE NEXT ONE
-        //errorResponse(res, 404, "Resource not found");
+            //fileResponse(res, "." + url.pathname); //TODO: DELETE THIS LINE AND UNCOMMENT THE NEXT ONE
+            errorResponse(res, 404, "Resource not found");
+            break;
     }
 }
 
@@ -127,7 +184,7 @@ function handleUserCreation(req, res) {
     extractForm(req)
         .then(user_info => validateNewUser(user_info))
         .then(_ => {
-            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.write('User created successfully');
             res.end();
         })
@@ -139,7 +196,7 @@ function handlePasswordPostCase(req, res) {
     extractForm(req)
         .then(username => search(username)) //in forgotPassword.js
         .then(_ => {
-            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.write('User found');
             res.end();
         })
@@ -152,7 +209,7 @@ function handleNewPassword(req, res) {
     extractForm(req)
         .then(info => passwords(info)) //in forgotPassword.js
         .then(_ => {
-            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.write('User found');
             res.end();
         })
@@ -215,18 +272,34 @@ function getCache() {
     } else {
         console.log(cache);
         return (cache.path);
-    }   
+    }
 }
 
 async function handleFileQueue(req, res) {
     const authHeader = req.headers['authorization'];
+    console.log("\n");
+    console.log(authHeader);
+    console.log("\n");
     const tempToken = authHeader.split(' ')[1];
     const user = tempToken.split('.')[0];
     //console.log(user);
-  
+
     let userTaskArray = await getTaskByUser(user);
     console.log("Test");
     console.log(userTaskArray);
     streamArray(res, userTaskArray);
-  }
+}
 
+function downloadFile(req, res) {
+    const URL = req.headers['url'];
+    console.log(URL);
+    const filename = URL.split('/')[4];
+
+    const fileStream = fs2.createWriteStream(filename);
+    res.pipe(fileStream);
+
+    fileStream.on('finish', () => {
+        fileStream.close();
+        console.log('Download finished')
+    });
+}

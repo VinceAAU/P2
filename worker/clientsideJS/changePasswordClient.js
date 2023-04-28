@@ -19,7 +19,7 @@ async function updatePassword(event) {
     
 
     try {
-        const response = await fetch('/worker/html/enter-new-password', {
+        const response = await fetch('/enter-new-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -33,7 +33,7 @@ async function updatePassword(event) {
             
         } else {
             console.log("response OK")
-            window.location.href = '/worker/html/login.html';
+            window.location.href = '/login.html';
         }
     } catch (error) {
         console.error(error);        

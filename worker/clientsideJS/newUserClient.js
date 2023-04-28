@@ -42,7 +42,7 @@ async function toggleLogin(event) {
             }
         } else {
             console.log("response OK")
-            window.location.href = '/worker/html/login.html';
+            window.location.href = '/login.html';
         }
     } catch (error) {
         console.error(error);
