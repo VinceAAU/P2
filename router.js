@@ -28,14 +28,17 @@ const createUserPath = '/worker/html/createUser.html';
 const forgotPasswordPath = '/worker/html/forgotPassword.html';
 
 //Javascript file paths
-const loginClientPath = '/worker/clientsideJS/loginClient.js';
-const costumerFileHandlerPath = '/worker/clientsideJS/customerFileHandler.js';
-const accessTokenPath = '/master/accessToken.js'
-const mainJSPath = '/worker/main.js'
-const webWorkerPath = '/worker/worker.js'
-const newUserClientPath = '/worker/clientsideJS/newUserClient.js';
-const forgotPasswordClientPath = '/worker/clientsideJS/forgotPasswordClient.js';
-const changePasswordClientPath = '/worker/clientsideJS/changePasswordClient.js';
+    //Clientside
+const loginClientPath           = '/worker/clientsideJS/loginClient.js';
+const newUserClientPath         = '/worker/clientsideJS/newUserClient.js';
+const forgotPasswordClientPath  = '/worker/clientsideJS/forgotPasswordClient.js';
+const changePasswordClientPath  = '/worker/clientsideJS/changePasswordClient.js';
+const accessTokenPath           = '/worker/clientsideJS.js'
+const costumerFileHandlerPath   = '/worker/clientsideJS/customerFileHandler.js';
+    //Serverside
+const mainJSPath                = '/worker/main.js'
+const webWorkerPath             = '/worker/worker.js'
+
 
 const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
 
