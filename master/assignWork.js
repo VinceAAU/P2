@@ -47,12 +47,12 @@ async function assignWorkToWorker(userID) {
 
 
 // call this function with: let workerX/ID/whatever = new worker(task)
-class worker{
+class Worker{
     //let current task = ??
     //let lastPing = ??
 
     constructor(task){
         this.currentTask = task
-        this.lastping = new Date().toLocaleString() //returns 'DD/MM/YYYY, HH.MM.SS'
+        this.lastping = Date.getTime() //returns 'DD/MM/YYYY, HH.MM.SS'
     }
 }
