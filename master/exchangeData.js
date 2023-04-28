@@ -35,8 +35,13 @@ export function streamArray(res, array) {
     readable.pipe(res);
   }
 
-  export async function handleUpload(form, req, user) {
-    const uploadedFile = await downloadFile(form, req);
+  export async function handleUpload(form, req, user) { //please dont do export like this
+    try {
+      const uploadedFile = await downloadFile(form, req);
+    }
+    catch(err){
+      throw(err)
+    }
     addCustomerQueue(user,uploadedFile);
   }
   
@@ -51,6 +56,7 @@ export function streamArray(res, array) {
         if (!file.fileupload || !file.fileupload.filepath) {
           console.error("File path not found");
           reject(new Error("File path not found"));
+          throw("pathNotFound")
         }
   
         const oldPath = file.fileupload.filepath;

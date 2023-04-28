@@ -168,11 +168,19 @@ function requestHandler(req, res) {
             const authHeader = req.headers['authorization'];
             const tempToken = authHeader.split(' ')[1];
             const user = tempToken.split('.')[0];
-            handleUpload(form, req, user);
-            console.log("Received file from: " + user);
+            handleUpload(form, req, user)
+            .then(_ => {
+                console.log("Received file from: " + user);
 
-            res.writeHead(204);
-            res.end();
+                res.writeHead(204);
+                res.end();
+            })
+            .catch(err => {
+                console.log(err);
+                res.writeHead(400); //bad request
+                res.end();
+            })
+            
 
             // get user ID token thingy for the requester
             break;
@@ -293,6 +301,7 @@ function getCache() {
 }
 
 async function handleFileQueue(req, res) {
+    console.log(req.headers['authorization'])
     const authHeader = req.headers['authorization'];
     console.log("\n");
     console.log(authHeader);
