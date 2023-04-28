@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { getTaskQueueHead } from "./queue";
+import { getTaskQueueHead } from "./queue.js";
 
 export { taskSplitter };
 
@@ -51,7 +51,7 @@ async function taskSplitter() {
   let filePath = getTaskQueueHead(); 
   let tasks = await splitArray(filePath);
 
-  console.log(tasks);  // Just prints all the arrays(tasks) to show it works. Call it in server.js.
+  return(tasks);  // Just prints all the arrays(tasks) to show it works. Call it in server.js.
   
 }
 

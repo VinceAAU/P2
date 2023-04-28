@@ -5,20 +5,23 @@ import NodeCache from "node-cache";
 const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } );
 
 function search(username) {
-    if (search_for_username(username.userName) === false) { //username (from html side) returns: "userName = xyz" hence username.userName
-        console.log('uu: '+username.userName);
+    if (search_for_username(username) === false) { 
         throw("no user");
     } else {
 
-        let obj = { user: username.userName};
+        let obj = { user: username};
         let success = myCache.set( "myKey", obj, 10000 );
         console.log("key saved, i think")
     };
 };
 
 function passwords(info){
-    if(info.password[0]==info.password[1]){
-        update(info.password[0]);
+    console.log(info.passwordConfirmation)
+    console.log(info.password)
+    console.log(info.password==info.passwordConfirmation)
+    if(info.password==info.passwordConfirmation){
+        console.log("passwords are equal")
+        update(info.password);
     } else {throw("passwords_unequal");
     };
 }
