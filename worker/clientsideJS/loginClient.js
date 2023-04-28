@@ -57,7 +57,7 @@ function returnToken(data) {
     headers: { 'Authorization': `Bearer ${data.accessToken}` }
   };
 
-  return fetch('/worker/html/posts', requestOptions);
+  return fetch('/posts', requestOptions);
 }
 
 function saveAccessToken(accessToken) {

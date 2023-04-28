@@ -1,0 +1,38 @@
+import { taskSplitter } from "splitData.js";
+export { assignWorkToWorker, enqueueTask };
+
+let allTasks = [];
+let availableTaskIndices = [];
+
+let qHead;
+let qTail;
+
+function enqueueTask(taskIndex) {
+    availableTaskIndices[qTail] = taskIndex;
+    qTail = (qTail + 1) % availableTaskIndices.length;
+}
+
+function dequeueTask() {
+    let task = availableTaskIndices[qHead];
+    qHead = (qHead + 1) % availableTaskIndices.length;
+    return task;
+}
+
+async function assignWorkToWorker(userID) {
+
+    if (allTasks.length === 0) {
+        allTasks = await taskSplitter();
+        availableTaskIndices = Array.from({length: allTasks.length + 1}, (_, i) => i);
+        qHead = 0;
+        qTail = availableTaskIndices.length;
+    }
+
+    if (qHead === qTail) {
+        console.log("Queue is empty.");
+        return null;
+    } else {
+        let taskForWorker = dequeueTask();
+        // Call reservedTasks(userID, taskForWorker); function here
+        return allTasks[taskForWorker];
+    }
+}
