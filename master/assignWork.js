@@ -1,8 +1,11 @@
 import { taskSplitter } from "./splitData.js";
-export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue };
+export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, reservedObject };
 
 let allTasks = [];
 let availableTaskIndices = [];
+let reservedObject = {}; //reserved.UUID = task - delete
+
+
 
 let qHead;
 let qTail;

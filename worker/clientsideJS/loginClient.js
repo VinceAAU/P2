@@ -33,14 +33,14 @@ async function toggleLogin(event) {
 
     const data = await response.json();
     console.log(data.accessToken);
-
-    const tokenResponse = await returnToken(data);
-
-    console.log(tokenResponse['accessToken']);
+    
+    const tokenResponse = await tokenExchange(data);
+    const retrieved = await tokenResponse.json(); 
+    console.log(retrieved.UUID)
 
     if (tokenResponse.ok) {
       console.log("response OK")
-      saveAccessToken(data.accessToken)
+      saveData(data.accessToken, retrieved.UUID)
       window.location.href = '/loggedIn';// getCache();//'/page.html';
     } else {
       console.log('Response not ok');
@@ -50,19 +50,23 @@ async function toggleLogin(event) {
   }
 }
 
-function returnToken(data) {
-  console.log("return token function")
-  const requestOptions = {
-    method: 'GET',
-    headers: { 'Authorization': `Bearer ${data.accessToken}` }
-  };
-
-  return fetch('/posts', requestOptions);
+async function tokenExchange(data){
+  try {
+    const response = await fetch('/posts', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${data.accessToken}`}
+    });
+    return(response)
+  } catch (error) {
+    console.error(error);
+  }
 }
 
-function saveAccessToken(accessToken) {
+function saveData(accessToken, ID) {
+  console.log("savedaata function")
   // Save the access token in local storage
   localStorage.setItem('accessToken', accessToken);
+  localStorage.setItem('UUID', ID);
   console.log("saved accesstoken")
 }
 
