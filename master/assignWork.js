@@ -48,8 +48,8 @@ async function assignWorkToWorker(userID) {
 
 // call this function with: let workerX/ID/whatever = new worker(task)
 class Worker{
-    let currentTask;
-    let lastPing;
+    //let currentTask;
+    //let lastPing;
 
     constructor(task){
         this.currentTask = task
