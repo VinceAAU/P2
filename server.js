@@ -125,7 +125,7 @@ function throw_user(res, thrown_error, redirected_from) {
           console.log("user not found2");
           break;
       }
-      fileresponse_path = './worker/html/login.html';
+      fileresponse_path = '/login.html';
       break;
     case "create-user":
       switch (thrown_error) {
@@ -184,17 +184,6 @@ function collectPostBody(req) {//cg addin explanation due
     //Exceptions raised will reject the promise
   }
   return new Promise(collectPostBodyExecutor);
-}
-async function handleFileQueue(req, res) {
-  const authHeader = req.headers['authorization'];
-  const tempToken = authHeader.split(' ')[1];
-  const user = tempToken.split('.')[0];
-  //console.log(user);
-
-  let userTaskArray = await getTaskByUser(user);
-  console.log("Test");
-  console.log(userTaskArray);
-  streamArray(res, userTaskArray);
 }
 
 server.listen(port, hostname, () => {
