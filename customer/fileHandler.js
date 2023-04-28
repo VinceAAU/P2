@@ -17,8 +17,13 @@ fetch('/get-task-list-by-user', { headers })
   const fileupload = document.querySelector('input');
   fileupload.addEventListener('change', (event) => {
   const file = event.target.files[0];
-  const form = document.querySelector('#upload-form');
+  if (file.type !== 'text/csv')
+  {
+    alert("Please pick a csv file");
+  }
+  })
 
+  const form = document.querySelector('#upload-form');
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
@@ -38,11 +43,7 @@ fetch('/get-task-list-by-user', { headers })
       // handle error
     }
   });
-  if (file.type !== 'text/csv')
-  {
-    alert("Please pick a csv file");
-  }
-  })
+
 
 
 function download(index) {
