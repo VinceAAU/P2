@@ -1,5 +1,5 @@
-import { taskSplitter } from "splitData.js";
-export { assignWorkToWorker, enqueueTask };
+import { taskSplitter } from "./splitData.js";
+export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue };
 
 let allTasks = [];
 let availableTaskIndices = [];
@@ -10,6 +10,12 @@ let qTail;
 function enqueueTask(taskIndex) {
     availableTaskIndices[qTail] = taskIndex;
     qTail = (qTail + 1) % availableTaskIndices.length;
+}
+
+// In case a task fails, this task skips to the front of the queue.
+function addToBeginningOfQueue(taskIndex) {
+    qHead = (qHead - 1) % availableTaskIndices.length;
+    availableTaskIndices[qHead] = taskIndex;
 }
 
 function dequeueTask() {
@@ -28,8 +34,7 @@ async function assignWorkToWorker(userID) {
     }
 
     if (qHead === qTail) {
-        console.log("Queue is empty.");
-        return null;
+        throw new Error("Queue is empty.");
     } else {
         let taskForWorker = dequeueTask();
         // Call reservedTasks(userID, taskForWorker); function here
