@@ -3,6 +3,7 @@
  * in the browser!
  */
 
+
 async function toggleStartButton() {
   let button = document.querySelector("#start_button");
   let hackerman = document.querySelector("#hackerman");
@@ -65,5 +66,12 @@ function startWorker(receivedArray) {
     }
   } else {
     console.log("Browser does not support webworkers. ");
+  }
+}
+
+async function pingTimer(pingInterval = 5_000){
+  while(true){
+    await fetch("ping", {method: "POST"});
+    await new Promise(r => setTimeout(r, pingInterval));
   }
 }
