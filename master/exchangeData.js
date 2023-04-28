@@ -39,11 +39,12 @@ function streamArray(res, array) {
   async function handleUpload(form, req, user) { //please dont do export like this
     try {
       const uploadedFile = await downloadFile(form, req);
+      addCustomerQueue(user, uploadedFile);
     }
     catch(err){
       throw(err)
     }
-    addCustomerQueue(user,uploadedFile);
+    
   }
   
   async function downloadFile(form, req)
