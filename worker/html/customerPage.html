@@ -10,12 +10,13 @@
     <button class="indexbutton" type="button"
         onclick="location.href='/'">Log out</button>
         
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <!-- HTML5 file upload selector-->
-        <input type="file" name="fileupload" accept=".csv">
-        <br>
-        <input type="submit" value="Upload File">
-      </form>
+        <form action="/upload" id = "upload-form" enctype="multipart/form-data">
+            <!-- HTML5 file upload selector-->
+            <input type="file" name="fileupload" accept=".csv">
+            <br>
+            <input type="submit" value="Upload File">
+          </form>
+    
 
       <button class="indexbutton" type="button" id="downloadButton"
         onclick=downloadFileFromServer()>Download</button>
