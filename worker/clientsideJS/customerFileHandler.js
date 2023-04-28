@@ -32,7 +32,7 @@ fetch('/get-task-list-by-user', { headers })
     formData.append('fileupload', fileInput.files[0]);
 
     try {
-      const response = await fetch('/customer/costumerPage/upload', {
+      const response = await fetch('/upload', {
         method: 'POST',
         headers,
         body: formData
