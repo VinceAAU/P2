@@ -33,7 +33,7 @@ const loginClientPath           = '/worker/clientsideJS/loginClient.js';
 const newUserClientPath         = '/worker/clientsideJS/newUserClient.js';
 const forgotPasswordClientPath  = '/worker/clientsideJS/forgotPasswordClient.js';
 const changePasswordClientPath  = '/worker/clientsideJS/changePasswordClient.js';
-const accessTokenPath           = '/worker/clientsideJS.js'
+const accessTokenPath           = '/worker/clientsideJS/accessToken.js'
 const costumerFileHandlerPath   = '/worker/clientsideJS/customerFileHandler.js';
     //Serverside
 const mainJSPath                = '/worker/main.js'
@@ -267,11 +267,11 @@ function saveCachePath(path) {
     let cache = myCache.get("myPath");
     if (cache != undefined) {
         console.log("resetting cache");
-        let success = myCache.set("myPath", null, 1);
+        let success = myCache.set("myPath", null, 100);
         saveCachePath(path);
     } else {
         let obj = { path: path };
-        let success = myCache.set("myPath", obj, 1);
+        let success = myCache.set("myPath", obj, 100);
         console.log('path saved as: ', path)
     }
 }
