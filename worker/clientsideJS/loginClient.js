@@ -9,7 +9,6 @@ function checkboxClick(event) {
 }
 
 async function toggleLogin(event) {
-  console.log("funcS");
   const button = document.querySelector("#submitBtn_id");
 
   var username = document.getElementById("name_id");
@@ -29,7 +28,6 @@ async function toggleLogin(event) {
     });
 
     if (!response.ok) {
-      console.log("response not ok")
       throwError();
     }
 

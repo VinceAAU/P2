@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Create User</title>
   <link rel="stylesheet" type="text/css" href="../style.css">
+  <script type="module" defer src="../clientsideJS/newUserClient.js"></script>
 </head>
 
 <body>
@@ -16,15 +17,16 @@
       <fieldset>
         <h1 id="id1"> Create User </h1>
         <div class="myFormLayout">
+          <div id="error-message"></div> <!-- error message element -->
           <label for="name_id"> Enter mail: </label>
-          <input type="text" name="mail" id="name_id" value="" required minlength="1" maxlength="30"> <br>
+          <input type="text" name="mail" id="mailID" value="" required minlength="1" maxlength="30"> <br>
           <label for="name_id"> Enter desired username: </label>
-          <input type="text" name="userName" id="name_id" value="" required minlength="1" maxlength="30"> <br>
+          <input type="text" name="userName" id="nameID" value="" required minlength="1" maxlength="30"> <br>
           <label for="password_id"> Enter a password: </label>
-          <input type="password" name="password" id="password_id" value="" required minlength="1" maxlength="30"> <br>
+          <input type="password" name="password" id="passwordID" value="" required minlength="1" maxlength="30"> <br>
           <label for="password_id"> Re-enter Password: </label>
-          <input type="password" name="password" id="password_id" value="" required minlength="1" maxlength="30">
-          <input type="submit" id="submitBtn_id" value="Create user">
+          <input type="password" name="password" id="passwordConfirmationID" value="" required minlength="1" maxlength="30">
+          <button id="submitBtn_id">Create User</button>
         </div>
       </fieldset>
     </form>

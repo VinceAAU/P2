@@ -1,6 +1,7 @@
-/*  The worker takes an array and performs QuickSort on it; 
-    returns the array, sorted.                               */
-
+/**
+ * The worker takes an array and performs QuickSort on it;
+ * returns the array, sorted. 
+ */
 onmessage = function(e) {
   console.log("Worker: received block of work. ");
   console.log("Unsorted: " + e.data);
@@ -16,25 +17,22 @@ onmessage = function(e) {
    */
   function quickSort(left = 0, right = e.data.length - 1) {
 
-    //  Base case: array is already sorted (~length less than two).
-    if (left >= right) {
-      return;
-    }
-    
-    //  Choosing a random pivot to decrease likelihood of worst-case running time.
-    const pivotIndex = getRandomInt(left, right);
-    const pivot = e.data[pivotIndex];
-
-    //  ------------------------ For debugging. ------------------------
-    //  console.log(`Pivot for run #${amountOfRecursions} is ${pivotIndex}`); 
-    amountOfRecursions++;
-
-    //  Partition the array into two subarrays.
-    const partitionIndex = partition(pivot, left, right);
+    if (left < right) {
+      const pivotIndex = getRandomInt(left, right);
+      const pivot = e.data[pivotIndex];
   
-    //  Recursively sort the subarrays.
-    quickSort(left, partitionIndex);
-    quickSort(partitionIndex + 1, right);
+      //  -------------------------- For debugging. --------------------------
+      //  console.log(`Pivot for run #${amountOfRecursions} is ${pivotIndex}`); 
+      amountOfRecursions++;
+      //  --------------------------------------------------------------------
+
+      const partitionIndex = partition(pivot, left, right);
+    
+      quickSort(left, partitionIndex);
+      quickSort(partitionIndex + 1, right);
+    } else {
+      return;  //  Base case: array is already sorted (~length less than two).
+    }
   }
   
   /**
@@ -50,19 +48,19 @@ onmessage = function(e) {
     let j = right + 1;
   
     while (true) {
+      do{
+        j--;
+      } while (e.data[j] > pivot); 
+
       do {
         i++;
       } while (e.data[i] < pivot);
 
-      do{
-        j--;
-      } while (e.data[j] > pivot);
-
-      if (i >= j) {
+      if (i < j) {
+        swap(i, j);
+      } else {
         return j;
       }
-
-      swap(i, j);
     }
   }
   

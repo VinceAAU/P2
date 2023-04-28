@@ -10,10 +10,12 @@
     <button class="indexbutton" type="button"
         onclick="location.href='/'">Log out</button>
         
-        <form id="upload-form" enctype="multipart/form-data">
-            <input type="file" name="fileupload">
-            <button type="submit">Upload File</button>
-          </form>
+    <form action="/customer/costumerPage/upload" enctype="multipart/form-data">
+        <!-- HTML5 file upload selector-->
+        <input type="file" name="fileupload" accept=".csv">
+        <br>
+        <input type="submit" value="Upload File">
+      </form>
 
         <p id="numFiles">Number of files uploaded 0</p> <!-- Element to display the number of stored files -->
 </body>
