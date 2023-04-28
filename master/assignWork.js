@@ -3,6 +3,7 @@ export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue };
 
 let allTasks = [];
 let availableTaskIndices = [];
+let reserved = {}; //reserved.UUID = task
 
 let qHead;
 let qTail;
