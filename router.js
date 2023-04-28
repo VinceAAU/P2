@@ -1,21 +1,21 @@
 import formidable from 'formidable';
 import fs from "fs/promises";
 import NodeCache from "node-cache";
-import fs2 from "fs"
+import fs2 from "fs";
 import path from "path";
 import http from 'http';
 //import { env } from 'process';asd
 
-export { requestHandler, fileResponse }
+export { requestHandler, fileResponse };
 
 //function imports from other .js files
-import { search_db } from "./master/db.js"
-import { streamArray, handleUpload } from "./master/exchangeData.js"
-import { search, passwords } from "./master/forgotPassword.js"
-import { validateNewUser } from "./master/createUser.js"
+import { search_db } from "./master/db.js";
+import { streamArray, handleUpload } from "./master/exchangeData.js";
+import { search, passwords } from "./master/forgotPassword.js";
+import { validateNewUser } from "./master/createUser.js";
 import { returnToken, authenticateToken, returnTokenErr } from './master/tokenHandler.js';
 import { securePath, throw_user, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
-import { savePendingQueue, addCustomerQueue, removeCustomerQueue, getTaskQueueHead, getUserQueueHead, pendingQueueToFinishedQueue, getTaskByUser } from './master/queue.js'
+import { savePendingQueue, addCustomerQueue, removeCustomerQueue, getTaskQueueHead, getUserQueueHead, pendingQueueToFinishedQueue, getTaskByUser } from './master/queue.js';
 
 //HTML and CSS file paths
 const loginPath = '/worker/html/login.html';
@@ -36,8 +36,8 @@ const changePasswordClientPath  = '/worker/clientsideJS/changePasswordClient.js'
 const accessTokenPath           = '/worker/clientsideJS/accessToken.js'
 const costumerFileHandlerPath   = '/worker/clientsideJS/customerFileHandler.js';
     //Serverside
-const mainJSPath                = '/worker/main.js'
-const webWorkerPath             = '/worker/worker.js'
+const mainJSPath                = '/worker/main.js';
+const webWorkerPath             = '/worker/worker.js';
 
 
 const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
@@ -79,7 +79,7 @@ function requestHandler(req, res) {
             fileResponse(res, workerPath);
             break;
         case "/createUser.html":
-            fileResponse(res, createUserPath)
+            fileResponse(res, createUserPath);
             break;
         case "/forgotPassword.html":
             fileResponse(res, forgotPasswordPath);
@@ -108,7 +108,7 @@ function requestHandler(req, res) {
             fileResponse(res, forgotPasswordClientPath);
             break;
         case "/changePasswordClient.js":
-            fileResponse(res, changePasswordClientPath)
+            fileResponse(res, changePasswordClientPath);
             break;
         //CSS GET calls
         case "/style.css":
@@ -119,11 +119,11 @@ function requestHandler(req, res) {
             streamArray(res, [5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]); // Example array
             break;
         case "/posts":
-            console.log("posts")
+            console.log("posts");
             authenticateToken(req, res);
             break;
         case "/enterNewPassword":
-            fileResponse(res, changePasswordPath)
+            fileResponse(res, changePasswordPath);
             break;
 
 
@@ -132,29 +132,29 @@ function requestHandler(req, res) {
             handleUserCreation(req, res);
             break;
         case "/protectedResource": //called from
-            console.log("protectedResource called")
-            authenticateToken(req, res)
+            console.log("protectedResource called");
+            authenticateToken(req, res);
             break;
         case "/worker/html/fetchUser":
-            console.log("post login-attempt")
+            console.log("post login-attempt");
             extractForm(req)
                 .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
-                .then(user => returnToken(req, res, user))
+                .then(user => returnToken(req, res, user));
                 .catch(thrown_error => returnTokenErr(req, res, 401, thrown_error)); //401: unauthorized
             break;
         case "/401": //called from hrefs
-            redirect(req, res, "/login.html")
+            redirect(req, res, "/login.html");
             break;
         case "/worker":
-            saveCachePath("/workerPage.html")
-            redirect(req, res, "/login.html")
+            saveCachePath("/workerPage.html");
+            redirect(req, res, "/login.html");
             break;
         case "/customer":
-            saveCachePath("/customerPage.html")
-            redirect(req, res, "/login.html")
+            saveCachePath("/customerPage.html");
+            redirect(req, res, "/login.html");
             break;
         case "/loggedIn":
-            redirect(req, res, getCache())
+            redirect(req, res, getCache());
             break;
         case "/forgot-password-post": //TODO: change underscores to hyphens for consistency in URL's
             handlePasswordPostCase(req, res);
@@ -182,9 +182,14 @@ function requestHandler(req, res) {
         case "/download":
             downloadFile(req, res);
             break;
+        case "/ping":
+            //possible TODO: Check for authentication?
+            pong(req.getHeader("UUID"));
+            res.end();
+            break;
 
         default:
-            //fileResponse(res, "." + url.pathname); //TODO: DELETE THIS LINE AND UNCOMMENT THE NEXT ONE
+            //fileResponse(res, "." + url.pathname); //TODO: DELETE THIS LINE AND UNCOMMENT THE NEXT ONE //Thanks Lasse <3
             errorResponse(res, 404, "Resource not found");
             break;
     }

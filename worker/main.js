@@ -70,8 +70,17 @@ function startWorker(receivedArray) {
 }
 
 async function pingTimer(pingInterval = 5_000){
+  //TODO: Test what happens if there isn't an access token. Can that even happen???
+  const accessToken = localStorage.getItem("accessToken");
+  const uuid        = localStorage.getItem("UUID");
   while(true){
-    await fetch("ping", {method: "POST"});
+    await fetch("ping", {
+	    "method": "POST",
+	    "headers": {
+		    "Authorisation": `Bearer ${accessToken}`,
+		    "UUID": uuid
+	    }
+    });
     await new Promise(r => setTimeout(r, pingInterval));
   }
 }
