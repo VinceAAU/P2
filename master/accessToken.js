@@ -1,6 +1,6 @@
 // Retrieve the access token from local storage
 const accessToken = localStorage.getItem('accessToken');
-
+const UUID = localStorage.getItem('UUID');
 // Add the access token to the request headers
 const headers = {
   'Authorization': `Bearer ${accessToken}`
@@ -16,5 +16,6 @@ fetch('/protectedResource', { headers })
       window.location.href = '/401';
     } else {
       console.log(accessToken)
+      console.log(UUID)
     }
   });
