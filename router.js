@@ -177,7 +177,7 @@ function requestHandler(req, res) {
             })
             .catch(err => {
                 console.log(err);
-                res.writeHead(400); //bad request
+                res.writeHead(err); //bad request
                 res.end();
             })
             

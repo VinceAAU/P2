@@ -39,10 +39,9 @@ form.addEventListener('submit', async (event) => {
       headers,
       body: formData
     });
-    if (response.status == 400) {
-      logError(400)
+    if (!response.status.ok) {
+      logError()
     }
-    // handle response
   } catch (error) {
     console.log(error)
   }
@@ -86,10 +85,8 @@ function download(index) {
   document.body.appendChild(downloadBtn);
 }*/
 
-function logError(error) {
-  console.log(error)
-  console.log("An error occurred while uploading")
-  errorMessage.textContent = "Error: Please choose a file for upload";
+function logError() {
+  errorMessage.textContent = "Not a valid .csv file"
   errorMessage.style.opacity = 1;
 }
 
