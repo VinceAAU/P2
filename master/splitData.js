@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { getTaskQueueHead } from "./queue";
+import { getTaskQueueHead } from "./queue.js";
 
 export { taskSplitter };
 
