@@ -3,7 +3,9 @@ import { Readable } from "stream";
 import formidable from "formidable";
 import {addCustomerQueue} from './queue.js'
 
-export function startDataStream(path, res) {
+export { handleUpload, startDataStream, streamArray }
+
+function startDataStream(path, res) {
 
     fs.access(path, (err) => { // makes sure the server doesn't crash, if given an incorrect path
         if (!err) {
@@ -11,14 +13,13 @@ export function startDataStream(path, res) {
             readStream.pipe(res);
             console.log("Begun streaming data");
         } else {
-            
             console.error(`${path} does not exist, or is not accessible`);
         }
     });
 
 }
 
-export function streamArray(res, array) {
+function streamArray(res, array) {
     const jsonString = JSON.stringify(array);
     const buffer = Buffer.from(jsonString, "utf-8");
     const readable = new Readable();
@@ -35,7 +36,7 @@ export function streamArray(res, array) {
     readable.pipe(res);
   }
 
-  export async function handleUpload(form, req, user) { //please dont do export like this
+  async function handleUpload(form, req, user) { //please dont do export like this
     try {
       const uploadedFile = await downloadFile(form, req);
     }
