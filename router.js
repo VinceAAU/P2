@@ -37,7 +37,8 @@ const accessTokenPath           = '/worker/clientsideJS/accessToken.js'
 const costumerFileHandlerPath   = '/worker/clientsideJS/customerFileHandler.js';
     //Serverside
 const mainJSPath                = '/worker/main.js';
-const webWorkerPath             = '/worker/worker.js';
+const webWorkerSortPath         = '/worker/workerSort.js';
+const webWorkerMergePath        = '/worker/workerMerge.js';
 
 
 const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
@@ -98,8 +99,11 @@ function requestHandler(req, res) {
         case "/main.js":
             fileResponse(res, mainJSPath);
             break;
-        case "/worker.js":
-            fileResponse(res, webWorkerPath);
+        case "/workerSort.js":
+            fileResponse(res, webWorkerSortPath);
+            break;
+        case "/workerMerge.js":
+            fileResponse(res, webWorkerMergePath);
             break;
         case "/newUserClient.js":
             fileResponse(res, newUserClientPath);
