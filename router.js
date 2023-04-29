@@ -140,7 +140,7 @@ function requestHandler(req, res) {
             extractForm(req)
                 .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
                 .then(user => returnToken(req, res, user))
-                .catch(thrown_error => returnTokenErr(req, res, 401, thrown_error)); //401: unauthorized
+                .catch(thrown_error => returnTokenErr(res, 401, thrown_error)); //401: unauthorized
             break;
         case "/401": //called from hrefs
             redirect(req, res, "/login.html");

@@ -9,7 +9,7 @@ const headers = {
 // Make a request to the server with the access token included in the headers
 fetch('/protectedResource', { headers })
   .then(response => {
-    if (response.status === 401) {
+    if (response.status === 403) {
       console.log("received 401")
 
       // Redirect the user to the login page if the access token is invalid or has expired
