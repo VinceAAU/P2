@@ -139,7 +139,7 @@ function requestHandler(req, res) {
             console.log("protectedResource called");
             authenticateToken(req, res);
             break;
-        case "/worker/html/fetchUser":
+        case "/fetchUser":
             console.log("post login-attempt");
             extractForm(req)
                 .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
