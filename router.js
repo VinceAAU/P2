@@ -146,9 +146,6 @@ function requestHandler(req, res) {
                 .then(user => returnToken(req, res, user))
                 .catch(thrown_error => returnTokenErr(res, 401, thrown_error)); //401: unauthorized
             break;
-        case "/401": //called from hrefs
-            redirect(req, res, "/login.html");
-            break;
         case "/worker":
             saveCachePath("/workerPage.html");
             redirect(req, res, "/login.html");
