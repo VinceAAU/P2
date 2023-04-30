@@ -4,22 +4,23 @@
  */
 onmessage = function(e) {
     console.log("Worker: received block of work. ");
-    console.log("Unsorted: " + e.data);
-
+    console.log("Nonmerged: " + e.data[0]);
+    
     // Assuming STD data packages of 10 million entries.
     // We probably need a new/separate startWorker() to pass indices.
-    function mergeInPlace(leftStart = 0, rightStart = 9999999, rightEnd = e.data.length - 1) {
+    function mergeInPlace(leftStart, rightStart) {
         let leftEnd = rightStart - 1;
+        let rightEnd = e.data[0].length - 1
       
-        while (leftEnd > leftStart && rightEnd > rightStart) {
-          if (e.data[rightStart] > e.data[leftStart]) {
+        while (leftStart <= leftEnd && rightStart <= rightEnd) {
+          if (e.data[0][leftStart] <= e.data[0][rightStart]) {
             leftStart++;
           } else {
-            let temp = e.data[rightStart];
+            let temp = e.data[0][rightStart];
             for (let i = rightStart; i > leftStart; i--) {
-              e.data[i] = e.data[i - 1];
+              e.data[0][i] = e.data[0][i - 1];
             } // Sacrificing time for space, I guess.
-            e.data[leftStart] = temp;
+            e.data[0][leftStart] = temp;
             leftStart++;
             rightStart++;
             leftEnd++;
@@ -28,8 +29,8 @@ onmessage = function(e) {
       }
     
     // Running Merge.
-    mergeInPlace();
+    mergeInPlace(e.data[1], e.data[2]);
 
      //  Returning array using POST.
-    this.postMessage(e.data, [e.data.buffer]);
+    postMessage(e.data[0], [e.data[0].buffer]);
 }

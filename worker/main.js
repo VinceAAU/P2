@@ -23,7 +23,7 @@ async function toggleStartButton() {
         const convertedArray = new Int32Array(data);
         console.log("Array as Int32Array:");
         console.log(convertedArray);
-        startWorker(convertedArray);
+        startWorkerMerge(convertedArray, 0, 2);
       })
       .catch(error => console.error(error));
 
@@ -47,22 +47,35 @@ async function toggleStartButton() {
   }
 }
 
-
-// let testArr = new Int32Array([5, 2, 3, 9, 900, 1, 1111, 111, 3]);
-// Move to where it should be, and adjust functionality accordingly
-function startWorker(receivedArray) {
+function startWorkerSort(receivedArray) {
   if (window.Worker) {
     const workerSort = new Worker("/workerSort.js");
 
-    /*  Somehow feed the array of numbers to sort to the worker.
-        For now, a static array of number is fed to test.         */
     workerSort.postMessage(receivedArray, [receivedArray.buffer]);
     console.log("Block of work posted to the worker. ");
 
     workerSort.onmessage = function (e) {
-      let arrR = new Int32Array(e.data);
+      let arrS = new Int32Array(e.data);
       console.log("Worker returned the sorted list: ");
-      console.log(arrR);
+      console.log(arrS);
+    }
+  } else {
+    console.log("Browser does not support webworkers. ");
+  }
+}
+
+// rightStart assumes the first array is 10 million elements if not otherwise specified.
+function startWorkerMerge(receivedArray, leftStart = 0, rightStart = 10000000) {
+  if (window.Worker) {
+    const workerSort = new Worker("/workerMerge.js");
+
+    workerSort.postMessage([receivedArray, leftStart, rightStart], [receivedArray.buffer]);
+    console.log("Block of work posted to the worker. ");
+
+    workerSort.onmessage = function (e) {
+      let arrM = new Int32Array(e.data);
+      console.log("Worker returned the merged list: ");
+      console.log(arrM);
     }
   } else {
     console.log("Browser does not support webworkers. ");
