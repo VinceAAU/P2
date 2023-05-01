@@ -129,7 +129,12 @@ function requestHandler(req, res) {
         case "/enterNewPassword":
             fileResponse(res, changePasswordPath);
             break;
-
+        case "/requestFirstTask":
+            giveFirstTask(req, res);
+            break;
+        case "/requestNewTask":
+            giveNewTask(req, res);
+            break;
 
         //POST
         case "/createUser":
@@ -331,4 +336,14 @@ async function downloadFile(req, res) {
         console.log(cache);
         return (cache.path);
     }
+}
+
+async function giveFirstTask(req, res){
+
+    streamArrayToClient(await assignWorkToWorker(req.getHeader("UUID")));
+}
+
+async function giveNewTask(req, res){
+
+    streamArrayToClient(await assignWorkToWorker(req.getHeader("UUID")));
 }
