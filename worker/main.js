@@ -35,6 +35,8 @@ async function toggleStartButton() {
       })
       .catch(error => console.error(error));
 
+	pingTimer(); //Begin ping timer thing - since it's async, it should happen in background(?)
+
       //Gives a warning when closing if working.
       window.onbeforeunload = function (e) {
         if (button.textContent === "Disconnect"){
