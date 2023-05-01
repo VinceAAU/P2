@@ -148,6 +148,7 @@ async function getTaskByUser(user) {
     for (let i = 0; i < finishedUserQueue.length; i++) {
         if (user === finishedUserQueue[i]) {
             taskArrayForUser[k] = finishedTaskQueue[i];
+            console.log(taskArrayForUser);
             k++;
         }
     }
@@ -155,12 +156,13 @@ async function getTaskByUser(user) {
     taskArrayForUser[k] = "Shift";
     k++;
 
-    for (let i = 0; i <= pendingUserQueue.length; i++) {
+    for (let i = 0; i < pendingUserQueue.length; i++) {
         if (pendingUserQueue[i] == user) {
             taskArrayForUser[k] = pendingTaskQueue[i];
+            console.log(taskArrayForUser);
             k++;
         }
     }
-
+    console.log(taskArrayForUser);
     return taskArrayForUser;
 }
