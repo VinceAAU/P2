@@ -76,15 +76,15 @@ function startWorkerSort(receivedArray) {
 }
 
 // rightStart assumes the first array is 10 million elements if not otherwise specified.
-function startWorkerMerge(receivedArray, leftStart = 0, rightStart = 10000000) {
+function startWorkerMerge(nestedArray) {
   if (window.Worker) {
     const workerSort = new Worker("/workerMerge.js");
 
-    workerSort.postMessage([receivedArray, leftStart, rightStart], [receivedArray.buffer]);
+    workerSort.postMessage(nestedArray, [nestedArray.buffer]);
     console.log("Block of work posted to the worker. ");
 
     workerSort.onmessage = function (e) {
-      let arrM = new Int32Array(e.data);
+      let arrM = new Int32Array(e.data[1]);
       console.log("Worker returned the merged list: ");
       console.log(arrM);
     }

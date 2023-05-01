@@ -1,49 +1,94 @@
 import { taskSplitter } from "./splitData.js";
 import { addWorker } from "./workerManagement.js";
-export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, WorkerNode };
+export { assignSortWorkToWorker, enqueueSortTask, addToBeginningOfSortQueue, addToBeginningOfMergeQueue, WorkerNode };
 
-let allTasks = [];
-let availableTaskIndices = [];
+let allSortTasks = [];
+let availableSortTaskIndices = [];
 
-let qHead;
-let qTail;
+let qHeadSort;
+let qTailSort;
 
-function enqueueTask(taskIndex) {
-    availableTaskIndices[qTail] = taskIndex;
-    qTail = (qTail + 1) % availableTaskIndices.length + 1;
+function enqueueSortTask(sortTaskIndex) {
+    availableSortTaskIndices[qTailSort] = sortTaskIndex;
+    qTailSort = (qTailSort + 1) % availableSortTaskIndices.length + 1;
 }
 
 // In case a task fails, this task skips to the front of the queue.
-function addToBeginningOfQueue(taskIndex) {
-    qHead = (qHead - 1) % availableTaskIndices.length + 1;
-    availableTaskIndices[qHead] = taskIndex;
+function addToBeginningOfSortQueue(sortTaskIndex) {
+    qHeadSort = (qHeadSort - 1) % availableSortTaskIndices.length + 1;
+    availableSortTaskIndices[qHeadSort] = sortTaskIndex;
 }
 
-function dequeueTask() {
-    let task = availableTaskIndices[qHead];
-    qHead = (qHead + 1) % availableTaskIndices.length + 1;
+function dequeueSortTask() {
+    let task = availableSortTaskIndices[qHeadSort];
+    qHeadSort = (qHeadSort + 1) % availableSortTaskIndices.length + 1;
     return task;
 }
 
-async function assignWorkToWorker(userID) {
+async function assignSortWorkToWorker(userID) {
 
-    if (allTasks.length === 0) {
-        allTasks = await taskSplitter();
-        availableTaskIndices = Array.from({length: allTasks.length + 1}, (_, i) => i);
-        qHead = 0;
-        qTail = availableTaskIndices.length;
+    if (allSortTasks.length === 0) {
+        allSortTasks = await taskSplitter();
+        availableSortTaskIndices = Array.from({length: allSortTasks.length + 1}, (_, i) => i);
+        qHeadSort = 0;
+        qTailSort = availableSortTaskIndices.length;
     }
 
-    if (qHead === qTail) {
-        throw new Error("Queue is empty.");
+    if (qHeadSort === qTailSort) {
+        console.log("Completed sorting, beginning to merge.");
+        assignMergeWorkToWorker(userID);
     } else {
-        let taskForWorker = dequeueTask();
-        // Call a function here to add userID and taskForWorker to a form of reservation list.
-        addWorker(userID, taskForWorker);
-        return allTasks[taskForWorker];
+        let sortTaskForWorker = dequeueSortTask();
+        // Call a function here to add userID and sortTaskForWorker to a form of reservation list.
+        addWorker(userID, sortTaskForWorker);
+        return [false, allSortTasks[sortTaskForWorker]];
     }
 }
 
+let allMergeTasks = []; // needs to store all the sorted tasks from the workers, somehow.
+let availableMergeTaskIndices = [];
+
+let qHeadMerge;
+let qTailMerge;  // populate variables etcetc
+
+function enqueueMergeTask(mergeTaskIndex) {
+    availableMergeTaskIndices[qTailMerge] = mergeTaskIndex;
+    qTailMerge = (qTailMerge + 1) % availableMergeTaskIndices.length + 1;
+}
+
+// In case a task fails, this task skips to the front of the queue.
+function addToBeginningOfMergeQueue(mergeTaskIndex) {
+    qHeadMerge = (qHeadMerge - 1) % availableMergeTaskIndices.length + 1;
+    availableMergeTaskIndices[qHeadMerge] = mergeTaskIndex;
+}
+
+function dequeueMergeTask() {
+    let task = availableMergeTaskIndices[qHeadMerge];
+    qHeadMerge = (qHeadMerge + 1) % availableMergeTaskIndices.length + 1;
+    return task;
+}
+
+async function assignMergeWorkToWorker(userID) {
+
+    if (allMergeTasks.length === 0) {
+        throw new Error("Nothing to merge.");
+    } /* Not sure how we get the sorted arrays into the local "allMergeTasks"
+     since the workers don't return their results here. [INSERT MAGIC] */
+
+    if (qHeadMerge === qTailMerge) {
+        console.log("Done merging."); /* Something when it's done (callback, function, promise, idk), 
+                                         probably would not be done when the Head and Tail meet, since the
+                                         server is supposed to do the last few steps. */
+    } else {
+        // Taking two tasks to merge
+        let mergeTaskForWorkerOne = dequeueMergeTask(); // The whole idea behind this kind of queue was to not lose data on node failure,
+        let mergeTaskForWorkerTwo = dequeueMergeTask(); // so how are we going to free the arrays continuously?
+        // assuming we can handle assigning more than some taskID to a worker, through an array or something.
+        addWorker(userID, [mergeTaskForWorkerOne, mergeTaskForWorkerTwo]); 
+        return [true, allMergeTasks[mergeTaskForWorkerOne], allMergeTasks[mergeTaskForWorkerTwo]];
+        // bool + two arrays, check bool to see if it is a sort or merge.
+    }
+} 
 
 // call this function with: let workerX/ID/whatever = new WorkerNode(task)
 class WorkerNode{
