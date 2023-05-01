@@ -173,7 +173,7 @@ function requestHandler(req, res) {
             //Process the file upload in Node
             const authHeader = req.headers['authorization'];
             const tempToken = authHeader.split(' ')[1];
-            const user = tempToken.split('.')[0];
+            const user = tempToken.split('.')[1];
             handleUpload(form, req, user)
                 .then(_ => {
                     console.log("Received file from: " + user);
