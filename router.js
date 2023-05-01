@@ -315,7 +315,7 @@ async function handleFileQueue(req, res) {
 
     let userTaskArray = await getTaskByUser(user);
     console.log(userTaskArray);
-    streamArray(res, userTaskArray);
+    streamArrayToClient(res, userTaskArray);
 }
 
 async function downloadFile(req, res) {
