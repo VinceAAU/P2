@@ -55,4 +55,9 @@ async function taskSplitter() {
   return(tasks);  // Just prints all the arrays(tasks) to show it works. Call it in server.js.
   
 }
-
+//let arr1 = [], let arr2 = []
+function combineArrays(arr1, arr2){
+  const newArr = arr1.concat(arr2)
+  arr1, arr2 = [];
+  return(newArr)
+}
