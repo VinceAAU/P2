@@ -10,7 +10,7 @@ export { requestHandler, fileResponse };
 
 //function imports from other .js files
 import { search_db } from "./master/db.js";
-import { streamArray, handleUpload } from "./master/exchangeData.js";
+import { handleUpload, streamArrayToClient, receiveArrayFromClient, tempReceiveArray } from "./master/exchangeData.js";
 import { search, passwords } from "./master/forgotPassword.js";
 import { validateNewUser } from "./master/createUser.js";
 import { returnToken, authenticateToken, returnTokenErr } from './master/tokenHandler.js';
@@ -28,17 +28,17 @@ const createUserPath = '/worker/html/createUser.html';
 const forgotPasswordPath = '/worker/html/forgotPassword.html';
 
 //Javascript file paths
-    //Clientside
-const loginClientPath           = '/worker/clientsideJS/loginClient.js';
-const newUserClientPath         = '/worker/clientsideJS/newUserClient.js';
-const forgotPasswordClientPath  = '/worker/clientsideJS/forgotPasswordClient.js';
-const changePasswordClientPath  = '/worker/clientsideJS/changePasswordClient.js';
-const accessTokenPath           = '/worker/clientsideJS/accessToken.js'
-const costumerFileHandlerPath   = '/worker/clientsideJS/customerFileHandler.js';
-    //Serverside
-const mainJSPath                = '/worker/main.js';
-const webWorkerSortPath         = '/worker/workerSort.js';
-const webWorkerMergePath        = '/worker/workerMerge.js';
+//Clientside
+const loginClientPath = '/worker/clientsideJS/loginClient.js';
+const newUserClientPath = '/worker/clientsideJS/newUserClient.js';
+const forgotPasswordClientPath = '/worker/clientsideJS/forgotPasswordClient.js';
+const changePasswordClientPath = '/worker/clientsideJS/changePasswordClient.js';
+const accessTokenPath = '/worker/clientsideJS/accessToken.js'
+const costumerFileHandlerPath = '/worker/clientsideJS/customerFileHandler.js';
+//Serverside
+const mainJSPath = '/worker/main.js';
+const webWorkerSortPath = '/worker/workerSort.js';
+const webWorkerMergePath = '/worker/workerMerge.js';
 
 
 const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
@@ -60,7 +60,7 @@ function requestHandler(req, res) {
     //let form = new formidable.IncomingForm();
     const maxFileSizeGB = 20;
     const form = new formidable.IncomingForm({
-      maxFileSize: maxFileSizeGB * 1024 * 1024 * 1024 // 20 GB limit
+        maxFileSize: maxFileSizeGB * 1024 * 1024 * 1024 // 20 GB limit
     });
 
     switch (url.pathname) {
@@ -120,7 +120,7 @@ function requestHandler(req, res) {
             break;
 
         case "/request-worktask":
-            streamArray(res, [5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]); // Example array
+            streamArrayToClient(res, [5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]); // Example array
             break;
         case "/posts":
             console.log("posts");
@@ -170,18 +170,18 @@ function requestHandler(req, res) {
             const tempToken = authHeader.split(' ')[1];
             const user = tempToken.split('.')[0];
             handleUpload(form, req, user)
-            .then(_ => {
-                console.log("Received file from: " + user);
+                .then(_ => {
+                    console.log("Received file from: " + user);
 
-                res.writeHead(204);
-                res.end();
-            })
-            .catch(err => {
-                console.log(err);
-                res.writeHead(err); //bad request
-                res.end();
-            })
-            
+                    res.writeHead(204);
+                    res.end();
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.writeHead(err); //bad request
+                    res.end();
+                })
+
 
             // get user ID token thingy for the requester
             break;
@@ -196,7 +196,9 @@ function requestHandler(req, res) {
             pong(req.getHeader("UUID"));
             res.end();
             break;
-
+        case "/upload-sorted-array":
+            tempReceiveArray(req, res);
+            break;
         default:
             //fileResponse(res, "." + url.pathname); //TODO: DELETE THIS LINE AND UNCOMMENT THE NEXT ONE //Thanks Lasse <3
             errorResponse(res, 404, "Resource not found");
@@ -294,7 +296,7 @@ function getCache() {
     let cache = myCache.get("myPath");
     if (cache == undefined) {
         console.log("key not found");
-        return("/index.html")
+        return ("/index.html")
     } else {
         console.log(cache);
         return (cache.path);
@@ -309,24 +311,24 @@ async function handleFileQueue(req, res) {
     console.log("\n");
     const tempToken = authHeader.split(' ')[1];
     const user = tempToken.split('.')[0];
-    //console.log(user);
 
     let userTaskArray = await getTaskByUser(user);
-    console.log("Test");
     console.log(userTaskArray);
-    streamArray(res, userTaskArray);
+    streamArrayToClient(res, userTaskArray);
 }
 
-function downloadFile(req, res) {
-    const URL = req.headers['url'];
-    console.log(URL);
-    const filename = URL.split('/')[4];
+async function downloadFile(req, res) {
+    try {
+        let downloadFileName = req.headers['url']
+        let filePath = './master/autogeneratedFiles/csvFiles/' + downloadFileName + '.csv';
+        const stat = fs2.statSync(filePath);
+        const fileSize = stat.size;
+        const headers = { 'Content-Type': 'text/csv', 'Content-Length': fileSize, 'Content-Disposition': 'attachment; filename=test.csv', };
+        res.writeHead(200, headers);
+        fs2.createReadStream(filePath).pipe(res);
 
-    const fileStream = fs2.createWriteStream(filename);
-    res.pipe(fileStream);
-
-    fileStream.on('finish', () => {
-        fileStream.close();
-        console.log('Download finished')
-    });
+    } catch (error) {
+        console.log(cache);
+        return (cache.path);
+    }
 }

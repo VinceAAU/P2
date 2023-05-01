@@ -3,6 +3,8 @@
  * in the browser!
  */
 
+const UUID = localStorage.getItem('UUID');
+
 
 async function toggleStartButton() {
   let button = document.querySelector("#start_button");
@@ -15,7 +17,12 @@ async function toggleStartButton() {
     button.textContent = "Disconnect";
     hackerman.style.visibility = "visible";
 
-    fetch('request-worktask')
+    fetch('request-worktask', {
+	method: 'GET',
+	headers: {
+		'UUID': UUID
+	}
+    })
       .then(response => response.json())
       .then(data => {
         console.log("Received array from server:");
@@ -23,9 +30,12 @@ async function toggleStartButton() {
         const convertedArray = new Int32Array(data);
         console.log("Array as Int32Array:");
         console.log(convertedArray);
-        startWorkerMerge(convertedArray, 0, 2);
+      // startWorkerMerge(convertedArray, 0, 2);
+        startWorkerSort(convertedArray);
       })
       .catch(error => console.error(error));
+
+	pingTimer(); //Begin ping timer thing - since it's async, it should happen in background(?)
 
       //Gives a warning when closing if working.
       window.onbeforeunload = function (e) {
@@ -58,6 +68,7 @@ function startWorkerSort(receivedArray) {
       let arrS = new Int32Array(e.data);
       console.log("Worker returned the sorted list: ");
       console.log(arrS);
+      sendToServer(arrS);
     }
   } else {
     console.log("Browser does not support webworkers. ");
@@ -95,5 +106,44 @@ async function pingTimer(pingInterval = 5_000){
 	    }
     });
     await new Promise(r => setTimeout(r, pingInterval));
+  }
+}
+
+
+async function sendToServer(array) // temp function
+{
+  fetch('/upload-sorted-array', {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(array)
+  });
+}
+
+// w.i.p
+async function streamArrayToServer(array) {
+  // Send sorted array to server in chunks of 1000 elements
+  const chunkSize = 1000;
+  console.log(array.length);
+  for (let i = 0; i < array.length; i += chunkSize) {
+    const chunk = array.slice(i, i + chunkSize);
+    try {
+      const response = await fetch('/upload-sorted-array', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8'
+        },
+        body: JSON.stringify(chunk)
+      });
+
+      if (response.ok) {
+        console.log("Array chunk streamed successfully to server");
+      } else {
+        console.error("Error streaming array chunk to server. Status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error streaming array chunk to server:", error);
+    }
   }
 }
