@@ -3,6 +3,8 @@
  * in the browser!
  */
 
+const UUID = localStorage.getItem('UUID');
+
 
 async function toggleStartButton() {
   let button = document.querySelector("#start_button");
@@ -15,7 +17,12 @@ async function toggleStartButton() {
     button.textContent = "Disconnect";
     hackerman.style.visibility = "visible";
 
-    fetch('request-worktask')
+    fetch('request-worktask', {
+	method: 'GET',
+	headers: {
+		'UUID': UUID
+	}
+    })
       .then(response => response.json())
       .then(data => {
         console.log("Received array from server:");

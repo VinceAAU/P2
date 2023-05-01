@@ -2,16 +2,17 @@
  * I don't know if this deserves its own file, but it probably does
  */
 
-const pings = {};
+export {workers}
 
+const workers = {};
 
 const timeout = 10_000;
-async function heartbeat(){
-    for(uuid in pings){
-        if(pings[uuid] < Date.getTime()+timeout){
+async function heartbeat(nodes){
+    for(uuid in nodes){
+        if(nodes[uuid].lastPing < Date.getTime()+timeout){
             console.log(`Worker ${uuid} is dead!!!!`);
-            //TODO: Reassign task
-            delete pings[uuid];
+            addToBeginningOfQueue(nodes[uuid].curentTask);
+            delete workers[uuid];
         }
     }
 
@@ -19,7 +20,7 @@ async function heartbeat(){
 }
 
 function addWorker(uuid){
-    pings[uuid] = Date.getTime();
+    workers[uuid].lastPing = Date.getTime();
 }
 
 /**

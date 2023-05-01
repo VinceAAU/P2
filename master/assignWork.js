@@ -50,7 +50,7 @@ class WorkerNode{
 
     constructor(task){
         this.currentTask = task
-        this.lastping = new Date().getTime();
+        this.lastPing = new Date().getTime();
 
     }
 }
