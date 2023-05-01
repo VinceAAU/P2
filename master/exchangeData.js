@@ -4,23 +4,10 @@ import formidable from "formidable";
 import { addCustomerQueue } from './queue.js'
 import path from 'path';
 
-export { handleUpload, startDataStream, streamArray }
+export { handleUpload, streamArrayToClient, receiveArrayFromClient, tempReceiveArray }
 
-function startDataStream(path, res) {
 
-  fs.access(path, (err) => { // makes sure the server doesn't crash, if given an incorrect path
-    if (!err) {
-      const readStream = fs.createReadStream(path);
-      readStream.pipe(res);
-      console.log("Begun streaming data");
-    } else {
-      console.error(`${path} does not exist, or is not accessible`);
-    }
-  });
-
-}
-
-function streamArray(res, array) {
+function streamArrayToClient(res, array) {
   const jsonString = JSON.stringify(array);
   const buffer = Buffer.from(jsonString, "utf-8");
   const readable = new Readable();
@@ -36,7 +23,65 @@ function streamArray(res, array) {
   readable.pipe(res);
 }
 
-async function handleUpload(form, req, user) { //please dont do export like this
+
+async function tempReceiveArray(req, res) {
+  let body = "";
+  req.on("data", (chunk) => {
+    body += chunk.toString();
+  });
+  req.on("end", () => {
+    try {
+      let data = JSON.parse(body);
+      console.log(data);
+      res.writeHead(204);
+    } catch (err) {
+      console.error(err);
+      res.writeHead(400);
+    }
+  });
+}
+
+function receiveArrayFromClient(req, res)
+{
+  const readable = new Readable({
+    read() {}
+  });
+
+  let chunks = [];
+  let totalLength = 0;
+
+  req.on('data', chunk => {
+    chunks.push(chunk);
+    totalLength += chunk.length;
+
+    if (totalLength > 10000000) { 
+      res.writeHead(413, {'Content-Type': 'text/plain'}).end('Request Entity Too Large');
+      req.destroy();
+      readable.destroy();
+    }
+  });
+
+  req.on('end', () => {
+    const json = Buffer.concat(chunks, totalLength).toString('utf-8');
+    const array = JSON.parse(json);
+
+    console.log("received following array:" + array);
+
+    res.writeHead(204);
+    res.end();
+
+    return array;
+  });
+
+  req.on('error', error => {
+    console.error('Error while handling sort request:', error);
+    res.writeHead(500, {'Content-Type': 'text/plain'}).end('Internal Server Error');
+  });
+
+  readable.pipe(req);
+}
+
+async function handleUpload(form, req, user) { 
   try {
     const uploadedFile = await downloadFile(form, req);
     addCustomerQueue(user, uploadedFile);

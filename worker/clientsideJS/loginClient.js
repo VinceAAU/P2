@@ -19,7 +19,7 @@ async function toggleLogin(event) {
   bodyData.append('password', password['value']);
 
   try {
-    const response = await fetch('/worker/html/fetchUser', {
+    const response = await fetch('/fetchUser', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'

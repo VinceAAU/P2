@@ -10,7 +10,7 @@ export { requestHandler, fileResponse };
 
 //function imports from other .js files
 import { search_db } from "./master/db.js";
-import { streamArray, handleUpload } from "./master/exchangeData.js";
+import { handleUpload, streamArrayToClient, receiveArrayFromClient, tempReceiveArray } from "./master/exchangeData.js";
 import { search, passwords } from "./master/forgotPassword.js";
 import { validateNewUser } from "./master/createUser.js";
 import { returnToken, authenticateToken, returnTokenErr } from './master/tokenHandler.js';
@@ -28,16 +28,17 @@ const createUserPath = '/worker/html/createUser.html';
 const forgotPasswordPath = '/worker/html/forgotPassword.html';
 
 //Javascript file paths
-//Clientside
-const loginClientPath = '/worker/clientsideJS/loginClient.js';
-const newUserClientPath = '/worker/clientsideJS/newUserClient.js';
-const forgotPasswordClientPath = '/worker/clientsideJS/forgotPasswordClient.js';
-const changePasswordClientPath = '/worker/clientsideJS/changePasswordClient.js';
-const accessTokenPath = '/worker/clientsideJS/accessToken.js'
-const costumerFileHandlerPath = '/worker/clientsideJS/customerFileHandler.js';
-//Serverside
-const mainJSPath = '/worker/main.js';
-const webWorkerPath = '/worker/worker.js';
+    //Clientside
+const loginClientPath           = '/worker/clientsideJS/loginClient.js';
+const newUserClientPath         = '/worker/clientsideJS/newUserClient.js';
+const forgotPasswordClientPath  = '/worker/clientsideJS/forgotPasswordClient.js';
+const changePasswordClientPath  = '/worker/clientsideJS/changePasswordClient.js';
+const accessTokenPath           = '/worker/clientsideJS/accessToken.js'
+const costumerFileHandlerPath   = '/worker/clientsideJS/customerFileHandler.js';
+    //Serverside
+const mainJSPath                = '/worker/main.js';
+const webWorkerSortPath         = '/worker/workerSort.js';
+const webWorkerMergePath        = '/worker/workerMerge.js';
 
 
 const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
@@ -98,8 +99,11 @@ function requestHandler(req, res) {
         case "/main.js":
             fileResponse(res, mainJSPath);
             break;
-        case "/worker.js":
-            fileResponse(res, webWorkerPath);
+        case "/workerSort.js":
+            fileResponse(res, webWorkerSortPath);
+            break;
+        case "/workerMerge.js":
+            fileResponse(res, webWorkerMergePath);
             break;
         case "/newUserClient.js":
             fileResponse(res, newUserClientPath);
@@ -116,7 +120,7 @@ function requestHandler(req, res) {
             break;
 
         case "/request-worktask":
-            streamArray(res, [5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]); // Example array
+            streamArrayToClient(res, [5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]); // Example array
             break;
         case "/posts":
             console.log("posts");
@@ -135,15 +139,12 @@ function requestHandler(req, res) {
             console.log("protectedResource called");
             authenticateToken(req, res);
             break;
-        case "/worker/html/fetchUser":
+        case "/fetchUser":
             console.log("post login-attempt");
             extractForm(req)
                 .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
                 .then(user => returnToken(req, res, user))
-                .catch(thrown_error => returnTokenErr(req, res, 401, thrown_error)); //401: unauthorized
-            break;
-        case "/401": //called from hrefs
-            redirect(req, res, "/login.html");
+                .catch(thrown_error => returnTokenErr(res, 401, thrown_error)); //401: unauthorized
             break;
         case "/worker":
             saveCachePath("/workerPage.html");
@@ -195,7 +196,9 @@ function requestHandler(req, res) {
             pong(req.getHeader("UUID"));
             res.end();
             break;
-
+        case "/upload-sorted-array":
+            tempReceiveArray(req,res);
+            break;
         default:
             //fileResponse(res, "." + url.pathname); //TODO: DELETE THIS LINE AND UNCOMMENT THE NEXT ONE //Thanks Lasse <3
             errorResponse(res, 404, "Resource not found");

@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
+import {errorResponse} from '../server.js'
 
 
 export { returnToken, authenticateToken, returnTokenErr }
@@ -38,7 +39,7 @@ function authenticateToken(req, res, next) {
     if (token == null) return res.sendStatus(401)
 
     jwt.verify(token, str, (err, user) => {
-        if (err) return errorResponse(res, 403, err)
+        if (err) return returnTokenErr(res, 403, err)
         
         console.log("token authenticated")
         res.statusCode = 201;
@@ -48,7 +49,7 @@ function authenticateToken(req, res, next) {
     });
 };
 
-function returnTokenErr(req, res, code, err) {
+function returnTokenErr(res, code, err) {
     console.log(err)
     res.statusCode = code;
     res.end("\n");

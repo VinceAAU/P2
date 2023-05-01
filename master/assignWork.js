@@ -1,11 +1,8 @@
 import { taskSplitter } from "./splitData.js";
-export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, reservedObject };
+export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, WorkerNode };
 
 let allTasks = [];
 let availableTaskIndices = [];
-let reservedObject = {}; //reserved.UUID = task - delete
-
-
 
 let qHead;
 let qTail;
@@ -53,7 +50,7 @@ class WorkerNode{
 
     constructor(task){
         this.currentTask = task
-        this.lastping = new Date().getTime();
+        this.lastPing = new Date().getTime();
 
     }
 }
