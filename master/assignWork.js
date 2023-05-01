@@ -1,4 +1,5 @@
 import { taskSplitter } from "./splitData.js";
+import { addWorker } from "./workerManagement.js";
 export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, WorkerNode };
 
 let allTasks = [];
@@ -38,6 +39,7 @@ async function assignWorkToWorker(userID) {
     } else {
         let taskForWorker = dequeueTask();
         // Call a function here to add userID and taskForWorker to a form of reservation list.
+        addWorker(userID, taskForWorker);
         return allTasks[taskForWorker];
     }
 }
