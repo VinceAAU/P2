@@ -2,7 +2,9 @@
  * I don't know if this deserves its own file, but it probably does
  */
 
-export {workers}
+import {WorkerNode} from './assignWork.js';
+
+export {workers};
 
 const workers = {};
 
@@ -19,8 +21,8 @@ async function heartbeat(nodes){
     await new Promise(r => setTimeout(r, 5000)); //I swear, there's no better way to do sleep()
 }
 
-function addWorker(uuid){
-    workers[uuid].lastPing = Date.getTime();
+function addWorker(uuid, task){
+    workers[uuid].lastPing = new Worker(task);
 }
 
 /**
