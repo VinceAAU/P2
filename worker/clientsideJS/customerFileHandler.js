@@ -74,59 +74,33 @@ form.addEventListener('submit', async (event) => {
   }
 });
 
-function downloadFileFromServer(e) {
+async function downloadFileFromServer(e) {
   console.log(e.target.id);
   headers = {
     'url': e.target.id
   };
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', '/download', true);
-  xhr.responseType = 'blob';
-  xhr.onload = function () {
-    if (xhr.status === 200) {
+  await fetch('/download', { headers })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.blob();
+    })
+    .then(blob => {
       // Create a download link and click it programmatically to initiate download
-      const url = window.URL.createObjectURL(xhr.response);
+      const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       document.body.appendChild(a);
       a.href = url;
       a.download = e.target.id;
       a.click();
       window.URL.revokeObjectURL(url);
-    }
-  };
-  xhr.send();
+    })
+    .catch(error => {
+      console.error('There has been a problem with your fetch operation:', error);
+    });
 }
 
-
-function download(index) {
-  const downloadLink = document.createElement('a');
-
-  //Takes an array of arrays and turns it into a csv file, should probably be removed when Viktor has his stuff.
-  const csvBlob = new Blob([arrays[index].map(line => line.join(',')).join('\n')], { type: 'text/csv' });
-
-  const csvUrl = URL.createObjectURL(csvBlob);
-
-  downloadLink.href = csvUrl;
-  downloadLink.download = files[index].name;
-
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-  document.body.removeChild(downloadLink);
-}
-
-/*function Button() {
-  let arrays = 0;
-  const downloadBtn = document.createElement('button');
-  downloadBtn.textContent = `Download File ${arrays.length}`;
-  arrays++;
-  downloadBtn.classList.add('download-button'); // Add a CSS class to the button
-  downloadBtn.addEventListener('click', (event) => {
-    const index = parseInt(event.target.textContent.split(' ')[2]) - 1;
-    download(index);
-    document.getElementById('download-rdy').textContent = `Your file "${files[index].name}" is ready to be downloaded.`; //To be changed later
-  })
-  document.body.appendChild(downloadBtn);
-}*/
 
 function logError() {
   errorMessage.textContent = "Not a valid .csv file"
