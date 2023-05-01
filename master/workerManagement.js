@@ -4,7 +4,7 @@
 
 import {WorkerNode} from './assignWork.js';
 
-export {workers};
+export { workers, addWorker };
 
 const workers = {};
 
@@ -22,7 +22,7 @@ async function heartbeat(nodes){
 }
 
 function addWorker(uuid, task){
-    workers[uuid].lastPing = new Worker(task);
+    workers[uuid].lastPing = new WorkerNode(task);
 }
 
 /**
