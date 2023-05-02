@@ -4,7 +4,7 @@
 
 import {WorkerNode} from './assignWork.js';
 
-export { workers, addWorker };
+export { workers, addWorker, pong };
 
 const workers = {};
 
