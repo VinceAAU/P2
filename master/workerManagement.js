@@ -11,7 +11,7 @@ const workers = {};
 const timeout = 10_000;
 async function heartbeat(nodes){
     for(uuid in nodes){
-        if(nodes[uuid].lastPing < Date.getTime()+timeout){
+        if(nodes[uuid].lastPing < Date.now()+timeout){
             console.log(`Worker ${uuid} is dead!!!!`);
             addToBeginningOfQueue(nodes[uuid].curentTask);
             delete workers[uuid];
@@ -31,5 +31,5 @@ function addWorker(uuid, merge, task){
  * @returns The response
  */
 async function pong(uuid){
-    pings[uuid] = Date.getTime();
+    workers[uuid] = Date.now();
 }

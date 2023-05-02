@@ -197,7 +197,7 @@ function requestHandler(req, res) {
             break;
         case "/ping":
             //possible TODO: Check for authentication?
-            pong(req.getHeader("UUID"));
+            pong(req.headers["uuid"]);
             res.end();
             break;
         case "/upload-sorted-array":
