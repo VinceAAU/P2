@@ -40,7 +40,7 @@ async function assignSortWorkToWorker(workerUUID) {
     } else {
         let sortTaskForWorker = dequeueSortTask();
         // Call a function here to add userID and sortTaskForWorker to a form of reservation list.
-        addWorker(workerUUID, sortTaskForWorker);
+        addWorker(workerUUID, false, sortTaskForWorker);
         return [false, allSortTasks[sortTaskForWorker]];
     }
 }
@@ -84,20 +84,20 @@ async function assignMergeWorkToWorker(workerUUID) {
         let mergeTaskForWorkerOne = dequeueMergeTask(); // The whole idea behind this kind of queue was to not lose data on node failure,
         let mergeTaskForWorkerTwo = dequeueMergeTask(); // so how are we going to free the arrays continuously?
         // assuming we can handle assigning more than some taskID to a worker, through an array or something.
-        addWorker(workerUUID, [mergeTaskForWorkerOne, mergeTaskForWorkerTwo]); 
+        addWorker(workerUUID, true, [mergeTaskForWorkerOne, mergeTaskForWorkerTwo]); 
         return [true, allMergeTasks[mergeTaskForWorkerOne], allMergeTasks[mergeTaskForWorkerTwo]];
         // bool + two arrays, check bool to see if it is a sort or merge.
     }
 } 
 
 // call this function with: let workerX/ID/whatever = new WorkerNode(task)
-class WorkerNode{
+class WorkerNode {
     //let currentTask;
     //let lastPing;
 
-    constructor(task){
-        this.currentTask = task
+    constructor(merge, task){
+        this.currentTask = task;
         this.lastPing = new Date().getTime();
-
+        this.isMerging = merge;
     }
 }
