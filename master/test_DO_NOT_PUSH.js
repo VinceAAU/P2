@@ -1,6 +1,7 @@
 import fs from 'fs/promises'
+import { exit } from 'process';
 
-const file_path = "/home/vince/Downloads/random_numbers_90.csv";
+const file_path = "/home/vince/Documents/aau/P2/repo/tools/random_numbers.csv";
 
 const numbers_array = [0];
 
@@ -22,16 +23,26 @@ while(true){
 
     let array_buffer = (buffer + '')
                     .replace('\n', ',').replace('\r', ',')
-                    .split(',');
+                    .split(',').map((value, fuck, you) => {
+                        return Number(value);
+                    });
     
     
-    numbers_array.push( (numbers_array.pop()+'').concat(array_buffer[0]));
+    numbers_array.push( Number((numbers_array.pop()+'').concat(array_buffer[0])));
     array_buffer.splice(0, 1);
 
-    numbers_array.push(...array_buffer);
+    try{
+        numbers_array.push(...array_buffer);
+    } catch (err) {
+        console.log(`Error ${err}`);
+        console.log(`With data ${numbers_array.length}, ${array_buffer.length}`);
+    }
     
 
     current_file_index += buffer_size;
+
+    if(current_file_index%1000_000 === 0)
+        console.log(current_file_index);
 }
 
 console.log(numbers_array);
