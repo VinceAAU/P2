@@ -5,21 +5,47 @@ export { taskSplitter };
 
 
 /**
- * The idea here is to read a given file from the server's filesystem, given a path from the Queue.
- * @param {*} path The filepath specified in the first position of the Queue (or some arbitrary path provided).
- * @returns Returns the contents of the filepath -- turns a CSV into a flat array of values.
+ * This function loads a file into memory, inside a Uint32Array.
+ * @param {*} filePath The path to the file that needs to be loaded.
+ * @returns The Uint32Array containing the CSV-file's data.
  */
-async function readDataFile(filePath) {
-  try {
-    let data = await fs.readFile(filePath, 'utf8'); // read file
-    let rows = data.trim().split('\r\n'); // split the data into an array of rows
-    let values = rows.map(row => row.split(',')); // split each row into an array of values
-    let fileArray = values.flat(); // flatten the array of arrays into a single array
+async function loadFileToArray(filePath) {
 
-    return fileArray; // return the flattened array of values / the file as an array.
-  } catch (err) {
-    console.error(err); // print any errors
+  let numbers_array = new Uint32Array(1_000_000_000);
+  let numarray_index = 0;
+  let file_index = 0;
+  const buffer_size = 1_000_000;
+
+  const fileHandle = await fs.open(filePath);
+
+  while(true) {
+      let buffer = Buffer.alloc(buffer_size);
+      let fd_read_return = await fileHandle.read(buffer, 0, buffer_size, file_index);
+
+      if(fd_read_return.bytesRead === 0) { 
+          break;
+      }
+
+      let array_buffer = (buffer + '')
+                      .replace('\n', ',').replace('\r', ',')
+                      .split(',').map((value, uselessOne, uselessTwo) => {
+                          return Number(value);
+                      });
+      
+      numbers_array[numarray_index] = Number((numbers_array[numarray_index] + '').concat(array_buffer[0]));
+      array_buffer.splice(0, 1);
+
+      for (let i of array_buffer){
+          numarray_index++;
+          numbers_array[numarray_index] = i;
+      } 
+
+      file_index += buffer_size;
   }
+
+  fileHandle.close();
+  numbers_array = numbers_array.slice(0, numarray_index + 1);
+  return numbers_array;
 }
 
 /**
@@ -29,14 +55,14 @@ async function readDataFile(filePath) {
  */
 async function splitArray(filePath) {
 
-  const taskSize = 10000000; //  How many elements we want in each task (primitive, yet effective).
+  const taskSize = 10_000_000; //  How many elements we want in each task (primitive, yet effective).
   let tasks = []; //  Array to contain arrays (tasks) ready to be scheduled.
 
   //  Call the function to read the data file
-  let data = await readDataFile(filePath);
-  
-  while (data.length) {
-    tasks.push(data.splice(0, taskSize));
+  let data = await loadFileToArray(filePath);
+
+  for (let leftIndex = 0; leftIndex < data.length; leftIndex += taskSize) {
+    tasks.push(data.slice(leftIndex, taskSize + leftIndex));
   }
 
   return(tasks);  //  Return an array of arrays (each array being a task)
@@ -55,6 +81,7 @@ async function taskSplitter() {
   return(tasks);  // Just prints all the arrays(tasks) to show it works. Call it in server.js.
   
 }
+
 //let arr1 = [], let arr2 = []
 function combineArrays(arr1, arr2){
   const newArr = arr1.concat(arr2)
