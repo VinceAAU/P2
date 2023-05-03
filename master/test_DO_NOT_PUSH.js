@@ -32,16 +32,18 @@ while(true){
     array_buffer.splice(0, 1);
 
     try{
-        numbers_array.push(...array_buffer);
+        for (let i of array_buffer){
+            numbers_array.push(i);
+        } 
     } catch (err) {
         console.log(`Error ${err}`);
         console.log(`With data ${numbers_array.length}, ${array_buffer.length}`);
-    }
-    
+        exit();
+    }   
 
     current_file_index += buffer_size;
 
-    if(current_file_index%1000_000 === 0)
+    if(current_file_index%10000_000 === 0)
         console.log(current_file_index);
 }
 
