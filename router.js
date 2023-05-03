@@ -344,6 +344,7 @@ async function giveFirstTask(req, res){
 }
 
 async function giveNewTask(req, res){
-
-    streamArrayToClient(await assignWorkToWorker(req.getHeader("UUID")));
+    let workerUUID = req.getHeader("UUID");
+    //moveTaskFromReservedTosorted(workerUUID);
+    streamArrayToClient(await assignWorkToWorker(workerUUID));
 }
