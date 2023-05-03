@@ -27,8 +27,8 @@ async function toggleStartButton() {
       .then(data => {
         console.log("Received array from server:");
         console.log(data);
-        const convertedArray = new Int32Array(data);
-        console.log("Array as Int32Array:");
+        const convertedArray = new Uint32Array(data);
+        console.log("Array as Uint32Array:");
         console.log(convertedArray);
       // startWorkerMerge(convertedArray, 0, 2);
         startWorkerSort(convertedArray);
@@ -65,7 +65,7 @@ function startWorkerSort(receivedArray) {
     console.log("Block of work posted to the worker. ");
 
     workerSort.onmessage = function (e) {
-      let arrS = new Int32Array(e.data);
+      let arrS = new Uint32Array(e.data);
       console.log("Worker returned the sorted list: ");
       console.log(arrS);
       sendToServer(arrS);
@@ -84,7 +84,7 @@ function startWorkerMerge(nestedArray) {
     console.log("Block of work posted to the worker. ");
 
     workerSort.onmessage = function (e) {
-      let arrM = new Int32Array(e.data[1]);
+      let arrM = new Uint32Array(e.data[1]);
       console.log("Worker returned the merged list: ");
       console.log(arrM);
     }
