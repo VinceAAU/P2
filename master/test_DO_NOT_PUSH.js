@@ -1,53 +1,44 @@
 import fs from 'fs/promises'
-import { exit } from 'process';
 
-const file_path = "/home/vince/Documents/aau/P2/repo/tools/random_numbers.csv";
+/**
+ * This function loads a file into memory, inside a Uint32Array.
+ * @param {*} filePath The path to the file that needs to be loaded.
+ * @returns The Uint32Array containing the CSV-file's data.
+ */
+async function loadFileToArray(filePath) {
 
-const numbers_array = new Uint32Array(1_000_000_000);
-numbers_array[0] = 0;
-let   current_numarray_index = 0;
+    let numbers_array = new Uint32Array(1_000_000_000);
+    let numarray_index = 0;
+    let file_index = 0;
+    const buffer_size = 1_000_000;
 
-const fd = await fs.open(file_path);
+    const fileHandle = await fs.open(filePath);
 
-let current_file_index = 0;
+    while(true) {
+        let buffer = Buffer.alloc(buffer_size);
+        let fd_read_return = await fileHandle.read(buffer, 0, buffer_size, file_index);
 
-const buffer_size = 1_000_000;
+        if(fd_read_return.bytesRead === 0) { 
+            break;
+        }
 
-console.log(fd);
+        let array_buffer = (buffer + '')
+                        .replace('\n', ',').replace('\r', ',')
+                        .split(',').map((value, fuck, you) => {
+                            return Number(value);
+                        });
+        
+        numbers_array[numarray_index] = Number((numbers_array[numarray_index] + '').concat(array_buffer[0]));
+        array_buffer.splice(0, 1);
 
-while(true){
-    let buffer = Buffer.alloc(buffer_size);
-    let fd_read_return = await fd.read(buffer, 0, buffer_size, current_file_index);
-
-    if(fd_read_return.bytesRead === 0)
-        break;
-    
-
-    let array_buffer = (buffer + '')
-                    .replace('\n', ',').replace('\r', ',')
-                    .split(',').map((value, fuck, you) => {
-                        return Number(value);
-                    });
-    
-    
-    numbers_array[current_numarray_index] = Number((numbers_array[current_numarray_index] + '').concat(array_buffer[0]));
-    array_buffer.splice(0, 1);
-
-    try{
         for (let i of array_buffer){
-            current_numarray_index++;
-            numbers_array[current_numarray_index] = i;
+            numarray_index++;
+            numbers_array[numarray_index] = i;
         } 
-    } catch (err) {
-        console.log(`Error ${err}`);
-        console.log(`With data ${numbers_array.length}, ${array_buffer.length}`);
-        exit();
+
+        file_index += buffer_size;
     }
 
-    current_file_index += buffer_size;
-
-    if(current_file_index%10000_000 === 0)
-        console.log(current_file_index);
+    numbers_array = numbers_array.slice(0, numarray_index + 1);
+    return numbers_array;
 }
-
-console.log(numbers_array);
