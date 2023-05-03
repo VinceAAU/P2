@@ -3,13 +3,15 @@ import { exit } from 'process';
 
 const file_path = "/home/vince/Documents/aau/P2/repo/tools/random_numbers.csv";
 
-const numbers_array = [0];
+const numbers_array = new Uint32Array(1_000_000_000);
+numbers_array[0] = 0;
+let   current_numarray_index = 0;
 
 const fd = await fs.open(file_path);
 
 let current_file_index = 0;
 
-const buffer_size = 100_000;
+const buffer_size = 1_000_000;
 
 console.log(fd);
 
@@ -28,18 +30,19 @@ while(true){
                     });
     
     
-    numbers_array.push( Number((numbers_array.pop()+'').concat(array_buffer[0])));
+    numbers_array[current_numarray_index] = Number((numbers_array[current_numarray_index] + '').concat(array_buffer[0]));
     array_buffer.splice(0, 1);
 
     try{
         for (let i of array_buffer){
-            numbers_array.push(i);
+            current_numarray_index++;
+            numbers_array[current_numarray_index] = i;
         } 
     } catch (err) {
         console.log(`Error ${err}`);
         console.log(`With data ${numbers_array.length}, ${array_buffer.length}`);
         exit();
-    }   
+    }
 
     current_file_index += buffer_size;
 
