@@ -2,8 +2,6 @@ import formidable from 'formidable';
 import fs from "fs/promises";
 import NodeCache from "node-cache";
 import fs2 from "fs";
-import path from "path";
-import http from 'http';
 //import { env } from 'process';asd
 
 export { requestHandler, fileResponse };
@@ -16,6 +14,7 @@ import { validateNewUser } from "./master/createUser.js";
 import { returnToken, authenticateToken, returnTokenErr } from './master/tokenHandler.js';
 import { securePath, throw_user, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
 import { savePendingQueue, addCustomerQueue, removeCustomerQueue, getTaskQueueHead, getUserQueueHead, pendingQueueToFinishedQueue, getTaskByUser } from './master/queue.js';
+import { pong } from './master/workerManagement.js'
 
 //HTML and CSS file paths
 const loginPath = '/worker/html/login.html';
@@ -198,7 +197,7 @@ function requestHandler(req, res) {
             break;
         case "/ping":
             //possible TODO: Check for authentication?
-            pong(req.getHeader("UUID"));
+            pong(req.headers["uuid"]);
             res.end();
             break;
         case "/upload-sorted-array":

@@ -25,7 +25,7 @@ function dequeueSortTask() {
     return task;
 }
 
-async function assignSortWorkToWorker(userID) {
+async function assignSortWorkToWorker(workerUUID) {
 
     if (allSortTasks.length === 0) {
         allSortTasks = await taskSplitter();
@@ -36,11 +36,11 @@ async function assignSortWorkToWorker(userID) {
 
     if (qHeadSort === qTailSort) {
         console.log("Completed sorting, beginning to merge.");
-        assignMergeWorkToWorker(userID);
+        assignMergeWorkToWorker(workerUUID);
     } else {
         let sortTaskForWorker = dequeueSortTask();
         // Call a function here to add userID and sortTaskForWorker to a form of reservation list.
-        addWorker(userID, sortTaskForWorker);
+        addWorker(workerUUID, false, sortTaskForWorker);
         return [false, allSortTasks[sortTaskForWorker]];
     }
 }
@@ -68,7 +68,7 @@ function dequeueMergeTask() {
     return task;
 }
 
-async function assignMergeWorkToWorker(userID) {
+async function assignMergeWorkToWorker(workerUUID) {
 
     if (allMergeTasks.length === 0) {
         throw new Error("Nothing to merge.");
@@ -84,20 +84,20 @@ async function assignMergeWorkToWorker(userID) {
         let mergeTaskForWorkerOne = dequeueMergeTask(); // The whole idea behind this kind of queue was to not lose data on node failure,
         let mergeTaskForWorkerTwo = dequeueMergeTask(); // so how are we going to free the arrays continuously?
         // assuming we can handle assigning more than some taskID to a worker, through an array or something.
-        addWorker(userID, [mergeTaskForWorkerOne, mergeTaskForWorkerTwo]); 
+        addWorker(workerUUID, true, [mergeTaskForWorkerOne, mergeTaskForWorkerTwo]); 
         return [true, allMergeTasks[mergeTaskForWorkerOne], allMergeTasks[mergeTaskForWorkerTwo]];
         // bool + two arrays, check bool to see if it is a sort or merge.
     }
 } 
 
 // call this function with: let workerX/ID/whatever = new WorkerNode(task)
-class WorkerNode{
+class WorkerNode {
     //let currentTask;
     //let lastPing;
 
-    constructor(task){
-        this.currentTask = task
+    constructor(merge, task){
+        this.currentTask = task;
         this.lastPing = new Date().getTime();
-
+        this.isMerging = merge;
     }
 }

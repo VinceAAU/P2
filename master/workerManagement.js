@@ -4,14 +4,14 @@
 
 import {WorkerNode} from './assignWork.js';
 
-export { workers, addWorker };
+export { workers, addWorker, pong };
 
 const workers = {};
 
 const timeout = 10_000;
 async function heartbeat(nodes){
     for(uuid in nodes){
-        if(nodes[uuid].lastPing < Date.getTime()+timeout){
+        if(nodes[uuid].lastPing < Date.now()+timeout){
             console.log(`Worker ${uuid} is dead!!!!`);
             addToBeginningOfQueue(nodes[uuid].curentTask);
             delete workers[uuid];
@@ -21,8 +21,8 @@ async function heartbeat(nodes){
     await new Promise(r => setTimeout(r, 5000)); //I swear, there's no better way to do sleep()
 }
 
-function addWorker(uuid, task){
-    workers[uuid].lastPing = new WorkerNode(task);
+function addWorker(uuid, merge, task){
+    workers[uuid].lastPing = new WorkerNode(merge, task);
 }
 
 /**
@@ -31,5 +31,5 @@ function addWorker(uuid, task){
  * @returns The response
  */
 async function pong(uuid){
-    pings[uuid] = Date.getTime();
+    workers[uuid] = Date.now();
 }

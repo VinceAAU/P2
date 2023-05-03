@@ -10,3 +10,5 @@ csvgeneratrothing.py
 
 
 data.db
+
+tools/*.csv
