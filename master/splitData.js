@@ -5,86 +5,64 @@ export { taskSplitter };
 
 
 /**
- * This function loads a file into memory, inside a Uint32Array.
+ * This function splits a file's values into buckets
  * @param {*} filePath The path to the file that needs to be loaded.
- * @returns The Uint32Array containing the CSV-file's data.
+ * @returns An list of buckets
  */
 async function loadFileToArray(filePath) {
+  const buckets = [];
+  const bucketAmount = determineBucketAmount(await fs.stat(filePath).size);
+  const dataRange = 1_000_000_000;
+  const bucketInterval = dataRange/bucketAmount;
 
-  let numbers_array = new Uint32Array(1_000_000_000);
-  let numarray_index = 0;
   let file_index = 0;
   const buffer_size = 1_000_000;
 
   const fileHandle = await fs.open(filePath);
-
+  
+  let leftoverNumber = 0;
   while(true) {
-      let buffer = Buffer.alloc(buffer_size);
-      let fd_read_return = await fileHandle.read(buffer, 0, buffer_size, file_index);
+    let buffer = Buffer.alloc(buffer_size);
+    let fd_read_return = await fileHandle.read(buffer, 0, buffer_size, file_index);
 
-      if(fd_read_return.bytesRead === 0) { 
-          break;
-      }
+    if(fd_read_return.bytesRead === 0) { 
+      break;
+    }
 
-      let array_buffer = (buffer + '')
-                      .replace('\n', ',').replace('\r', ',')
-                      .split(',').map((value, uselessOne, uselessTwo) => {
-                          return Number(value);
-                      });
-      
-      numbers_array[numarray_index] = Number((numbers_array[numarray_index] + '').concat(array_buffer[0]));
-      array_buffer.splice(0, 1);
+    let array_buffer = (buffer + '')
+                    .replace('\n', ',').replace('\r', ',')
+                    .split(',').map((value, uselessOne, uselessTwo) => {
+                        return Number(value);
+                    });
+    
+    leftoverNumber = Number( (leftoverNumber + '').concat(array_buffer[0]) );
+    buckets[determineBucket(bucketInterval, leftoverNumber)] = leftoverNumber;
+    array_buffer.splice(0, 1);
+    leftoverNumber = array_buffer.pop();
 
-      for (let i of array_buffer){
-          numarray_index++;
-          numbers_array[numarray_index] = i;
-      } 
+    for (let i of array_buffer){
+        buckets[determineBucket(bucketInterval, i)].push(i);
+    } 
 
-      file_index += buffer_size;
+    file_index += buffer_size;
   }
+
+  buckets[determineBucket(bucketInterval, leftoverNumber)] = leftoverNumber;
 
   fileHandle.close();
-  numbers_array = numbers_array.slice(0, numarray_index + 1);
-  return numbers_array;
+  return buckets;
 }
 
-/**
- * This function should take an array and split it into smaller arrays that are more fit for 
- * being distributed. As a start: Split into lists of roughly 10 million elements.
- * @param {*} filePath Filepath to give to the readDataFile function to get the whole file as an array in return.
- */
-async function splitArray(filePath) {
-
-  const taskSize = 10_000_000; //  How many elements we want in each task (primitive, yet effective).
-  let tasks = []; //  Array to contain arrays (tasks) ready to be scheduled.
-
-  //  Call the function to read the data file
-  let data = await loadFileToArray(filePath);
-
-  for (let leftIndex = 0; leftIndex < data.length; leftIndex += taskSize) {
-    tasks.push(data.slice(leftIndex, taskSize + leftIndex));
-  }
-
-  return(tasks);  //  Return an array of arrays (each array being a task)
+function determineBucket(bucketSize, element){
+  return Math.floor(element/bucketSize);
 }
 
-/**
- * Unsure about the naming, but this could be the main function, that is called and runs the functions of the document.
- * Pretty useless right now, but perhaps there is a use for it in the future.
- */
-async function taskSplitter() {
+function determineBucketAmount(fileSize){
+  const targetPayloadSize = 100_000_000; //100 megabytes. Too much? Too little? Idk
   
-  let filePath = getTaskQueueHead(); 
-  removeCustomerQueue();
-  let tasks = await splitArray(filePath);
-
-  return(tasks);  // Just prints all the arrays(tasks) to show it works. Call it in server.js.
-  
+  //Because we don't send CSV files, but binary arrays, the payload 
+  //will actually be about half of the target. This is because my maths 
+  //is lazy. FIXME
+  return Math.ceil(fileSize/targetPayloadSize);
 }
 
-//let arr1 = [], let arr2 = []
-function combineArrays(arr1, arr2){
-  const newArr = arr1.concat(arr2)
-  arr1, arr2 = [];
-  return(newArr)
-}
