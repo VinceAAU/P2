@@ -9,14 +9,30 @@ export { loadBuckets };
  * @returns An list of buckets
  */
 async function loadBuckets(filePath) {
-  const buckets = [];
-  const bucketAmount = determineBucketAmount(await fs.stat(filePath).size);
-  for (int i = 0; i < bucketAmount; i++) buckets[i] = [];
+  let buckets = [];
+  const fileStats = await fs.stat(filePath);
+  const fileSize = fileStats.size;
+  console.log(fileSize); // Debugging line
+  const bucketAmount = determineBucketAmount(fileSize);
+  console.log('Bucket amount:', bucketAmount); // Debugging line
+  for (let i = 0; i < bucketAmount; i++) buckets[i] = [];
+  console.log('Buckets:', buckets); // Debugging line
+
   const dataRange = 1_000_000_000;
   const bucketInterval = dataRange/bucketAmount;
+  console.log(bucketInterval); // Debugging line
 
   let file_index = 0;
   const buffer_size = 1_000_000;
+
+  // Hjemmelavet push() helperfunction, som tjekker for undefined
+  function pushToBucket(bucketIndex, element) {
+    if (buckets[bucketIndex] === undefined) {
+      buckets[bucketIndex] = [element];
+    } else {
+      buckets[bucketIndex].push(element);
+    }
+  }
 
   const fileHandle = await fs.open(filePath);
   
@@ -36,12 +52,12 @@ async function loadBuckets(filePath) {
                     });
     
     leftoverNumber = Number( (leftoverNumber + '').concat(array_buffer[0]) );
-    buckets[determineBucket(bucketInterval, leftoverNumber)] = leftoverNumber;
+    pushToBucket(determineBucket(bucketInterval, leftoverNumber), leftoverNumber);
     array_buffer.splice(0, 1);
     leftoverNumber = array_buffer.pop();
 
     for (let i of array_buffer){
-        buckets[determineBucket(bucketInterval, i)].push(i);
+        pushToBucket(determineBucket(bucketInterval, i), i);
     } 
 
     file_index += buffer_size;
@@ -66,3 +82,8 @@ function determineBucketAmount(fileSize){
   return Math.ceil(fileSize/targetPayloadSize);
 }
 
+// Debugging:
+console.log("Pre-call");
+const bigData = await loadBuckets("../random_numbers_50.csv"); //adjust file path for debugging.
+console.log("Post-call");
+console.log(bigData); // Result
