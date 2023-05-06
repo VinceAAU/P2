@@ -1,7 +1,6 @@
 import fs from "fs/promises";
-import { getTaskQueueHead, removeCustomerQueue } from "./queue.js";
 
-export { taskSplitter };
+export { loadBuckets };
 
 
 /**
@@ -9,9 +8,10 @@ export { taskSplitter };
  * @param {*} filePath The path to the file that needs to be loaded.
  * @returns An list of buckets
  */
-async function loadFileToArray(filePath) {
+async function loadBuckets(filePath) {
   const buckets = [];
   const bucketAmount = determineBucketAmount(await fs.stat(filePath).size);
+  for (int i = 0; i < bucketAmount; i++) buckets[i] = [];
   const dataRange = 1_000_000_000;
   const bucketInterval = dataRange/bucketAmount;
 
