@@ -185,7 +185,8 @@ function requestHandler(req, res) {
             res.end();
             break;
         case "/upload-sorted-array":
-            tempReceiveArray(req, res);
+            const data = receiveArrayFromClient(req, res);
+            console.log(data);
             break;
         default:
             //fileResponse(res, "." + url.pathname); //TODO: DELETE THIS LINE AND UNCOMMENT THE NEXT ONE //Thanks Lasse <3
