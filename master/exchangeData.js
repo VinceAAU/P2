@@ -4,12 +4,10 @@ import formidable from "formidable";
 import { addCustomerQueue } from './queue.js'
 import path from 'path';
 
-export { handleUpload, streamArrayToClient, receiveArrayFromClient, tempReceiveArray }
+export { handleUpload, streamArrayToClient, receiveArrayFromClient }
 
+function streamArrayToClient(res, buffer) {
 
-function streamArrayToClient(res, array) {
-  const jsonString = JSON.stringify(array);
-  const buffer = Buffer.from(jsonString, "utf-8");
   const readable = new Readable();
 
   readable._read = () => { };
@@ -17,68 +15,46 @@ function streamArrayToClient(res, array) {
   readable.push(null);
 
   res.writeHead(200, {
-    "Content-Type": "application/json",
+    "Content-Type": "application/octet-stream",
     "Content-Length": buffer.length,
   });
+
   readable.pipe(res);
+
 }
 
+async function receiveArray(req, res) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
 
-async function tempReceiveArray(req, res) {
-  let body = "";
-  req.on("data", (chunk) => {
-    body += chunk.toString();
-  });
-  req.on("end", () => {
-    try {
-      let data = JSON.parse(body);
-      console.log(data);
+    req.on("data", (chunk) => {
+      chunks.push(chunk);
+    });
+
+    req.on("end", () => {
+      const data = Buffer.concat(chunks);
+
       res.writeHead(204);
-    } catch (err) {
+      res.end();
+
+      resolve(data);
+    });
+
+    req.on("error", (err) => {
       console.error(err);
       res.writeHead(400);
-    }
+      res.end();
+
+      reject(err);
+    });
   });
 }
 
-function receiveArrayFromClient(req, res)
+async function receiveArrayFromClient(req, res)
 {
-  const readable = new Readable({
-    read() {}
-  });
-
-  let chunks = [];
-  let totalLength = 0;
-
-  req.on('data', chunk => {
-    chunks.push(chunk);
-    totalLength += chunk.length;
-
-    if (totalLength > 10000000) { 
-      res.writeHead(413, {'Content-Type': 'text/plain'}).end('Request Entity Too Large');
-      req.destroy();
-      readable.destroy();
-    }
-  });
-
-  req.on('end', () => {
-    const json = Buffer.concat(chunks, totalLength).toString('utf-8');
-    const array = JSON.parse(json);
-
-    console.log("received following array:" + array);
-
-    res.writeHead(204);
-    res.end();
-
-    return array;
-  });
-
-  req.on('error', error => {
-    console.error('Error while handling sort request:', error);
-    res.writeHead(500, {'Content-Type': 'text/plain'}).end('Internal Server Error');
-  });
-
-  readable.pipe(req);
+  const result = await receiveArray(req, res);
+  console.log(result);
+  return result;
 }
 
 async function handleUpload(form, req, user) { 

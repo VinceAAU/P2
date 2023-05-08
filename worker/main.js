@@ -23,11 +23,11 @@ async function toggleStartButton() {
 		'UUID': UUID
 	}
     })
-      .then(response => response.json())
-      .then(data => {
+      .then(async data => {
         console.log("Received array from server:");
         console.log(data);
-        const convertedArray = new Uint32Array(data);
+        const buffer = await data.arrayBuffer();
+        const convertedArray = new Uint32Array(buffer);
         console.log("Array as Uint32Array:");
         console.log(convertedArray);
       // startWorkerMerge(convertedArray, 0, 2);
@@ -115,35 +115,10 @@ async function sendToServer(array) // temp function
   fetch('/upload-sorted-array', {
     method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/octet-stream",
+      "Content-Length": array.length
     },
-    body: JSON.stringify(array)
+    body: array
   });
 }
 
-// w.i.p
-async function streamArrayToServer(array) {
-  // Send sorted array to server in chunks of 1000 elements
-  const chunkSize = 1000;
-  console.log(array.length);
-  for (let i = 0; i < array.length; i += chunkSize) {
-    const chunk = array.slice(i, i + chunkSize);
-    try {
-      const response = await fetch('/upload-sorted-array', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        body: JSON.stringify(chunk)
-      });
-
-      if (response.ok) {
-        console.log("Array chunk streamed successfully to server");
-      } else {
-        console.error("Error streaming array chunk to server. Status:", response.status);
-      }
-    } catch (error) {
-      console.error("Error streaming array chunk to server:", error);
-    }
-  }
-}
