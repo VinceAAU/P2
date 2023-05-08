@@ -11,4 +11,4 @@ csvgeneratrothing.py
 
 data.db
 
-tools/*.csv
+*.csv

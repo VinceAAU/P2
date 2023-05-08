@@ -4,9 +4,9 @@ import random
 import threading
 
 # Set the file name and the number of rows and columns
-file_name = "random_numbers.csv"
-num_rows = 50000
-num_cols = 10000
+file_name = "random_numbers_average.csv"
+num_rows = 100
+num_cols = 10_000_000
 
 # Create a lock to synchronize access to the file
 lock = threading.Lock()
@@ -16,7 +16,7 @@ def worker():
     with lock:
         with open(file_name, "a", newline="") as csvfile:
             writer = csv.writer(csvfile)
-            row = [random.randint(0, 1000000000) for j in range(num_cols)]
+            row = [random.randint(0, 1_000_000_000) for j in range(num_cols)]
             writer.writerow(row)
 
 # Create a list of worker threads and start them
