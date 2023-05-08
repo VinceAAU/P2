@@ -378,9 +378,10 @@ function redirectToHandleUpload(req, res) {
         })
 
 }
-let first = 1;
+
 async function bucketConcatenate() {
     let fileName = getTaskQueueHead;
+    let first = 1;
     sortedBuckets.forEach(element => {
         try {
             if (first) {
