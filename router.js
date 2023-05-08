@@ -40,7 +40,6 @@ const mainJSPath = '/worker/main.js';
 const webWorkerSortPath = '/worker/workerSort.js';
 const webWorkerMergePath = '/worker/workerMerge.js';
 
-
 const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
 
 
@@ -116,7 +115,7 @@ function requestHandler(req, res) {
             break;
 
         case "/request-worktask":
-            streamArrayToClient(res, Buffer.from([5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6])); // Example array
+            streamArrayToClient(res, Buffer.from(new Uint32Array([5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]).buffer)); // Example array
             break;
         case "/posts":
             console.log("posts");
