@@ -19,8 +19,6 @@ export { throw_user, securePath, errorResponse, guessMimeType, redirect, extract
 const hostname = '127.0.0.1';
 const port = 3000;
 const server = http.createServer(requestHandler);
-const createUserPath = '/worker/html/createUser.html';
-const forgotPasswordPath = '/worker/html/forgotPassword.html';
 const changePasswordPath = '/worker/html/changePassword.html';
 
 function redirect(req, res, path) {
