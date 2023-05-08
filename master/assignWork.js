@@ -1,4 +1,4 @@
-import { taskSplitter } from "./splitData.js";
+// import { taskSplitter } from "./splitData.js";
 import { addWorker } from "./workerManagement.js";
 export { assignSortWorkToWorker, enqueueSortTask, addToBeginningOfSortQueue, addToBeginningOfMergeQueue, WorkerNode };
 

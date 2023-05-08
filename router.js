@@ -8,7 +8,7 @@ export { requestHandler, fileResponse };
 
 //function imports from other .js files
 import { search_db } from "./master/db.js";
-import { handleUpload, streamArrayToClient, receiveArrayFromClient, tempReceiveArray } from "./master/exchangeData.js";
+import { handleUpload, streamArrayToClient, receiveArrayFromClient} from "./master/exchangeData.js";
 import { search, passwords } from "./master/forgotPassword.js";
 import { validateNewUser } from "./master/createUser.js";
 import { returnToken, authenticateToken, returnTokenErr } from './master/tokenHandler.js';
@@ -119,7 +119,7 @@ function requestHandler(req, res) {
             break;
 
         case "/request-worktask":
-            streamArrayToClient(res, [5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]); // Example array
+            streamArrayToClient(res, Buffer.from([5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6])); // Example array
             break;
         case "/posts":
             console.log("posts");
