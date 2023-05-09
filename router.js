@@ -115,7 +115,7 @@ function requestHandler(req, res) {
             break;
 
         case "/request-worktask":
-            streamArrayToClient(res, Buffer.from(new Uint32Array([5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]).buffer)); // Example array
+            streamArrayToClient(res, new Uint32Array([5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6])); // Example array
             break;
         case "/posts":
             console.log("posts");

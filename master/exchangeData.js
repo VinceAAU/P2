@@ -6,9 +6,11 @@ import path from 'path';
 
 export { handleUpload, streamArrayToClient, receiveArrayFromClient }
 
-function streamArrayToClient(res, buffer) {
+function streamArrayToClient(res, array) {
 
   const readable = new Readable();
+
+  const buffer = Buffer.from(array.buffer); 
 
   readable._read = () => { };
   readable.push(buffer);
