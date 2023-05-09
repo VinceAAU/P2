@@ -66,9 +66,12 @@ function startWorkerSort(receivedArray) {
 
     workerSort.onmessage = function (e) {
       let arrS = new Uint32Array(e.data);
+    //  const uint8Array = new Uint8Array(arrS.buffer);
       console.log("Worker returned the sorted list: ");
       console.log(arrS);
       sendToServer(arrS);
+     //sendToServer(arrS.buffer);
+
     }
   } else {
     console.log("Browser does not support webworkers. ");
@@ -112,7 +115,7 @@ async function pingTimer(pingInterval = 5_000){
 
 async function sendToServer(array) // temp function
 {
-  fetch('/upload-sorted-array', {
+  await fetch('/upload-sorted-array', {
     method: 'POST',
     headers: {
       "Content-Type": "application/octet-stream",

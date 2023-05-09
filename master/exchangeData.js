@@ -23,37 +23,33 @@ function streamArrayToClient(res, buffer) {
 
 }
 
-async function receiveArray(req, res) {
-  return new Promise((resolve, reject) => {
+async function receiveArray(req) {
+  return new Promise((resolve) => {
     const chunks = [];
 
-    req.on("data", (chunk) => {
+    req.on('data', chunk => {
       chunks.push(chunk);
     });
 
-    req.on("end", () => {
-      const data = Buffer.concat(chunks);
+    req.on('end', () => {
+      // Concatenate the received chunks into a single Buffer
+      const buffer = Buffer.concat(chunks);
 
-      res.writeHead(204);
-      res.end();
+      // Create a UInt32Array from the Buffer
+      const uint32Array = new Uint32Array(buffer.buffer, buffer.byteOffset, buffer.byteLength / Uint32Array.BYTES_PER_ELEMENT);
 
-      resolve(data);
-    });
-
-    req.on("error", (err) => {
-      console.error(err);
-      res.writeHead(400);
-      res.end();
-
-      reject(err);
+      // Resolve the promise with the UInt32Array
+      resolve(uint32Array);
     });
   });
 }
 
-async function receiveArrayFromClient(req, res)
-{
-  const result = await receiveArray(req, res);
+async function receiveArrayFromClient(req, res) {
+  const result = await receiveArray(req);
   console.log(result);
+
+  res.statusCode = 200;
+  res.end();
   return result;
 }
 
