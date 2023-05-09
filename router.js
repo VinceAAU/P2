@@ -338,7 +338,7 @@ async function giveNewTask(req, res) {
     
     //moveTaskFromReservedTosorted(workerUUID);
     
-    taskCounter;
+    taskCounter();
     giveTask(req, res);
 }
 
