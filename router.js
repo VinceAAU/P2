@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import NodeCache from "node-cache";
 //import { env } from 'process';asd
 
-export { requestHandler, fileResponse, fileExists };
+export { requestHandler, fileResponse };
 
 //function imports from other .js files
 import { search_db } from "./master/db.js";
@@ -294,7 +294,7 @@ async function handleFileQueue(req, res) {
     console.log(authHeader);
     console.log("\n");
     const tempToken = authHeader.split(' ')[1];
-    const user = tempToken.split('.')[0];
+    const user = tempToken.split('.')[1];
 
     let userTaskArray = await getTaskByUser(user);
     console.log(userTaskArray);
