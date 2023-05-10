@@ -3,10 +3,10 @@ import fs from "fs/promises";
 export { savePendingQueue, addCustomerQueue, removeCustomerQueue, getUserQueueHead, getTaskQueueHead, pendingQueueToFinishedQueue, loadPendingQueue, getTaskByUser };
 
 // Start by creating needed queue arrays
-let pendingUserQueue = [""];
-let pendingTaskQueue = [""];
-let finishedUserQueue = [""];
-let finishedTaskQueue = [""];
+let pendingUserQueue = [];
+let pendingTaskQueue = [];
+let finishedUserQueue = [];
+let finishedTaskQueue = [];
 
 async function addCustomerQueue(user, task) {
     await loadPendingQueue();
