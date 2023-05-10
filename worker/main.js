@@ -17,7 +17,7 @@ async function toggleStartButton() {
     button.textContent = "Disconnect";
     hackerman.style.visibility = "visible";
 
-    fetch('request-worktask', {
+    fetch('requestFirstTask', {
 	method: 'GET',
 	headers: {
 		'UUID': UUID
@@ -55,6 +55,11 @@ async function toggleStartButton() {
     button.textContent = "Start";
     hackerman.style.visibility = "hidden";
   }
+}
+
+function requestTask()
+{
+
 }
 
 function startWorkerSort(receivedArray) {
@@ -112,11 +117,12 @@ async function pingTimer(pingInterval = 5_000){
 
 async function sendToServer(array) // temp function
 {
-  fetch('/upload-sorted-array', {
+  fetch('/requestNewTask', {
     method: 'POST',
     headers: {
       "Content-Type": "application/octet-stream",
-      "Content-Length": array.length
+      "Content-Length": array.length,
+      'UUID': UUID
     },
     body: array
   });
