@@ -4,9 +4,9 @@ import random
 import threading
 
 # Set the file name and the number of rows and columns
-file_name = "random_numbers_average.csv"
+file_name = "random_numbers_300_megabytes.csv"
 num_rows = 100
-num_cols = 10_000_000
+num_cols = 3_00_000
 
 # Create a lock to synchronize access to the file
 lock = threading.Lock()

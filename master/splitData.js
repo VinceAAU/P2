@@ -1,6 +1,5 @@
 import fs from "fs/promises";
 import { getTaskQueueHead } from "./queue.js";
-import { fileExists } from "../router.js"
 
 export { BucketList };
 
@@ -43,6 +42,8 @@ class  BucketList
     const fileSize = fileStats.size;
 
     const bucketAmount = BucketList.bucketAmount(fileSize);
+
+    console.log(`Bucket amount: ${bucketAmount}`);
 
     let bucketList = new BucketList(bucketAmount, 1_000_000_000, 1_000_000_000);
   
