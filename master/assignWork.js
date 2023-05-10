@@ -1,14 +1,17 @@
-// import { taskSplitter } from "./splitData.js";
 import { addWorker } from "./workerManagement.js";
 import {getTaskQueueHead, pendingQueueToFinishedQueue} from "./queue.js";
 export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, WorkerNode, taskCounter };
 
+// Variables for the sorted tasks and merging
+let taskCount = 0;
+let sortedBuckets = [];
+
+// Variables for the queue of tasks
 let allTasks = [];
 let availableTaskIndices = [];
 
 let qHead;
 let qTail;
-let taskCount = 0;
 
 function enqueueTask(taskIndex) {
     availableTaskIndices[qTail] = taskIndex;
@@ -38,12 +41,13 @@ async function assignWorkToWorker(workerUUID) {
 
     if (qHead === qTail) {
         console.log("Completed sorting. ");
+        addWorker(workerUUID, null);
         return null; // add some handling; if null is returned something is wrong.
     } else {
         let taskForWorker = dequeueTask();
         // Call a function here to add userID and sortTaskForWorker to a form of reservation list.
-        addWorker(workerUUID, false, taskForWorker);
-        return [false, allTasks[taskForWorker]];
+        addWorker(workerUUID, taskForWorker);
+        return allTasks[taskForWorker];
     }
 }
 
@@ -52,10 +56,9 @@ class WorkerNode {
     //let currentTask;
     //let lastPing;
 
-    constructor(merge, task){
+    constructor(task){
         this.currentTask = task;
         this.lastPing = new Date().getTime();
-        this.isMerging = merge;
     }
 }
 

@@ -21,8 +21,8 @@ async function heartbeat(nodes){
     await new Promise(r => setTimeout(r, 5000)); //I swear, there's no better way to do sleep()
 }
 
-function addWorker(uuid, merge, task){
-    workers[uuid].lastPing = new WorkerNode(merge, task);
+function addWorker(uuid, task){
+    workers[uuid].lastPing = new WorkerNode(task);
 }
 
 /**
