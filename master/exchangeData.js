@@ -6,11 +6,9 @@ import path from 'path';
 
 export { handleUpload, streamArrayToClient, receiveArrayFromClient }
 
-function streamArrayToClient(res, array) {
+function streamArrayToClient(res, buffer) {
 
   const readable = new Readable();
-
-  const buffer = Buffer.from(array.buffer); 
 
   readable._read = () => { };
   readable.push(buffer);
@@ -25,33 +23,37 @@ function streamArrayToClient(res, array) {
 
 }
 
-async function receiveArray(req) {
-  return new Promise((resolve) => {
+async function receiveArray(req, res) {
+  return new Promise((resolve, reject) => {
     const chunks = [];
 
-    req.on('data', chunk => {
+    req.on("data", (chunk) => {
       chunks.push(chunk);
     });
 
-    req.on('end', () => {
-      // Concatenate the received chunks into a single Buffer
-      const buffer = Buffer.concat(chunks);
+    req.on("end", () => {
+      const data = Buffer.concat(chunks);
 
-      // Create a UInt32Array from the Buffer
-      const uint32Array = new Uint32Array(buffer.buffer, buffer.byteOffset, buffer.byteLength / Uint32Array.BYTES_PER_ELEMENT);
+      res.writeHead(204);
+      res.end();
 
-      // Resolve the promise with the UInt32Array
-      resolve(uint32Array);
+      resolve(data);
+    });
+
+    req.on("error", (err) => {
+      console.error(err);
+      res.writeHead(400);
+      res.end();
+
+      reject(err);
     });
   });
 }
 
-async function receiveArrayFromClient(req, res) {
-  const result = await receiveArray(req);
+async function receiveArrayFromClient(req, res)
+{
+  const result = await receiveArray(req, res);
   console.log(result);
-
-  res.statusCode = 200;
-  res.end();
   return result;
 }
 
