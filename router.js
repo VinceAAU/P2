@@ -1,7 +1,6 @@
 import formidable from 'formidable';
 import fs from "fs/promises";
 import NodeCache from "node-cache";
-import fs2 from "fs";
 //import { env } from 'process';asd
 
 export { requestHandler, fileResponse };
@@ -310,11 +309,12 @@ async function downloadFile(req, res) {
         const fileSize = stat.size;
         const headers = { 'Content-Type': 'text/csv', 'Content-Length': fileSize, 'Content-Disposition': 'attachment; filename=test.csv', };
         res.writeHead(200, headers);
-        fs2.createReadStream(filePath).pipe(res);
+
+        let file = await fs.open(filePath);
+        file.createReadStream().pipe(res); //createReadStream closes the file handle automatically (by default)
 
     } catch (error) {
-        console.log(cache);
-        return (cache.path);
+        console.log(error);
     }
 }
 
