@@ -60,11 +60,12 @@ class WorkerNode {
 }
 
 
-async function taskCounter()
-taskCount += 1;
-if (taskCount >= buckets.length) {
-    await bucketConcatenate();
-    taskCount = 0;
+async function taskCounter(){
+    taskCount++;
+    if (taskCount >= buckets.length) {
+        await bucketConcatenate();
+        taskCount = 0;
+    }
 }
 
 async function bucketConcatenate() {
