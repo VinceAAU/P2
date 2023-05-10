@@ -61,8 +61,8 @@ class  BucketList
       if(fd_read_return.bytesRead === 0) { //Checks end of file
         break;
       }
-  
-      let array_buffer = (buffer + '')
+      let string_buffer = buffer.toString('utf-8', 0, fd_read_return.bytesRead);
+      let array_buffer = string_buffer
                       .replace('\n', ',').replace('\r', ',')
                       .split(',').map((value, uselessOne, uselessTwo) => {
                           return Number(value);
