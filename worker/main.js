@@ -24,14 +24,7 @@ async function toggleStartButton() {
 	}
     })
       .then(async data => {
-        console.log("Received array from server:");
-        console.log(data);
-        const buffer = await data.arrayBuffer();
-        const convertedArray = new Uint32Array(buffer);
-        console.log("Array as Uint32Array:");
-        console.log(convertedArray);
-      // startWorkerMerge(convertedArray, 0, 2);
-        startWorker(convertedArray);
+        handleReceivedData(data);
       })
       .catch(error => console.error(error));
 
@@ -91,10 +84,20 @@ async function pingTimer(pingInterval = 5_000){
   }
 }
 
+async function handleReceivedData(data) {
+  console.log("Received array from server:");
+  console.log(data);
+  const buffer = await data.arrayBuffer();
+  const convertedArray = new Uint32Array(buffer);
+  console.log("Array as Uint32Array:");
+  console.log(convertedArray);
+  startWorker(convertedArray);
+}
 
-async function sendToServer(array) // temp function
+
+async function sendToServer(array) 
 {
-  fetch('/requestNewTask', {
+  await fetch('/requestNewTask', {
     method: 'POST',
     headers: {
       "Content-Type": "application/octet-stream",
@@ -102,6 +105,9 @@ async function sendToServer(array) // temp function
       'UUID': UUID
     },
     body: array
-  });
+  }) .then(async data => {
+    handleReceivedData(data); // recursive, worker eventually calls sendToServer. Idk if that's a bad way to do it?
+  })
+  .catch(error => console.error(error));
 }
 
