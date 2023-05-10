@@ -7,7 +7,7 @@ export { requestHandler, fileResponse };
 
 //function imports from other .js files
 import { search_db } from "./master/db.js";
-import { handleUpload, streamArrayToClient, receiveArrayFromClient } from "./master/exchangeData.js";
+import { handleUpload, streamArrayToClient, receiveArray } from "./master/exchangeData.js";
 import { search, passwords } from "./master/forgotPassword.js";
 import { validateNewUser } from "./master/createUser.js";
 import { returnToken, authenticateToken, returnTokenErr } from './master/tokenHandler.js';
@@ -180,7 +180,7 @@ function requestHandler(req, res) {
             res.end();
             break;
         case "/upload-sorted-array":
-            const data = receiveArrayFromClient(req, res);
+            const data = receiveArray(req, res);
             console.log(data);
             break;
         default:
@@ -332,7 +332,7 @@ async function giveTask(req, res) {
 async function giveNewTask(req, res) {
     let workerUUID = req.getHeader("UUID");
 
-    //NEED TO HANDLE SAVING THE RETURNED ARRAY
+    let recievedTask = await receiveArray(req, res)
     
     //moveTaskFromReservedTosorted(workerUUID);
     
