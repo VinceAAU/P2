@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import NodeCache from "node-cache";
 //import { env } from 'process';asd
 
-export { requestHandler, fileResponse };
+export { requestHandler, fileResponse, fileExists };
 
 //function imports from other .js files
 import { search_db } from "./master/db.js";
