@@ -2,6 +2,9 @@ import { addWorker } from "./workerManagement.js";
 import {getTaskQueueHead, pendingQueueToFinishedQueue} from "./queue.js";
 export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, WorkerNode, taskCounter };
 
+// Constants
+const possibleValues = 1_000_000_000;
+
 // Variables for the sorted tasks and merging
 let taskCount = 0;
 let sortedBuckets = [];
@@ -62,10 +65,16 @@ class WorkerNode {
     }
 }
 
+// Put the sorted bucket into the correct position of the sortedBuckets array.
+function storeSortedBuckets(bucket) {
+    let indexForSortedBucket = Math.floor(bucket[0]/(possibleValues/allTasks.length));
+    sortedBuckets[indexForSortedBucket] = bucket;
+}
+
 
 async function taskCounter(){
     taskCount++;
-    if (taskCount >= buckets.length) {
+    if (taskCount >= allTasks.length) {
         await bucketConcatenate();
         taskCount = 0;
     }

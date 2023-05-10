@@ -31,7 +31,7 @@ async function toggleStartButton() {
         console.log("Array as Uint32Array:");
         console.log(convertedArray);
       // startWorkerMerge(convertedArray, 0, 2);
-        startWorkerSort(convertedArray);
+        startWorker(convertedArray);
       })
       .catch(error => console.error(error));
 
@@ -57,7 +57,7 @@ async function toggleStartButton() {
   }
 }
 
-function startWorkerSort(receivedArray) {
+function startWorker(receivedArray) {
   if (window.Worker) {
     const workerSort = new Worker("/workerSort.js");
 
@@ -69,24 +69,6 @@ function startWorkerSort(receivedArray) {
       console.log("Worker returned the sorted list: ");
       console.log(arrS);
       sendToServer(arrS);
-    }
-  } else {
-    console.log("Browser does not support webworkers. ");
-  }
-}
-
-// rightStart assumes the first array is 10 million elements if not otherwise specified.
-function startWorkerMerge(nestedArray) {
-  if (window.Worker) {
-    const workerSort = new Worker("/workerMerge.js");
-
-    workerSort.postMessage(nestedArray, [nestedArray.buffer]);
-    console.log("Block of work posted to the worker. ");
-
-    workerSort.onmessage = function (e) {
-      let arrM = new Uint32Array(e.data[1]);
-      console.log("Worker returned the merged list: ");
-      console.log(arrM);
     }
   } else {
     console.log("Browser does not support webworkers. ");

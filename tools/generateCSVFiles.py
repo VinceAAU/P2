@@ -16,7 +16,7 @@ def worker():
     with lock:
         with open(file_name, "a", newline="") as csvfile:
             writer = csv.writer(csvfile)
-            row = [random.randint(0, 1_000_000_000) for j in range(num_cols)]
+            row = [random.randint(0, 999_999_999) for j in range(num_cols)]
             writer.writerow(row)
 
 # Create a list of worker threads and start them
