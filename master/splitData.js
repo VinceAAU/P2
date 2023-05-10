@@ -3,7 +3,8 @@ import { getTaskQueueHead } from "./queue.js";
 
 export { BucketList };
 
-class BucketList{
+class  BucketList
+{
   buckets = [];
   bucketInterval = 0;
 
@@ -94,8 +95,8 @@ class BucketList{
     return returnList;
   }
 
-  static fromQueue(){
-    return BucketList.fromFile(getTaskQueueHead() + '.csv');
+  static async fromQueue(){
+    return await BucketList.fromFile(getTaskQueueHead() + '.csv');
   }
 }
 
