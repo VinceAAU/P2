@@ -93,9 +93,9 @@ async function bucketConcatenate() {
     allTasks = [];
     sortedBuckets = [];
 }
-
+/*
 // Debugging
 console.log("Pre-call");
 const getTask = await assignWorkToWorker("tis");
 console.log(getTask);
-console.log("Post-call");
+console.log("Post-call");*/
