@@ -323,9 +323,7 @@ async function downloadFile(req, res) {
 
 async function giveTask(req, res) {
     let task = await assignWorkToWorker(req.getHeader("UUID"));
-    if (task == null) {
-        //Needs function that updates worker to "FREE"
-    } else {
+    if (task !== null) {
         streamArrayToClient(task);
     }
 
