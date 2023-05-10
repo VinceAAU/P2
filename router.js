@@ -43,7 +43,7 @@ const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
 
 
 function requestHandler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:3000');
+    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:3190');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     if (req.method === 'OPTIONS') {
@@ -53,7 +53,7 @@ function requestHandler(req, res) {
     }
     console.log("New request: " + req.method + " " + req.url);
 
-    let baseURL = 'http://' + req.headers.host + '/';
+    let baseURL = "https://cs-23-sw-2-12.p2datsw.cs.aau.dk/node0/";
     let url = new URL(req.url, baseURL);
     //let form = new formidable.IncomingForm();
 
