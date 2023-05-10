@@ -1,6 +1,6 @@
 import { addWorker } from "./workerManagement.js";
 import {getTaskQueueHead, pendingQueueToFinishedQueue} from "./queue.js";
-export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, WorkerNode, taskCounter };
+export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, WorkerNode, taskCounter, storeSortedBuckets };
 
 // Constants
 const possibleValues = 1_000_000_000;

@@ -14,7 +14,7 @@ import { returnToken, authenticateToken, returnTokenErr } from './master/tokenHa
 import { securePath, throw_user, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
 import { savePendingQueue, addCustomerQueue, removeCustomerQueue, getTaskQueueHead, getUserQueueHead, pendingQueueToFinishedQueue, getTaskByUser } from './master/queue.js';
 import { pong } from './master/workerManagement.js'
-import { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, WorkerNode, taskCounter } from './master/assignWork.js';
+import { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, WorkerNode, taskCounter, storeSortedBuckets } from './master/assignWork.js';
 
 //HTML and CSS file paths
 const loginPath = '/worker/html/login.html';
@@ -331,11 +331,9 @@ async function giveTask(req, res) {
 
 async function giveNewTask(req, res) {
     let workerUUID = req.getHeader("UUID");
-
     let recievedTask = await receiveArray(req, res)
     
-    //moveTaskFromReservedTosorted(workerUUID);
-    
+    storeSortedBuckets(recievedTask);
     taskCounter();
     giveTask(req, res);
 }
