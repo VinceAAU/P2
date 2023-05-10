@@ -333,7 +333,7 @@ async function giveNewTask(req, res) {
     let recievedTask = await receiveArray(req, res)
 
     storeSortedBuckets(recievedTask);
-    taskCounter();
+    await taskCounter();
     await giveTask(req, res);
 }
 
