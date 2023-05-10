@@ -7,7 +7,7 @@ export { requestHandler, fileResponse };
 
 //function imports from other .js files
 import { search_db } from "./master/db.js";
-import { handleUpload, streamArrayToClient, receiveArray } from "./master/exchangeData.js";
+import { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToClient } from "./master/exchangeData.js";
 import { search, passwords } from "./master/forgotPassword.js";
 import { validateNewUser } from "./master/createUser.js";
 import { returnToken, authenticateToken, returnTokenErr } from './master/tokenHandler.js';
@@ -298,7 +298,7 @@ async function handleFileQueue(req, res) {
 
     let userTaskArray = await getTaskByUser(user);
     console.log(userTaskArray);
-    streamArrayToClient(res, Buffer.from(userTaskArray));
+    streamStringArrayToClient(res, userTaskArray);
 }
 
 async function downloadFile(req, res) {

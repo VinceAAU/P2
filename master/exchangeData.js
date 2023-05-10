@@ -3,7 +3,7 @@ import { Readable } from 'stream';
 import { addCustomerQueue } from './queue.js';
 import path from 'path';
 
-export { handleUpload, streamArrayToClient, receiveArray };
+export { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToClient };
 
 function streamArrayToClient(res, array) {
 
@@ -98,4 +98,20 @@ async function downloadFile(form, req) {
       });
     });
   });
+}
+
+function streamStringArrayToClient(res, array) {
+  const jsonString = JSON.stringify(array);
+  const buffer = Buffer.from(jsonString, "utf-8");
+  const readable = new Readable();
+
+  readable._read = () => { };
+  readable.push(buffer);
+  readable.push(null);
+
+  res.writeHead(200, {
+    "Content-Type": "application/json",
+    "Content-Length": buffer.length,
+  });
+  readable.pipe(res);
 }
