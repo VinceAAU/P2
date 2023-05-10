@@ -1,10 +1,10 @@
 import fs from "fs";
 import { Readable } from "stream";
 import formidable from "formidable";
-import { addCustomerQueue } from './queue.js'
-import path from 'path';
+import { addCustomerQueue } from "./queue.js";
+import path from "path";
 
-export { handleUpload, streamArrayToClient, receiveArrayFromClient }
+export { handleUpload, streamArrayToClient, receiveArray };
 
 function streamArrayToClient(res, buffer) {
 
@@ -48,13 +48,6 @@ async function receiveArray(req, res) {
       reject(err);
     });
   });
-}
-
-async function receiveArrayFromClient(req, res)
-{
-  const result = await receiveArray(req, res);
-  console.log(result);
-  return result;
 }
 
 async function handleUpload(form, req, user) { 

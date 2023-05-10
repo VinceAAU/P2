@@ -95,8 +95,9 @@ class  BucketList
     return returnList;
   }
 
-  static async fromQueue(){
-    return await BucketList.fromFile(getTaskQueueHead() + '.csv');
+  static async fromQueue() {
+    let taskQHead = await getTaskQueueHead();
+    return await BucketList.fromFile(taskQHead);
   }
 }
 
@@ -118,8 +119,9 @@ class Bucket{
   }
 }
 
+/*
 // Debugging:
 console.log("Pre-call");
 const bigData = await BucketList.fromFile("/home/vince/Documents/aau/P2/repo/tools/random_numbers_average.csv"); //adjust file path for debugging.
 console.log("Post-call");
-console.log(bigData); // Result
+console.log(bigData); // Result */
