@@ -331,10 +331,10 @@ async function giveTask(req, res) {
 
 async function giveNewTask(req, res) {
     let recievedTask = await receiveArray(req, res)
-    
+
     storeSortedBuckets(recievedTask);
     taskCounter();
-    giveTask(req, res);
+    await giveTask(req, res);
 }
 
 async function redirectToHandleUpload(req, res) {
