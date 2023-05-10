@@ -1,4 +1,4 @@
-import { writeFileSync, existsSync, mkdirSync } from "fs";
+import { existsSync } from "fs";
 import fs from "fs/promises";
 export { savePendingQueue, addCustomerQueue, removeCustomerQueue, getUserQueueHead, getTaskQueueHead, pendingQueueToFinishedQueue, loadPendingQueue, getTaskByUser };
 
@@ -46,7 +46,7 @@ async function csvMaker(data) {    //Takes the data arrays that it is given and 
     const headers = Object.keys(data);
     csvRows.push(headers.join(','));
 
-    const values = Object.values(data).join(',\n');
+    const values = Object.values(data).join('\n');
     csvRows.push(values);
 
     return csvRows.join('\n');
