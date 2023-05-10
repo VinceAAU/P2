@@ -34,7 +34,7 @@ async function getUserQueueHead() {
 async function getTaskQueueHead() {
     await loadPendingQueue();
     if (pendingTaskQueue.length === 0) {
-        return console.log("Task que is empty");
+        return null;
     } else {
         return pendingTaskQueue[0];
     }
