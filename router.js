@@ -330,7 +330,6 @@ async function giveTask(req, res) {
 }
 
 async function giveNewTask(req, res) {
-    let workerUUID = req.getHeader("UUID");
     let recievedTask = await receiveArray(req, res)
     
     storeSortedBuckets(recievedTask);
