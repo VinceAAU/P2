@@ -38,9 +38,14 @@ async function assignWorkToWorker(workerUUID) {
 
     if (allTasks.length === 0) {
         allTasks = await BucketList.fromQueue();
-        availableTaskIndices = Array.from({length: allTasks.length + 1}, (_, i) => i);
-        qHead = 0;
-        qTail = availableTaskIndices.length;
+        if (allTasks !== null) {
+            availableTaskIndices = Array.from({length: allTasks.length + 1}, (_, i) => i);
+            qHead = 0;
+            qTail = availableTaskIndices.length;
+        } else {
+            qHead = 0;
+            qTail = 0;
+        }
     }
 
     if (qHead === qTail) {
