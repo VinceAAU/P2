@@ -6,7 +6,7 @@ import {WorkerNode} from './assignWork.js';
 
 export { workers, addWorker, pong };
 
-const workers = {};
+var workers = {};
 
 const timeout = 10_000;
 async function heartbeat(nodes){
@@ -22,7 +22,8 @@ async function heartbeat(nodes){
 }
 
 function addWorker(uuid, task){
-    workers[uuid].lastPing = new WorkerNode(task);
+    if(workers===undefined) { workers = {}; }
+    workers[uuid] = new WorkerNode(task);
 }
 
 /**

@@ -1,5 +1,6 @@
 import { addWorker } from "./workerManagement.js";
 import {getTaskQueueHead, pendingQueueToFinishedQueue} from "./queue.js";
+import { BucketList } from "./splitData.js";
 export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, WorkerNode, taskCounter, storeSortedBuckets };
 
 // Constants
@@ -36,7 +37,7 @@ function dequeueTask() {
 async function assignWorkToWorker(workerUUID) {
 
     if (allTasks.length === 0) {
-        allTasks = await taskSplitter(); // Change this await to whatever Vincent's cookin'
+        allTasks = await BucketList.fromQueue();
         availableTaskIndices = Array.from({length: allTasks.length + 1}, (_, i) => i);
         qHead = 0;
         qTail = availableTaskIndices.length;
@@ -92,3 +93,9 @@ async function bucketConcatenate() {
     allTasks = [];
     sortedBuckets = [];
 }
+/*
+// Debugging
+console.log("Pre-call");
+const getTask = await assignWorkToWorker("tis");
+console.log(getTask);
+console.log("Post-call");*/

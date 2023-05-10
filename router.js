@@ -3,7 +3,7 @@ import fs from "fs/promises";
 import NodeCache from "node-cache";
 //import { env } from 'process';asd
 
-export { requestHandler, fileResponse };
+export { requestHandler, fileResponse, fileExists };
 
 //function imports from other .js files
 import { search_db } from "./master/db.js";
@@ -322,19 +322,19 @@ async function downloadFile(req, res) {
 
 
 async function giveTask(req, res) {
-    let task = await assignWorkToWorker(req.getHeader("UUID"));
+    let task = await assignWorkToWorker(req.headers["UUID"]);
     if (task !== null) {
-        streamArrayToClient(task);
+        streamArrayToClient(res, task);
     }
 
 }
 
 async function giveNewTask(req, res) {
     let recievedTask = await receiveArray(req, res)
-    
+
     storeSortedBuckets(recievedTask);
     taskCounter();
-    giveTask(req, res);
+    await giveTask(req, res);
 }
 
 async function redirectToHandleUpload(req, res) {
