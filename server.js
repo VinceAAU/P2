@@ -30,7 +30,6 @@ function redirect(req, res, path) {
 }
 
 function extractForm(req) { //cg addin explanation due
-  console.log(req.headers)
   if (isFormEncoded(req.headers['content-type']))
     return collectPostBody(req).then(body => {
       const data = qs.parse(body);
@@ -43,7 +42,6 @@ function extractForm(req) { //cg addin explanation due
 
 //stay
 function isFormEncoded(contentType) {//cg addin explanation due
-  console.log(contentType);
   let ctType = contentType.split(";")[0];
   ctType = ctType.trim();
   return (ctType === "application/x-www-form-urlencoded");
