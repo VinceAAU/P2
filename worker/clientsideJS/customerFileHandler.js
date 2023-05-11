@@ -72,6 +72,7 @@ form.addEventListener('submit', async (event) => {
   } catch (error) {
     console.log(error)
   }
+  location.reload();
 });
 
 async function downloadFileFromServer(e) {
