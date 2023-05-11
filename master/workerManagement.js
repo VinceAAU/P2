@@ -9,11 +9,11 @@ export { workers, addWorker, pong };
 var workers = {};
 
 const timeout = 10_000;
-async function heartbeat(nodes){
-    for(uuid in nodes){
-        if(nodes[uuid].lastPing < Date.now()+timeout){
+async function heartbeat(){
+    for(uuid in workers){
+        if(workers[uuid].lastPing < Date.now()+timeout){
             console.log(`Worker ${uuid} is dead!!!!`);
-            addToBeginningOfQueue(nodes[uuid].curentTask);
+            addToBeginningOfQueue(workers[uuid].curentTask);
             delete workers[uuid];
         }
     }
