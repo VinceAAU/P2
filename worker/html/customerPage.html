@@ -2,16 +2,16 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="/style.css">
-    <script type="module" defer src="/accessToken.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" defer src="accessToken.js"></script>
 </head>
 
 <body>
     <h1>Customer Page</h1>
-    <button class="indexbutton" type="button" name="Worker" onclick="location.href='/workerPage.html'">Worker</button>
+    <button class="indexbutton" type="button" name="Worker" onclick="location.href='workerPage.html'">Worker</button>
     <button class="indexbutton" type="button" onclick="location.href='/'">Log out</button>
     <div id="error-message"></div> <!-- error message element -->
-    <form action="/upload" id="upload-form" enctype="multipart/form-data">
+    <form action="upload" id="upload-form" enctype="multipart/form-data">
         <!-- HTML5 file upload selector-->
         <input type="file" name="fileupload" accept=".csv">
         <br>
@@ -22,6 +22,6 @@
 
     <p id="numFiles">Number of files uploaded 0</p> <!-- Element to display the number of stored files -->
 </body>
-<script src="/customerFileHandler.js"></script>
+<script src="customerFileHandler.js"></script>
 
 </html>

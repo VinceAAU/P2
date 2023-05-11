@@ -7,7 +7,7 @@ let headers = {
   'Authorization': `Bearer ${accessToken}`
 };
 
-fetch('/get-task-list-by-user', { headers })
+fetch('get-task-list-by-user', { headers })
   .then(response => response.json())
   .then(data => {
     let numFiles = document.querySelector("#numFiles");
@@ -60,7 +60,7 @@ form.addEventListener('submit', async (event) => {
   formData.append('fileupload', fileInput.files[0]);
 
   try {
-    const response = await fetch('/upload', {
+    const response = await fetch('upload', {
       method: 'POST',
       headers,
       body: formData
@@ -79,7 +79,7 @@ async function downloadFileFromServer(e) {
   headers = {
     'url': e.target.id
   };
-  await fetch('/download', { headers })
+  await fetch('download', { headers })
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');

@@ -22,7 +22,7 @@ async function toggleLogin(event) {
     bodyData.append('passwordConfirmation', passwordConfirmation['value']);
 
     try {
-        const response = await fetch('/createUser', {
+        const response = await fetch('createUser', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -42,7 +42,7 @@ async function toggleLogin(event) {
             }
         } else {
             console.log("response OK")
-            window.location.href = '/login.html';
+            window.location.href = 'login.html';
         }
     } catch (error) {
         console.error(error);

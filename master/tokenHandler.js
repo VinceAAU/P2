@@ -4,7 +4,8 @@ import {errorResponse} from '../server.js'
 import dotenv from 'dotenv';
 dotenv.config();
 
-const acccesTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+//const acccesTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+const acccesTokenSecret = "473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0";
 
 export { returnToken, authenticateToken, returnTokenErr, decodeToken }
 
@@ -12,7 +13,7 @@ export { returnToken, authenticateToken, returnTokenErr, decodeToken }
 //
 function returnToken(req, res, username) {
     console.log("return token with user: " + username)
-    
+    console.log(acccesTokenSecret);
     const user = { name: username }
     const accessToken = jwt.sign(user, acccesTokenSecret);
     res.statusCode = 201;

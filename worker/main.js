@@ -52,7 +52,7 @@ async function toggleStartButton() {
 
 function startWorker(receivedArray) {
   if (window.Worker) {
-    const workerSort = new Worker("/workerSort.js");
+    const workerSort = new Worker("workerSort.js");
 
     workerSort.postMessage(receivedArray, [receivedArray.buffer]);
     console.log("Block of work posted to the worker. ");
@@ -97,7 +97,7 @@ async function handleReceivedData(data) {
 
 async function sendToServer(array) 
 {
-  await fetch('/requestNewTask', {
+  await fetch('requestNewTask', {
     method: 'POST',
     headers: {
       "Content-Type": "application/octet-stream",
