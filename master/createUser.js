@@ -5,7 +5,6 @@ export { validateNewUser };
 
 //Receives data from POST in server.js from create_user.html to be hashed
 function hashing(raw_data) { //to be made
-  console.log("Hashing"); //blaze it
   let hashed = raw_data; //thats one way to do it
   return (hashed);
 };
@@ -13,7 +12,6 @@ function hashing(raw_data) { //to be made
 
 //Purpose: To look for unique credentials and matching passwords, returns data to be handled
 function validateNewUser(user_info) {
-  console.log(user_info)
   let return_object = { mail: user_info.mail, username: user_info.username };
   console.log("validify new user");
   console.log('name: ' + user_info.username);

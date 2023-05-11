@@ -117,7 +117,6 @@ function requestHandler(req, res) {
             streamArrayToClient(res, Buffer.from(new Uint32Array([5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]).buffer)); // Example array
             break;
         case "/posts":
-            console.log("posts");
             authenticateToken(req, res);
             break;
         case "/enterNewPassword":
@@ -135,11 +134,9 @@ function requestHandler(req, res) {
             handleUserCreation(req, res);
             break;
         case "/protectedResource": //called from
-            console.log("protectedResource called");
             authenticateToken(req, res);
             break;
         case "/fetchUser":
-            console.log("post login-attempt");
             extractForm(req)
                 .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
                 .then(user => returnToken(req, res, user))
@@ -178,10 +175,6 @@ function requestHandler(req, res) {
             //possible TODO: Check for authentication?
             pong(req.headers["uuid"]);
             res.end();
-            break;
-        case "/upload-sorted-array":
-            const data = receiveArray(req, res);
-            console.log(data);
             break;
         default:
             //fileResponse(res, "." + url.pathname); //TODO: DELETE THIS LINE AND UNCOMMENT THE NEXT ONE //Thanks Lasse <3
@@ -242,8 +235,6 @@ async function fileResponse(res, filename) {
         const data = await fs.readFile(sPath);
         res.statusCode = 200;
         res.setHeader('Content-Type', guessMimeType(sPath));
-        //console.log('Content-Type', guessMimeType(sPath))
-        //console.log(res.headers)
         res.write(data);
         res.end('\n');
     } catch (err) {
@@ -266,7 +257,6 @@ async function fileExists(filename) {
 function saveCachePath(path) {
     let cache = myCache.get("myPath");
     if (cache != undefined) {
-        console.log("resetting cache");
         let success = myCache.set("myPath", null, 100);
         saveCachePath(path);
     } else {
@@ -279,7 +269,6 @@ function saveCachePath(path) {
 function getCache() {
     let cache = myCache.get("myPath");
     if (cache == undefined) {
-        console.log("key not found");
         return ("/index.html")
     } else {
         console.log(cache);
@@ -291,7 +280,6 @@ async function handleFileQueue(req, res) {
     const user = decodeToken(req)
 
     let userTaskArray = await getTaskByUser(user);
-    console.log(userTaskArray);
     streamStringArrayToClient(res, userTaskArray);
 }
 
