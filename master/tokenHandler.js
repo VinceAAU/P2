@@ -6,7 +6,7 @@ dotenv.config();
 
 const acccesTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 
-export { returnToken, authenticateToken, returnTokenErr }
+export { returnToken, authenticateToken, returnTokenErr, decodeToken }
 
 
 //
@@ -30,7 +30,7 @@ function authenticateToken(req, res, next) {
 
     jwt.verify(token, acccesTokenSecret, (err, user) => {
         if (err) return returnTokenErr(res, 403, err)
-        
+        decodeToken(req,res)
         console.log("token authenticated")
         res.statusCode = 201;
         res.setHeader('Content-Type', 'text/txt');
@@ -43,4 +43,14 @@ function returnTokenErr(res, code, err) {
     console.log(err)
     res.statusCode = code;
     res.end("\n");
-}
+};
+
+function decodeToken(req) {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    const decodedToken = jwt.decode(token, { complete: true });
+    const payload = decodedToken.payload;
+    const username = payload.name;
+    return username;
+  };
+  
