@@ -19,7 +19,7 @@ async function toggleLogin(event) {
   bodyData.append('password', password['value']);
 
   try {
-    const response = await fetch('/fetchUser', {
+    const response = await fetch('fetchUser', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -41,7 +41,7 @@ async function toggleLogin(event) {
     if (tokenResponse.ok) {
       console.log("response OK")
       saveData(data.accessToken, retrieved.UUID)
-      window.location.href = '/loggedIn';// getCache();//'/page.html';
+      window.location.href = 'loggedIn';// getCache();//'/page.html';
     } else {
       console.log('Response not ok');
     }
@@ -52,7 +52,7 @@ async function toggleLogin(event) {
 
 async function tokenExchange(data){
   try {
-    const response = await fetch('/posts', {
+    const response = await fetch('posts', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${data.accessToken}`}
     });

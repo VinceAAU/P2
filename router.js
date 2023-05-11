@@ -146,12 +146,12 @@ function requestHandler(req, res) {
                 .catch(thrown_error => returnTokenErr(res, 401, thrown_error)); //401: unauthorized
             break;
         case "/worker":
-            saveCachePath("/workerPage.html");
-            redirect(req, res, "/login.html");
+            saveCachePath("workerPage.html");
+            redirect(req, res, "login.html");
             break;
         case "/customer":
-            saveCachePath("/customerPage.html");
-            redirect(req, res, "/login.html");
+            saveCachePath("customerPage.html");
+            redirect(req, res, "login.html");
             break;
         case "/loggedIn":
             redirect(req, res, getCache());
@@ -280,7 +280,7 @@ function getCache() {
     let cache = myCache.get("myPath");
     if (cache == undefined) {
         console.log("key not found");
-        return ("/index.html")
+        return ("index.html")
     } else {
         console.log(cache);
         return (cache.path);
