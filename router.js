@@ -7,14 +7,14 @@ export { requestHandler, fileResponse };
 
 //function imports from other .js files
 import { search_db } from "./master/db.js";
-import { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToClient } from "./master/exchangeData.js";
+import { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToClient, decodeToken } from "./master/exchangeData.js";
 import { search, passwords } from "./master/forgotPassword.js";
 import { validateNewUser } from "./master/createUser.js";
 import { returnToken, authenticateToken, returnTokenErr } from './master/tokenHandler.js';
 import { securePath, throw_user, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
-import { savePendingQueue, addCustomerQueue, removeCustomerQueue, getTaskQueueHead, getUserQueueHead, pendingQueueToFinishedQueue, getTaskByUser } from './master/queue.js';
+import { getTaskByUser } from './master/queue.js';
 import { pong } from './master/workerManagement.js'
-import { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, WorkerNode, taskCounter, storeSortedBuckets } from './master/assignWork.js';
+import { assignWorkToWorker, taskCounter, storeSortedBuckets } from './master/assignWork.js';
 
 //HTML and CSS file paths
 const loginPath = '/worker/html/login.html';
@@ -288,13 +288,7 @@ function getCache() {
 }
 
 async function handleFileQueue(req, res) {
-    console.log(req.headers['authorization'])
-    const authHeader = req.headers['authorization'];
-    console.log("\n");
-    console.log(authHeader);
-    console.log("\n");
-    const tempToken = authHeader.split(' ')[1];
-    const user = tempToken.split('.')[1];
+    const user = decodeToken(req)
 
     let userTaskArray = await getTaskByUser(user);
     console.log(userTaskArray);
@@ -354,10 +348,7 @@ async function redirectToHandleUpload(req, res) {
         maxFileSize: maxFileSizeGB * 1024 * 1024 * 1024 // 20 GB limit
     });
 
-
-    const authHeader = req.headers['authorization'];
-    const tempToken = authHeader.split(' ')[1];
-    const user = tempToken.split('.')[1];
+    const user = decodeToken(req)
     handleUpload(form, req, user)
         .then(_ => {
             console.log("Received file from: " + user);
