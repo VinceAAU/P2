@@ -37,8 +37,8 @@ async function hash(password){
   try{
     let hashedPassword = await bcrypt.hash(password, 10); //10 = salt - further explanation due
     return(hashedPassword);
-  }catch{
-    console.log("failed"); //throw should be implemted
+  }catch (err){
+    console.error(err)
   }
 }
 
@@ -76,20 +76,19 @@ async function search_db(searchUsername, searchPassword){
 };
 
 // Returns true/false    //for the function create_user in createUser.js
-function search_for_mail(srch_m){
+function search_for_mail(mailSearch){
     const stmt = db.prepare('SELECT * FROM users WHERE email = ?');
-    const mail = stmt.all(srch_m);
+    const mail = stmt.all(mailSearch);
     if(mail.length == 0) {
         return false;
     } else return true;
 }
 
 // Returns true/false    //for the function create_user in login.js
-function search_for_username(srch_u){
-    console.log("searching")
+function search_for_username(username){
     const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
-    const username_srch = stmt.all(srch_u.username); //username (from html side) returns: "userName = xyz" hence .userName
-    if(username_srch.length == 0) {
+    const usernameSearch = stmt.all(username);
+    if(usernameSearch.length == 0) {
         return false;
     } else return true;
 };
