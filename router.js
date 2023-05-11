@@ -7,10 +7,10 @@ export { requestHandler, fileResponse };
 
 //function imports from other .js files
 import { search_db } from "./master/db.js";
-import { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToClient, decodeToken } from "./master/exchangeData.js";
+import { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToClient } from "./master/exchangeData.js";
 import { search, passwords } from "./master/forgotPassword.js";
 import { validateNewUser } from "./master/createUser.js";
-import { returnToken, authenticateToken, returnTokenErr } from './master/tokenHandler.js';
+import { returnToken, authenticateToken, returnTokenErr, decodeToken } from './master/tokenHandler.js';
 import { securePath, throw_user, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
 import { getTaskByUser } from './master/queue.js';
 import { pong } from './master/workerManagement.js'
