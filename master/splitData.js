@@ -67,13 +67,16 @@ class  BucketList
                       .split(',').map((value, uselessOne, uselessTwo) => {
                           return Number(value);
                       });
+      console.log(`First few elements of array_buffer: ${array_buffer.slice(0, 10)}`);
       
       if(buffer[0]===44 /*comma*/){
         array_buffer[0] = NaN;
       }
 
-      //TODO: Rewrite line to be more clean and not use two tertiary operators
-      leftoverNumber = Number( ((leftoverNumber===NaN?'':leftoverNumber) + '').concat(array_buffer[0]) === NaN ? '' : array_buffer[0] );
+      if(leftoverNumber===NaN)  leftoverNumber = '';
+      if(array_buffer[0]===NaN) array_buffer[0] = '';
+      
+      leftoverNumber = Number((leftoverNumber + '').concat(array_buffer[0]));
       bucketList.push(leftoverNumber);
       array_buffer.splice(0, 1);
       leftoverNumber = array_buffer.pop();
