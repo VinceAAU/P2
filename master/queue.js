@@ -92,7 +92,7 @@ async function loadPendingQueue() {      //loads the pending queue from the serv
             rowOne = rows[1]; //We only need row 1 and 2, since row 0 is the header
             rowTwo = rows[2];
 
-            if (rowOne !== undefined || rowTwo !== undefined) { //If the "rows" are empty 
+            if (rowOne !== undefined && rowTwo !== undefined) { //If the "rows" are empty 
                 pendingUserQueue = rowOne.split(',');           //they will be undefined and split
                 pendingTaskQueue = rowTwo.split(',');          //will therefor crash the server
             }
@@ -118,7 +118,7 @@ async function loadFinishedQueue() {      //loads the finished queue from the se
             rowOne = rows[1]; //We only need row 1 and 2, since row 0 is the header
             rowTwo = rows[2];
 
-            if (rowOne !== undefined || rowTwo !== undefined) { //If the "rows" are empty
+            if (rowOne !== undefined && rowTwo !== undefined) { //If the "rows" are empty
                 finishedUserQueue = rowOne.split(',');          //they will be undefined and split
                 finishedTaskQueue = rowTwo.split(',');         //will therefor crash the server
             }
@@ -134,8 +134,8 @@ async function loadFinishedQueue() {      //loads the finished queue from the se
 
 async function pendingQueueToFinishedQueue() {     //Takes the first element from the pending queeu and pushes it to the finished queue
     await loadPendingQueue();                    //Also saves the finished and pending queue in their updated version
-    finishedUserQueue.push(getUserQueueHead());
-    finishedTaskQueue.push('sorted' + getTaskQueueHead());
+    finishedUserQueue.push(await getUserQueueHead());
+    finishedTaskQueue.push('sorted' + await getTaskQueueHead());
     await removeCustomerQueue();
     await saveFinishedQueue();
     await savePendingQueue();
