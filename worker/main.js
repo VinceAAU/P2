@@ -5,48 +5,49 @@
 
 const UUID = localStorage.getItem('UUID');
 
+let pingTimerActive = false;
 
 async function toggleStartButton() {
   let button = document.querySelector("#start_button");
   let hackerman = document.querySelector("#hackerman");
 
 
-  if (button.textContent === "Start") {
-
+  if (button.textContent === "Start") { // when user presses "start"
     // ui stuff
     button.textContent = "Disconnect";
     hackerman.style.visibility = "visible";
 
     fetch('requestFirstTask', {
-	method: 'GET',
-	headers: {
-		'UUID': UUID
-	}
+      method: 'GET',
+      headers: {
+        'UUID': UUID
+      }
     })
       .then(async data => {
         handleReceivedData(data);
       })
       .catch(error => console.error(error));
 
-	pingTimer(); //Begin ping timer thing - since it's async, it should happen in background(?)
+    startPingTimer();
 
-      //Gives a warning when closing if working.
-      window.onbeforeunload = function (e) {
-        if (button.textContent === "Disconnect"){
-          e = e || window.event;
+    //Gives a warning when closing if working.
+    window.onbeforeunload = function (e) {
+      if (button.textContent === "Disconnect") {
+        e = e || window.event;
         // For IE and Firefox prior to version 4
         if (e) {
           e.returnValue = 'Sure?';
         }
-  
+
         // For Safari
         return 'Sure?';
       }
-      };
+    };
 
-  } else {
+  } else { // when user presses "disconnect"
     button.textContent = "Start";
     hackerman.style.visibility = "hidden";
+    stopPingTimer();
   }
 }
 
@@ -68,21 +69,32 @@ function startWorker(receivedArray) {
   }
 }
 
-async function pingTimer(pingInterval = 5_000){
-  //TODO: Test what happens if there isn't an access token. Can that even happen???
+async function pingTimer() {
+  const pingInterval = 5000;
   const accessToken = localStorage.getItem("accessToken");
-  const uuid        = localStorage.getItem("UUID");
-  while(true){
+  const uuid = localStorage.getItem("UUID");
+
+  while (pingTimerActive) {
     await fetch("ping", {
-	    "method": "POST",
-	    "headers": {
-		    "Authorisation": `Bearer ${accessToken}`,
-		    "UUID": uuid
-	    }
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "UUID": uuid
+      }
     });
     await new Promise(r => setTimeout(r, pingInterval));
   }
 }
+
+function startPingTimer() {
+  pingTimerActive = true;
+  pingTimer();
+}
+
+function stopPingTimer() {
+  pingTimerActive = false;
+}
+
 
 async function handleReceivedData(data) {
   console.log("Received array from server:");
@@ -95,8 +107,7 @@ async function handleReceivedData(data) {
 }
 
 
-async function sendToServer(array) 
-{
+async function sendToServer(array) {
   await fetch('/requestNewTask', {
     method: 'POST',
     headers: {
@@ -105,9 +116,9 @@ async function sendToServer(array)
       'UUID': UUID
     },
     body: array
-  }) .then(async data => {
+  }).then(async data => {
     handleReceivedData(data); // recursive, worker eventually calls sendToServer. Idk if that's a bad way to do it?
   })
-  .catch(error => console.error(error));
+    .catch(error => console.error(error));
 }
 
