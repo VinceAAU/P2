@@ -15,7 +15,9 @@ async function heartbeat(){
             if(uuid===undefined) continue;
             if(Date.now()-workers[uuid].lastPing > timeout){
                 console.log(`Worker ${uuid} is dead!!!!`);
-                enqueueTask(workers[uuid].curentTask);
+                if(workers[uuid].currentTask !== null){
+                    enqueueTask(workers[uuid].currentTask);
+                }
                 delete workers[uuid];
             }
         }
