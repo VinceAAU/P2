@@ -63,11 +63,14 @@ class  BucketList
       }
       let string_buffer = buffer.toString('utf-8', 0, fd_read_return.bytesRead);
       let array_buffer = string_buffer
-                      .replace('\n', ',').replace('\r', ',')
+                      .replace('\n', ',').replace('\r', '')
                       .split(',').map((value, uselessOne, uselessTwo) => {
-                          return Number(value);
+                          if(value==='')
+                            return NaN;
+                          else
+                            return Number(value);
                       });
-      console.log(`First few elements of array_buffer: ${array_buffer.slice(0, 10)}`);
+
       
       if(buffer[0]===44 /*comma*/){
         array_buffer[0] = NaN;
