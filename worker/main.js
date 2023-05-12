@@ -48,6 +48,12 @@ async function toggleStartButton() {
     button.textContent = "Start";
     hackerman.style.visibility = "hidden";
     stopPingTimer();
+    fetch('dead', {
+      method: 'POST',
+      headers: {
+        "UUID": UUID
+      }
+    });
   }
 }
 

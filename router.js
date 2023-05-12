@@ -13,7 +13,7 @@ import { validateNewUser } from "./master/createUser.js";
 import { returnToken, authenticateToken, returnTokenErr, decodeToken } from './master/tokenHandler.js';
 import { securePath, throw_user, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
 import { getTaskByUser } from './master/queue.js';
-import { pong } from './master/workerManagement.js'
+import { pong, removeWorker } from './master/workerManagement.js'
 import { assignWorkToWorker, taskCounter, storeSortedBuckets } from './master/assignWork.js';
 
 //HTML and CSS file paths
@@ -174,6 +174,10 @@ function requestHandler(req, res) {
         case "/ping":
             //possible TODO: Check for authentication?
             pong(req.headers["uuid"]);
+            res.end();
+            break;
+        case "/dead":
+            removeWorker(req.headers["uuid"]);
             res.end();
             break;
         default:

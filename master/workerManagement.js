@@ -4,7 +4,7 @@
 
 import {WorkerNode, addToBeginningOfQueue, enqueueTask} from './assignWork.js';
 
-export { workers, addWorker, pong, heartbeat };
+export { workers, addWorker, removeWorker, pong, heartbeat };
 
 var workers = {};
 
@@ -14,11 +14,7 @@ async function heartbeat(){
         for(let uuid in workers){
             if(uuid===undefined) continue;
             if(Date.now()-workers[uuid].lastPing > timeout){
-                console.log(`Worker ${uuid} is dead!!!!`);
-                if(workers[uuid].currentTask !== null){
-                    enqueueTask(workers[uuid].currentTask);
-                }
-                delete workers[uuid];
+                removeWorker(uuid);
             }
         }
 
@@ -29,6 +25,14 @@ async function heartbeat(){
 function addWorker(uuid, task){
     if(workers===undefined) { workers = {}; }
     workers[uuid] = new WorkerNode(task);
+}
+
+function removeWorker(uuid){
+    console.log(`Killing worker ${uuid}!`);
+    if(workers[uuid].currentTask !== null){
+        enqueueTask(workers[uuid].currentTask);
+    }
+    delete workers[uuid];
 }
 
 /**
