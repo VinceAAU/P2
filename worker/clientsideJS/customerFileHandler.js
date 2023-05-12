@@ -55,10 +55,10 @@ fileupload.addEventListener('change', (event) => {
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
-
+  
   const formData = new FormData();
   formData.append('fileupload', fileInput.files[0]);
-
+  fileInput.value = ''; // clear chosen file field
   try {
     const response = await fetch('/upload', {
       method: 'POST',
@@ -72,6 +72,7 @@ form.addEventListener('submit', async (event) => {
   } catch (error) {
     console.log(error)
   }
+  location.reload();
 });
 
 async function downloadFileFromServer(e) {

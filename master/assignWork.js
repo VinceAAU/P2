@@ -20,24 +20,24 @@ let qTail;
 
 function enqueueTask(taskIndex) {
     availableTaskIndices[qTail] = taskIndex;
-    qTail = (qTail + 1) % (availableTaskIndices.length + 1);
+    qTail = (qTail + 1) % (allTasks.length + 1);
 }
 
 // In case a task fails, this task skips to the front of the queue.
 function addToBeginningOfQueue(taskIndex) {
-    qHead = (qHead - 1) % (availableTaskIndices.length + 1);
+    qHead = (qHead - 1) % (allTasks.length + 1);
     availableTaskIndices[qHead] = taskIndex;
 }
 
 function dequeueTask() {
     let task = availableTaskIndices[qHead];
-    qHead = (qHead + 1) % (availableTaskIndices.length + 1);
+    qHead = (qHead + 1) % (allTasks.length + 1);
     return task;
 }
 
 async function assignWorkToWorker(workerUUID) {
 
-    if (allTasks.length === 0) {
+    if (allTasks == null || allTasks.length === 0) {
         allTasks = await BucketList.fromQueue();
         console.log(`All tasks:`);
         for (let i in allTasks){
@@ -46,7 +46,7 @@ async function assignWorkToWorker(workerUUID) {
         if (allTasks !== null) {
             availableTaskIndices = Array.from({length: allTasks.length + 1}, (_, i) => i);
             qHead = 0;
-            qTail = availableTaskIndices.length;
+            qTail = allTasks.length;
         } else {
             qHead = 0;
             qTail = 0;
