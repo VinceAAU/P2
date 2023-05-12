@@ -4,19 +4,18 @@
  */
 
 const UUID = localStorage.getItem('UUID');
-
 let pingTimerActive = false;
+let workerSort;
 
 async function toggleStartButton() {
-  let button = document.querySelector("#start_button");
   let hackerman = document.querySelector("#hackerman");
-
+  let button = document.querySelector("#start_button");
 
   if (button.textContent === "Start") { // when user presses "start"
     // ui stuff
     button.textContent = "Disconnect";
     hackerman.style.visibility = "visible";
-
+    workerSort = new Worker("workerSort.js");
     fetch('requestFirstTask', {
       method: 'GET',
       headers: {
@@ -47,6 +46,7 @@ async function toggleStartButton() {
   } else { // when user presses "disconnect"
     button.textContent = "Start";
     hackerman.style.visibility = "hidden";
+    workerSort.terminate();
     stopPingTimer();
     fetch('dead', {
       method: 'POST',
@@ -59,7 +59,6 @@ async function toggleStartButton() {
 
 function startWorker(receivedArray) {
   if (window.Worker) {
-    const workerSort = new Worker("/workerSort.js");
 
     workerSort.postMessage(receivedArray, [receivedArray.buffer]);
     console.log("Block of work posted to the worker. ");
@@ -112,8 +111,12 @@ async function handleReceivedData(data) {
   startWorker(convertedArray);
 }
 
-
 async function sendToServer(array) {
+  let button = document.querySelector("#start_button");
+  if (button.textContent === "Start") { // if disconnected (moderately scuffed and probably not necessary, since the webworker should be dead by now ) 
+    console.log("Stopped working");
+    return;
+  }
   await fetch('/requestNewTask', {
     method: 'POST',
     headers: {

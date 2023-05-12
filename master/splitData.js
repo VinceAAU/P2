@@ -45,7 +45,7 @@ class  BucketList
 
     console.log(`Bucket amount: ${bucketAmount}`);
 
-    let bucketList = new BucketList(bucketAmount, 1_000_000_000, 1_000_000_000);
+    let bucketList = new BucketList(bucketAmount, 1_000_000_00, 1_000_000_000);
   
     let file_index = 0;
     const buffer_size = 10_000_000;
