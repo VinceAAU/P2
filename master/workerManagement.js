@@ -27,13 +27,17 @@ function addWorker(uuid, task){
     workers[uuid] = new WorkerNode(task);
 }
 
-function removeWorker(uuid){
+function removeWorker(uuid) {
     console.log(`Killing worker ${uuid}!`);
-    if(workers[uuid].currentTask !== null){
-        enqueueTask(workers[uuid].currentTask);
+    if (workers[uuid] && (typeof workers[uuid].currentTask !== 'undefined' && workers[uuid].currentTask !== null)) {
+      enqueueTask(workers[uuid].currentTask);
+    } else {
+        console.log("User task or user was invalid for some reason ¯\_(ツ)_/¯");
     }
     delete workers[uuid];
-}
+  }
+  
+  
 
 /**
  * 
