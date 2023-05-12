@@ -10,6 +10,7 @@ import http from 'http';
 import path from "path";
 import qs from "querystring";
 import { requestHandler, fileResponse } from './router.js';
+import { heartbeat } from './master/workerManagement.js';
 
 
 //function and const exports
@@ -183,5 +184,7 @@ function collectPostBody(req) {//cg addin explanation due
 }
 
 server.listen(port, hostname, () => {
+  console.log(`Started heartbeat`);
+  heartbeat();
   console.log(`Server running at http://${hostname}:${port}/`);
 });

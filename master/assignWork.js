@@ -69,8 +69,8 @@ async function assignWorkToWorker(workerUUID) {
 
 // call this function with: let workerX/ID/whatever = new WorkerNode(task)
 class WorkerNode {
-    //let currentTask;
-    //let lastPing;
+    currentTask;
+    lastPing;
 
     constructor(task){
         this.currentTask = task;

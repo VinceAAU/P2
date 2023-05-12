@@ -304,7 +304,7 @@ async function downloadFile(req, res) {
 
 
 async function giveTask(req, res) {
-    let task = await assignWorkToWorker(req.headers["UUID"]);
+    let task = await assignWorkToWorker(req.headers["uuid"]);
     if (task !== null) {
         streamArrayToClient(res, task);
     }
