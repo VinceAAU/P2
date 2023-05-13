@@ -32,7 +32,7 @@ function removeWorker(uuid) {
     if (workers[uuid] && (typeof workers[uuid].currentTask !== 'undefined' && workers[uuid].currentTask !== null)) {
       enqueueTask(workers[uuid].currentTask);
     } else {
-        console.log("User task or user was invalid for some reason ¯\_(ツ)_/¯");
+        console.log("User task or user was invalid for some reason ¯\\_(ツ)_/¯");
     }
     delete workers[uuid];
   }
