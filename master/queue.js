@@ -1,6 +1,6 @@
 import { existsSync } from "fs";
 import fs from "fs/promises";
-export { savePendingQueue, addCustomerQueue, removeCustomerQueue, getUserQueueHead, getTaskQueueHead, pendingQueueToFinishedQueue, loadPendingQueue, getTaskByUser };
+export { savePendingQueue, addCustomerQueue, removeCustomerQueue, getUserQueueHead, getTaskQueueHead, pendingQueueToFinishedQueue, loadPendingQueue, getTaskByUser, removeFinishedCustomerQueue };
 
 // Start by creating needed queue arrays
 let pendingUserQueue = [];
@@ -30,6 +30,12 @@ async function getUserQueueHead() {
         return pendingUserQueue[0];
     }
 }
+
+async function removeFinishedCustomerQueue() {
+    await loadFinishedQueue();
+    finishedUserQueue.shift();
+    finishedTaskQueue.shift();
+    await saveFinishedQueue();
 
 async function getTaskQueueHead() {
     await loadPendingQueue();
