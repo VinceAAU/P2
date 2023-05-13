@@ -117,7 +117,7 @@ async function sendToServer(array) {
     console.log("Stopped working");
     return;
   }
-  await fetch('/requestNewTask', {
+  await fetch('requestNewTask', {
     method: 'POST',
     headers: {
       "Content-Type": "application/octet-stream",
