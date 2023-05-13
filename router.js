@@ -15,6 +15,7 @@ import { securePath, throw_user, errorResponse, guessMimeType, redirect, extract
 import { getTaskByUser } from './master/queue.js';
 import { pong, removeWorker } from './master/workerManagement.js'
 import { assignWorkToWorker, taskCounter, storeSortedBuckets } from './master/assignWork.js';
+import { createReadStream } from 'fs';
 
 //HTML and CSS file paths
 const loginPath = '/worker/html/login.html';
@@ -297,8 +298,18 @@ async function downloadFile(req, res) {
         res.writeHead(200, headers);
 
         let file = await fs.open(filePath);
-        file.createReadStream().pipe(res); //createReadStream closes the file handle automatically (by default)
+        const stream = file.createReadStream();
+        stream.pipe(res);
 
+        stream.on('end', () => {
+            // File has been fully streamed/downloaded by the user, so we can delete it now
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error(`Error deleting the file: ${err}`);
+                    return;
+                }
+            });
+        });
     } catch (error) {
         console.log(error);
     }
