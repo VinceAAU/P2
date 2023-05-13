@@ -31,10 +31,10 @@ async function getUserQueueHead() {
     }
 }
 
-async function removeFinishedCustomerQueue() {
+async function removeFinishedCustomerQueue(index) {
     await loadFinishedQueue();
-    finishedUserQueue.shift();
-    finishedTaskQueue.shift();
+    finishedUserQueue.splice(index, 1);
+    finishedTaskQueue.splice(index, 1);
     await saveFinishedQueue();
 }
 
