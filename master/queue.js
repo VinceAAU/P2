@@ -36,6 +36,7 @@ async function removeFinishedCustomerQueue() {
     finishedUserQueue.shift();
     finishedTaskQueue.shift();
     await saveFinishedQueue();
+}
 
 async function getTaskQueueHead() {
     await loadPendingQueue();
