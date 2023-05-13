@@ -28,24 +28,31 @@ class  BucketList
     }
   }
 
-  static bucketAmount(fileSize){
+  /**
+   * None of these parameters need to be exact, since the payload won't 
+   * be at the exact target size anyway
+   * @param elementAmount The amount of elements you have
+   * @param elementSize The average size of each element
+   * @returns The amount of buckets you need
+   */
+  static bucketAmount(elementAmount, elementSize){
     const targetPayloadSize = 100_000_000; //100 megabytes. Too much? Too little? Idk
-  
-    //Because we don't send CSV files, but binary arrays, the payload 
-    //will actually be about half of the target. This is because my maths 
-    //is lazy. FIXME
-    return Math.ceil(fileSize/targetPayloadSize);
+
+    return Math.ceil((elementAmount*elementSize)/targetPayloadSize);
   }
 
   static async fromFile(filePath){
     const fileStats = await fs.stat(filePath);
     const fileSize = fileStats.size;
 
-    const bucketAmount = BucketList.bucketAmount(fileSize);
+    const bucketAmount = BucketList.bucketAmount(fileSize/10 /*The average size of each element is 9.89 bytes*/, 4);
+
+    const maxBucketSize = 100_000_000; //Arbitrarily chosen
+    const dataRange = 1_000_000_000;
 
     console.log(`Bucket amount: ${bucketAmount}`);
 
-    let bucketList = new BucketList(bucketAmount, 1_000_000_00, 1_000_000_000);
+    let bucketList = new BucketList(bucketAmount, maxBucketSize, dataRange);
   
     let file_index = 0;
     const buffer_size = 10_000_000;
