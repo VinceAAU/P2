@@ -1,6 +1,6 @@
 import { existsSync } from "fs";
 import fs from "fs/promises";
-export { savePendingQueue, addCustomerQueue, removeCustomerQueue, getUserQueueHead, getTaskQueueHead, pendingQueueToFinishedQueue, loadPendingQueue, getTaskByUser, removeFinishedCustomerQueue };
+export { savePendingQueue, addCustomerQueue, removeCustomerQueue, getUserQueueHead, getTaskQueueHead, pendingQueueToFinishedQueue, loadPendingQueue, getTaskByUser, removeFinishedCustomerQueue, findFinishedTaskIndex };
 
 // Start by creating needed queue arrays
 let pendingUserQueue = [];
@@ -36,6 +36,20 @@ async function removeFinishedCustomerQueue(index) {
     finishedUserQueue.splice(index, 1);
     finishedTaskQueue.splice(index, 1);
     await saveFinishedQueue();
+}
+
+async function findFinishedTaskIndex(user, task)
+{
+    for(let i = 0; i < finishedTaskQueue.length; i++)
+    {
+        if(finishedTaskQueue[i] === task && finishedUserQueue[i] === user)
+        {
+          //  console.log("Found user at: "+ i);
+            return i;
+        }
+    }
+    console.log("Couldn't find user or task :(");
+    return null;
 }
 
 async function getTaskQueueHead() {
@@ -157,7 +171,7 @@ async function getTaskByUser(user) {
     for (let i = 0; i < finishedUserQueue.length; i++) {
         if (user === finishedUserQueue[i]) {
             taskArrayForUser[k] = finishedTaskQueue[i];
-            console.log(taskArrayForUser);
+           // console.log(taskArrayForUser);
             k++;
         }
     }
@@ -168,7 +182,7 @@ async function getTaskByUser(user) {
     for (let i = 0; i < pendingUserQueue.length; i++) {
         if (pendingUserQueue[i] == user) {
             taskArrayForUser[k] = pendingTaskQueue[i];
-            console.log(taskArrayForUser);
+          //  console.log(taskArrayForUser);
             k++;
         }
     }

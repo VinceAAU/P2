@@ -78,6 +78,7 @@ form.addEventListener('submit', async (event) => {
 async function downloadFileFromServer(e) {
   console.log(e.target.id);
   headers = {
+    "Authorization": `Bearer ${accessToken}`,
     'url': e.target.id
   };
   await fetch('/download', { headers })
@@ -100,6 +101,7 @@ async function downloadFileFromServer(e) {
     .catch(error => {
       console.error('There has been a problem with your fetch operation:', error);
     });
+    location.reload();
 }
 
 
