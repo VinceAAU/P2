@@ -3,7 +3,7 @@
  * in the browser!
  */
 
-const UUID = localStorage.getItem('UUID');
+window.UUID = crypto.randomUUID(); //WARNING: THIS ONLY WORKS IN localhost AND HTTPS
 let pingTimerActive = false;
 let isConnected = false;
 let workerSort;
@@ -45,7 +45,7 @@ function stopWorking()
   fetch('dead', {
     method: 'POST',
     headers: {
-      "UUID": UUID
+      "UUID": window.UUID
     }
   });
 }
@@ -57,7 +57,7 @@ function startWorking()
     fetch('requestFirstTask', {
       method: 'GET',
       headers: {
-        'UUID': UUID
+        'UUID': window.UUID
       }
     })
       .then(async data => {
@@ -89,7 +89,7 @@ function startWebWorker(receivedArray) {
 async function pingTimer() {
   const pingInterval = 5000;
   const accessToken = localStorage.getItem("accessToken");
-  const uuid = localStorage.getItem("UUID");
+  const uuid = window.UUID;
 
   while (pingTimerActive) {
     await fetch("ping", {
@@ -130,7 +130,7 @@ async function sendToServer(array) {
     headers: {
       "Content-Type": "application/octet-stream",
       "Content-Length": array.length,
-      'UUID': UUID
+      'UUID': window.UUID
     },
     body: array
   }).then(async data => {
