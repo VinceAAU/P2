@@ -1,3 +1,9 @@
+h2{
+  font: 32px Arial;
+  color:white;
+  margin-left: 50px;
+}
+
 p{
   font: 24px Arial;
   color:white;
@@ -10,7 +16,7 @@ p{
     width: 100px; 
     height: 32px; 
     font-size: 19px; 
-    margin-right: 40px;
+    margin-right: 30px;
     margin-top:  10px;   
 }
 
@@ -124,7 +130,7 @@ section {
     font: normal 48px Arial;
     text-align: center;
     padding: 40px; 
-    color: #f9f9f9;
+    color: white;
 
 }
 
@@ -134,12 +140,12 @@ section {
     font-size: 24px;
     margin-left: 50px;
     margin-top: -25px;
-    color: #f9f9f9;
+    color: white;
 }
 
 #indexul1{
   font-size: 24px; 
-  color: #f9f9f9;
+  color: white;
   margin-left: 50px;
   padding: 20px;
   line-height: 1.5;
@@ -160,19 +166,19 @@ section {
 
 #numFiles {
   margin-left: 50px;
-  color: #f9f9f9;
-  font-size: 24px;
+  color: white;
+  font-size: 32px;
 }
 
 #upload-form {
   padding: 5px; 
-  color: #f9f9f9;
+  color: white;
   font-size: 24px;
 }
 
 #file-input {
   padding: 5px; 
-  color: #f9f9f9;
+  color: white;
   font-size: 24px;
   margin-left: 50px;
 }
@@ -180,7 +186,7 @@ section {
 
 #error-message {
   padding: 5px; 
-  color: #f9f9f9;
+  color: white;
   font-size: 24px;
 }
 
@@ -218,7 +224,7 @@ section {
 #nameofFiles {
   margin-left: 20px;
   margin-top: 15px;
-  color: #f9f9f9;
+  color: white;
   font-size: 24px;
 }
 
@@ -228,7 +234,7 @@ section {
 
 #worker_text {
   margin-left: 20px;
-  color: #f9f9f9;
+  color: white;
   font-size: 24px;
 }
 

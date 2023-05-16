@@ -16,7 +16,7 @@ fetch('/get-task-list-by-user', { headers })
     let numFiles = document.querySelector("#numFiles");
     console.log(numFiles);
     console.log(data.length);
-    numFiles.textContent = 'Number of files uploaded ' + (data.length - 1);
+    numFiles.textContent = 'Number of files uploaded: ' + (data.length - 1);
     console.log("Received array from server:");
     console.log(data);
 
@@ -24,7 +24,7 @@ fetch('/get-task-list-by-user', { headers })
     data.forEach(x => {
       if (x === 'Shift') {
         shifted = true;
-        let text = document.createElement('p');
+        let text = document.createElement('h2');
         text.textContent = "In progress:";
         document.body.appendChild(text);
       } else {
