@@ -115,3 +115,22 @@ function logError() {
   errorMessage.style.opacity = 1;
 }
 
+//Makes so you can see what file you have selected
+const realFileBtn = document.getElementById("file-input");
+const customBtn = document.getElementById("custom-button");
+const customTxt = document.getElementById("nameofFiles");
+
+//Makes sure the pseudo button activates the real button
+customBtn.addEventListener("click", function(){
+    realFileBtn.click();
+})
+
+//This is what changes the file name
+realFileBtn.addEventListener("change", function(){
+  if (realFileBtn.value) {
+//That long weird text is neccesary, makes it so the file path is not shown and only the name
+    customTxt.innerHTML = realFileBtn.value.match(/[\/\\]([\w\d\s\.\-\(\)]+)$/)[1];
+  } else {
+    customTxt.innerHTML = "No file chosen, yet.";
+  }
+})
