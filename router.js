@@ -324,9 +324,6 @@ async function downloadFile(req, res) {
     }
 }
 
-
-
-
 async function giveTask(req, res) {
     try {
       let task = await assignWorkToWorker(req.headers["uuid"]);
@@ -335,8 +332,7 @@ async function giveTask(req, res) {
       } else {
         throw new Error("No tasks available");
       }
-    } catch (error) {
-      console.log("No tasks mf", error);
+    } catch {
       res.statusCode = 404;
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify({ message: "No tasks available" }));
