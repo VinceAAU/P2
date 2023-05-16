@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <head>
 	<title>Web computing</title>
 	<script src="/main.js"></script>
@@ -6,21 +7,24 @@
 	<script type="module" defer src="/accessToken.js"></script>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
+
 <body>
 
-<h1>Worker Node</h1>
-<p>
-	This is where you share your CPU for the greater good!
-	
-</p>		
+	<h1 id="indexh1">Worker Node</h1>
 
-<button  id="customer_page" onclick="location.href='/customerPage.html'" >Customer page</button>
-<button  id="start_button" onclick="toggleStartButton()">Start</button> 
-<button class="indexbutton" type="button" onclick="location.href='/'">Log out</button>
+		<div class="startWorker">
+			<button id="start_button" onclick="toggleStartButton()">Start</button>
+			<p id="worker_text">This is where you share your CPU for the greater good!</p>
+		</div>
 
-<p style = "visibility:hidden" id = "hackerman">
-	<img src="https://media.tenor.com/Pm4S40MGsIQAAAAC/hacker-hackerman.gif" style="width:500px;height:400px;" >
-	<img src="https://media.tenor.com/B64hJM7Ki1QAAAAC/pc-fire.gif" style="width:500px;height:400px;">
-</p>
+	<div id="header">
+		<button class="indexbutton" id="customer_page" onclick="location.href='/customerPage.html'">Customer</button>
+		<button class="indexbutton" id="logout" type="button" onclick="location.href='/'">Log out</button>
+	</div>
+
+	<p style="visibility:hidden" id="hackerman">
+		<img src="https://media.tenor.com/Pm4S40MGsIQAAAAC/hacker-hackerman.gif" style="width:500px;height:400px;">
+		<img src="https://media.tenor.com/B64hJM7Ki1QAAAAC/pc-fire.gif" style="width:500px;height:400px;">
+	</p>
 
 </body>
