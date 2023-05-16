@@ -328,13 +328,22 @@ async function downloadFile(req, res) {
 
 
 async function giveTask(req, res) {
-    let task = await assignWorkToWorker(req.headers["uuid"]);
-    if (task !== null) {
+    try {
+      let task = await assignWorkToWorker(req.headers["uuid"]);
+      if (task !== null) {
         streamArrayToClient(res, task);
+      } else {
+        throw new Error("No tasks available");
+      }
+    } catch (error) {
+      console.log("No tasks mf", error);
+      res.statusCode = 404;
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify({ message: "No tasks available" }));
     }
-
-}
-
+  }
+  
+  
 async function giveNewTask(req, res) {
     let recievedTask = await receiveArray(req, res)
 
