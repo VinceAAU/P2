@@ -2,6 +2,9 @@ const accessToken = localStorage.getItem('accessToken');
 const errorMessage = document.getElementById('error-message');
 const form = document.querySelector('#upload-form');
 const fileInput = document.querySelector('input[name="fileupload"]');
+const realFileBtn = document.getElementById("file-input");
+const customBtn = document.getElementById("custom-button");
+const customTxt = document.getElementById("nameofFiles");
 
 let headers = {
   'Authorization': `Bearer ${accessToken}`
@@ -32,6 +35,7 @@ fetch('/get-task-list-by-user', { headers })
           let downloadButton = document.createElement('button');
           downloadButton.textContent = 'Download file';
           downloadButton.id = x;
+          downloadButton.classList.add('downloadButtons');
           downloadButton.addEventListener("click", downloadFileFromServer);
           document.body.appendChild(downloadButton);
         }
@@ -56,12 +60,12 @@ fileupload.addEventListener('change', (event) => {
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
 
-  if (fileInput.value === '') {
+  if (realFileBtn.value === '') {
     logError();
   } else {
     const formData = new FormData();
-  formData.append('fileupload', fileInput.files[0]);
-  fileInput.value = ''; // clear chosen file field
+  formData.append('fileupload', realFileBtn.files[0]);
+  realFileBtn.value = ''; // clear chosen file field
   try {
     const response = await fetch('/upload', {
       method: 'POST',
@@ -115,10 +119,6 @@ function logError() {
   errorMessage.style.opacity = 1;
 }
 
-//Makes so you can see what file you have selected
-const realFileBtn = document.getElementById("file-input");
-const customBtn = document.getElementById("custom-button");
-const customTxt = document.getElementById("nameofFiles");
 
 //Makes sure the pseudo button activates the real button
 customBtn.addEventListener("click", function(){
