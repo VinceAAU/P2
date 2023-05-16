@@ -7,6 +7,10 @@ window.UUID = crypto.randomUUID(); //WARNING: THIS ONLY WORKS IN localhost AND H
 let pingTimerActive = false;
 let isConnected = false;
 let workerSort;
+//const errorMessage = document.getElementById('statusMsg');
+
+
+
 
 async function toggleStartButton() {
   let hackerman = document.querySelector("#hackerman");
@@ -15,15 +19,23 @@ async function toggleStartButton() {
   if (button.textContent === "Start") { // when user presses "start"
     button.textContent = "Disconnect";
     //hackerman.style.visibility = "visible";
+    statusMessage("Node registered, awaiting tasks");
     
     startWorking(); // Request data and start sorting
     startAlert();  //Gives a warning when closing if working.
 
   } else { // when user presses "disconnect"
     button.textContent = "Start";
-    hackerman.style.visibility = "hidden";
+    statusMessage("")
+    //hackerman.style.visibility = "hidden";
     stopWorking();
   }
+}
+
+function statusMessage(message) {
+  const errorMessage = document.getElementById('statusMsg');
+  errorMessage.textContent = message;
+  errorMessage.style.opacity = 1;
 }
 
 function startAlert()
@@ -74,6 +86,7 @@ function fetchTask(){
       if(data.ok){
         console.log("ping response OK")
         console.log(data)
+        statusMessage("Recieved task. Computing begun")
         handleReceivedData(data);
       }
     })
@@ -86,11 +99,11 @@ async function startPingTask(){
 
   while (pingTimerActive) {
     fetchTask()
+    statusMessage("No new tasks. Awaiting...")
     console.log("ping loop")
     await new Promise(r => setTimeout(r, pingInterval));
   } 
 }
-
 
 function startWebWorker(receivedArray) {
   if (window.Worker) {
@@ -102,6 +115,7 @@ function startWebWorker(receivedArray) {
       let arrS = new Uint32Array(e.data);
       console.log("Worker returned the sorted list: ");
       console.log(arrS);
+      statusMessage("Done computing")
       sendToServer(arrS);
     }
   } else {
