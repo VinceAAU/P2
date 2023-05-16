@@ -115,7 +115,7 @@ function logError() {
   errorMessage.style.opacity = 1;
 }
 
-//Makes so you can see what file you have uploaded
+//Makes so you can see what file you have selected
 const realFileBtn = document.getElementById("file-input");
 const customBtn = document.getElementById("custom-button");
 const customTxt = document.getElementById("nameofFiles");
