@@ -7,27 +7,20 @@ window.UUID = crypto.randomUUID(); //WARNING: THIS ONLY WORKS IN localhost AND H
 let pingTimerActive = false;
 let isConnected = false;
 let workerSort;
-//const errorMessage = document.getElementById('statusMsg');
-
-
-
 
 async function toggleStartButton() {
-  let hackerman = document.querySelector("#hackerman");
   let button = document.querySelector("#start_button");
 
   if (button.textContent === "Start") { // when user presses "start"
     button.textContent = "Disconnect";
-    //hackerman.style.visibility = "visible";
     statusMessage("Node registered, awaiting tasks");
-    
+
     startWorking(); // Request data and start sorting
     startAlert();  //Gives a warning when closing if working.
 
   } else { // when user presses "disconnect"
     button.textContent = "Start";
     statusMessage("")
-    //hackerman.style.visibility = "hidden";
     stopWorking();
   }
 }
@@ -38,8 +31,7 @@ function statusMessage(message) {
   errorMessage.style.opacity = 1;
 }
 
-function startAlert()
-{
+function startAlert() {
   window.onbeforeunload = function (e) {
     if (isConnected) {
       e = e || window.event;
@@ -49,8 +41,7 @@ function startAlert()
   };
 }
 
-function stopWorking()
-{
+function stopWorking() {
   isConnected = false;
   workerSort.terminate();
   stopPingTimer();
@@ -62,20 +53,15 @@ function stopWorking()
   });
 }
 
-function startWorking()
-{
+function startWorking() {
   workerSort = new Worker("workerSort.js");
-    isConnected = true;
-    console.log("start")
-    //fetchTask()
-
-    startPingTimer();
-    fetchTask();
-    
-
+  isConnected = true;
+  console.log("start")
+  startPingTimer();
+  fetchTask();
 }
 
-function fetchTask(){
+async function fetchTask() {
   fetch('requestFirstTask', {
     method: 'GET',
     headers: {
@@ -83,30 +69,29 @@ function fetchTask(){
     }
   })
     .then(async data => {
-      if(data.ok){
+      if (data.ok) {
         console.log("ping response OK")
         console.log(data)
         statusMessage("Recieved task. Computing begun")
         handleReceivedData(data);
       } else {
         console.log("no work to do in original fetch")
-        startPingTask("fetchTask")
+        startPingTask()
       }
     })
     .catch(error => console.error(error));
 }
 
-async function startPingTask(from){
+async function startPingTask() {
   console.log("startPingTask")
-  console.log("from: ",from)
-  const pingIntervalTask = 30000;
+  const pingIntervalTask = 5000;
 
   while (pingTimerActive) {
-    fetchTask()
     statusMessage("Awaiting new tasks")
     console.log("ping loop")
     await new Promise(r => setTimeout(r, pingIntervalTask));
-  } 
+    await fetchTask()
+  }
 }
 
 function startWebWorker(receivedArray) {
@@ -153,7 +138,6 @@ function stopPingTimer() {
   pingTimerActive = false;
 }
 
-
 async function handleReceivedData(data) {
   console.log("Received array from server:");
   console.log(data);
@@ -165,7 +149,7 @@ async function handleReceivedData(data) {
 }
 
 async function sendToServer(array) {
-  if (!isConnected){ 
+  if (!isConnected) {
     return
   }; // If not connected, don't send anything or request new tasks. 
   await fetch('requestNewTask', {
@@ -177,15 +161,14 @@ async function sendToServer(array) {
     },
     body: array
   })
-  .then(async response => {
-    if (response.ok) {
-      //const data = await response.json();
-      console.log(response)
-      handleReceivedData(response); // recursive, worker eventually calls sendToServer. Idk if that's a bad way to do it?
-    } else {
-      console.log("No data returned from the server.");
-      startPingTask("SendtoServer");
-    }
-  })
-  .catch(error => console.error(error));
+    .then(async response => {
+      if (response.ok) {
+        console.log(response)
+        handleReceivedData(response); // recursive, worker eventually calls sendToServer. Idk if that's a bad way to do it?
+      } else {
+        console.log("No data returned from the server.");
+        startPingTask();
+      }
+    })
+    .catch(error => console.error(error));
 }
