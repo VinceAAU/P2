@@ -1,12 +1,17 @@
 .indexbutton {
-    float: right;
+  float: right;
     margin: 8px;
+    width: 100px; 
+    height: 32px; 
+    font-size: 19px; 
+    margin-right: 40px;
+    margin-top:  10px;   
 }
 
 #footer {
     position: fixed;
     border-top: 2px solid black;
-    background-color: lightskyblue;
+    background-color: #9ba4b5;
     bottom: 0;
     width: 100%;
     text-align: center;
@@ -15,8 +20,7 @@
 html, body {
     margin: 0;
     padding: 0;
-    
-    background-color: lightyellow;
+    background-color: #394867;
     align-self: center;
 }
 
@@ -100,22 +104,36 @@ section {
 
 #header {
     position: fixed;  
+    height: 50px;
     margin: 0px;
     top: 0;
     width: 100%;
-    background-color: lightgreen;
-    border-bottom: 2px solid black;
+    background-color: #212A3E;
+    border-bottom: 3px solid black;
+}
+
+#indexh1 {
+    font: normal 48px Arial;
+    text-align: center;
+    padding: 40px; 
+    color: #f9f9f9;
+
 }
 
 #indexp1 {
     line-height: 1.5;
-    margin: 2px;
+    margin: 10px;
+    font-size: 24px;
+    margin-left: 50px;
+    color: #f9f9f9;
 }
 
-#indexh1 {
-    text-decoration: underline;
-    text-align: center;
-    padding: 20px;
+#indexul1{
+  font-size: 24px; 
+  color: #f9f9f9;
+  margin-left: 50px;
+  padding: 20px;
+  line-height: 1.5;
 }
 
 #login-error-msg, #error-message {
@@ -130,3 +148,77 @@ section {
   background-color: #e58f8f;
   opacity: 0;
 }
+
+#numFiles {
+  margin-left: 50px;
+  color: #f9f9f9;
+  font-size: 24px;
+}
+
+#upload-form {
+  padding: 5px; 
+  color: #f9f9f9;
+  font-size: 24px;
+}
+
+#file-input {
+  padding: 5px; 
+  color: #f9f9f9;
+  font-size: 24px;
+}
+
+
+#error-message {
+  padding: 5px; 
+  color: #f9f9f9;
+  font-size: 24px;
+}
+
+#custom-button {
+  width: 200px; 
+  height: 50px; 
+  font-size: 24px; 
+  margin-left: 50px;
+  margin-bottom: 20px;
+}
+
+#start_button {
+  width: 200px; 
+  height: 50px; 
+  font-size: 24px; 
+  margin-left: 50px;
+  margin-top: 12px;
+}
+
+#upload-file {
+  width: 200px; 
+  height: 50px; 
+  font-size: 24px; 
+  margin-left: 45px;
+}
+
+.file-upload {
+  display: inline-flex;
+}
+
+.startWorker {
+  display: inline-flex;
+}
+
+#nameofFiles {
+  margin-left: 20px;
+  margin-top: 15px;
+  color: #f9f9f9;
+  font-size: 24px;
+}
+
+#uploadFiles {
+  margin-left: 14px;
+}
+
+#worker_text {
+  margin-left: 20px;
+  color: #f9f9f9;
+  font-size: 24px;
+}
+

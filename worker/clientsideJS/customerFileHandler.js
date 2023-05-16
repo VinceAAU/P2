@@ -56,9 +56,12 @@ fileupload.addEventListener('change', (event) => {
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
 
-  const formData = new FormData();
+  if (fileInput.value === '') {
+    logError();
+  } else {
+    const formData = new FormData();
   formData.append('fileupload', fileInput.files[0]);
-
+  fileInput.value = ''; // clear chosen file field
   try {
     const response = await fetch('upload', {
       method: 'POST',
@@ -72,11 +75,15 @@ form.addEventListener('submit', async (event) => {
   } catch (error) {
     console.log(error)
   }
+    location.reload();
+  }
+  
 });
 
 async function downloadFileFromServer(e) {
   console.log(e.target.id);
   headers = {
+    "Authorization": `Bearer ${accessToken}`,
     'url': e.target.id
   };
   await fetch('download', { headers })
@@ -99,6 +106,7 @@ async function downloadFileFromServer(e) {
     .catch(error => {
       console.error('There has been a problem with your fetch operation:', error);
     });
+    location.reload();
 }
 
 

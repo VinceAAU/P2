@@ -66,7 +66,7 @@ function saveData(accessToken, ID) {
   console.log("savedaata function")
   // Save the access token in local storage
   localStorage.setItem('accessToken', accessToken);
-  localStorage.setItem('UUID', ID);
+  window.UUID = ID;
   console.log("saved accesstoken")
 }
 

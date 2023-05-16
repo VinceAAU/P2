@@ -1,6 +1,6 @@
 // Retrieve the access token and UUID from local storage
 const accessToken = localStorage.getItem('accessToken');
-const UUID = localStorage.getItem('UUID');
+const UUID = window.UUID;
 // Add the access token to the request headers
 const headers = {
   'Authorization': `Bearer ${accessToken}`

@@ -10,6 +10,7 @@ import http from 'http';
 import path from "path";
 import qs from "querystring";
 import { requestHandler, fileResponse } from './router.js';
+import { heartbeat } from './master/workerManagement.js';
 
 
 //function and const exports
@@ -20,6 +21,7 @@ const hostname = '127.0.0.1';
 const port = 3190;
 const server = http.createServer(requestHandler);
 const changePasswordPath = '/worker/html/changePassword.html';
+server.requestTimeout = 1000 * 60 * 30; // 30 minutes request timeout time. Otherwise, server might crash for big file uploads.
 
 function redirect(req, res, path) {
   console.log("redirecting to: ", path)
@@ -183,5 +185,7 @@ function collectPostBody(req) {//cg addin explanation due
 }
 
 server.listen(port, hostname, () => {
+  console.log(`Started heartbeat`);
+  heartbeat();
   console.log(`Server running at http://${hostname}:${port}/`);
 });

@@ -7,16 +7,27 @@
 </head>
 
 <body>
-    <h1>Customer Page</h1>
-    <button class="indexbutton" type="button" name="Worker" onclick="location.href='workerPage.html'">Worker</button>
-    <button class="indexbutton" type="button" onclick="location.href='/'">Log out</button>
+    <h1 id="indexh1">Customer</h1>
+    <div id="header">
+        <button class="indexbutton" type="button" name="Worker" onclick="location.href='/workerPage.html'" id="worker_button">Worker</button>
+        <button class="indexbutton" type="button" onclick="location.href='/'">Log out</button>
+	</div>
+
     <div id="error-message"></div> <!-- error message element -->
-    <form action="upload" id="upload-form" enctype="multipart/form-data">
-        <!-- HTML5 file upload selector-->
-        <input type="file" name="fileupload" accept=".csv">
-        <br>
-        <input type="submit" value="Upload File">
+
+<div class="file-upload">
+    <input type="file" name="fileupload" id="file-input" accept=".csv" hidden>
+    <button onclick="document.getElementById('file-input').click()" id="custom-button">Select File</button>
+    <span id="nameofFiles">Name of file: need help with this one</span>
+</div>
+
+
+    <form action="/upload" id="upload-form" enctype="multipart/form-data">
+          <!-- Your additional form elements can go here if needed -->
+         <input type="submit" value="Upload File" id="upload-file">
+         <span id="uploadFiles">Upload current file</span>
     </form>
+
 
 
 
