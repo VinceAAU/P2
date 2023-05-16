@@ -14,7 +14,7 @@ async function toggleStartButton() {
 
   if (button.textContent === "Start") { // when user presses "start"
     button.textContent = "Disconnect";
-    hackerman.style.visibility = "visible";
+    //hackerman.style.visibility = "visible";
     
     startWorking(); // Request data and start sorting
     startAlert();  //Gives a warning when closing if working.
@@ -54,6 +54,7 @@ function startWorking()
 {
   workerSort = new Worker("workerSort.js");
     isConnected = true;
+    console.log("start")
     fetch('requestFirstTask', {
       method: 'GET',
       headers: {
@@ -61,13 +62,42 @@ function startWorking()
       }
     })
       .then(async data => {
+        console.log(data)
         handleReceivedData(data);
       })
       .catch(error => console.error(error));
 
     startPingTimer();
+    //startPingTask();
 
 }
+
+async function startPingTask(){
+  console.log("startPingTask")
+  const pingInterval = 30000;
+  // const accessToken = localStorage.getItem("accessToken");
+  // const uuid = window.UUID;
+
+  while (pingTimerActive) {
+    fetch('requestFirstTask', {
+      method: 'GET',
+      headers: {
+        'UUID': window.UUID
+      }
+    })
+      .then(async data => {
+        if(data.ok){
+          console.log("ping response OK")
+          console.log(data)
+          handleReceivedData(data);
+        }
+      })
+      .catch(error => console.error(error));
+    console.log("ping loop")
+    await new Promise(r => setTimeout(r, pingInterval));
+  } 
+}
+
 
 function startWebWorker(receivedArray) {
   if (window.Worker) {
@@ -99,6 +129,7 @@ async function pingTimer() {
         "UUID": uuid
       }
     });
+    console.log("ping pong")
     await new Promise(r => setTimeout(r, pingInterval));
   }
 }
@@ -124,7 +155,11 @@ async function handleReceivedData(data) {
 }
 
 async function sendToServer(array) {
-  if (!isConnected) return; // If not connected don't send anything or request new tasks. 
+  console.log("sendtoserver aaaaaaa");
+  if (!isConnected){ 
+    console.log("is not connected")
+    return
+  }; // If not connected, don't send anything or request new tasks. 
   await fetch('requestNewTask', {
     method: 'POST',
     headers: {
@@ -133,9 +168,17 @@ async function sendToServer(array) {
       'UUID': window.UUID
     },
     body: array
-  }).then(async data => {
-    handleReceivedData(data); // recursive, worker eventually calls sendToServer. Idk if that's a bad way to do it?
   })
-    .catch(error => console.error(error));
+  .then(async response => {
+    if (response.ok) {
+      //const data = await response.json();
+      console.log(response)
+      console.log("Response AOK")
+      handleReceivedData(response); // recursive, worker eventually calls sendToServer. Idk if that's a bad way to do it?
+    } else {
+      console.log("No data returned from the server.");
+      startPingTask();
+    }
+  })
+  .catch(error => console.error(error));
 }
-
