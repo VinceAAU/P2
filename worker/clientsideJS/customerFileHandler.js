@@ -1,10 +1,10 @@
-const accessToken = localStorage.getItem('accessToken');
-const errorMessage = document.getElementById('error-message');
+const accessToken = localStorage.getItem('#accessToken');
+const errorMessage = document.querySelector('#error-message');
 const form = document.querySelector('#upload-form');
-const fileInput = document.querySelector('input[name="fileupload"]');
-const realFileBtn = document.getElementById("file-input");
-const customBtn = document.getElementById("custom-button");
-const customTxt = document.getElementById("nameofFiles");
+const fileInput = document.querySelector('#input[name="fileupload"]');
+const realFileBtn = document.querySelector("#file-input");
+const customBtn = document.querySelector("#custom-button");
+const customTxt = document.querySelector("#nameofFiles");
 
 let headers = {
   'Authorization': `Bearer ${accessToken}`
@@ -47,7 +47,7 @@ fetch('/get-task-list-by-user', { headers })
   .catch(error => console.log(error));
 
 //Gives a warning when user inputs a non csv file
-const fileupload = document.querySelector('input');
+const fileupload = document.querySelector('#input');
 fileupload.addEventListener('change', (event) => {
   const file = event.target.files[0];
   if (file.type !== 'text/csv') {
