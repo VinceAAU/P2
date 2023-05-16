@@ -18,9 +18,11 @@ p{
     position: fixed;
     border-top: 2px solid black;
     background-color: #9ba4b5;
+    height: 6%;
     bottom: 0;
     width: 100%;
     text-align: center;
+    padding-top: 2px;
 }
 
 html, body {
