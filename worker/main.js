@@ -55,44 +55,37 @@ function startWorking()
   workerSort = new Worker("workerSort.js");
     isConnected = true;
     console.log("start")
-    fetch('requestFirstTask', {
-      method: 'GET',
-      headers: {
-        'UUID': window.UUID
-      }
-    })
-      .then(async data => {
-        console.log(data)
-        handleReceivedData(data);
-      })
-      .catch(error => console.error(error));
+    //fetchTask()
 
     startPingTimer();
-    //startPingTask();
+    startPingTask();
+    
 
+}
+
+function fetchTask(){
+  fetch('requestFirstTask', {
+    method: 'GET',
+    headers: {
+      'UUID': window.UUID
+    }
+  })
+    .then(async data => {
+      if(data.ok){
+        console.log("ping response OK")
+        console.log(data)
+        handleReceivedData(data);
+      }
+    })
+    .catch(error => console.error(error));
 }
 
 async function startPingTask(){
   console.log("startPingTask")
   const pingInterval = 30000;
-  // const accessToken = localStorage.getItem("accessToken");
-  // const uuid = window.UUID;
 
   while (pingTimerActive) {
-    fetch('requestFirstTask', {
-      method: 'GET',
-      headers: {
-        'UUID': window.UUID
-      }
-    })
-      .then(async data => {
-        if(data.ok){
-          console.log("ping response OK")
-          console.log(data)
-          handleReceivedData(data);
-        }
-      })
-      .catch(error => console.error(error));
+    fetchTask()
     console.log("ping loop")
     await new Promise(r => setTimeout(r, pingInterval));
   } 
@@ -129,7 +122,6 @@ async function pingTimer() {
         "UUID": uuid
       }
     });
-    console.log("ping pong")
     await new Promise(r => setTimeout(r, pingInterval));
   }
 }
@@ -155,9 +147,7 @@ async function handleReceivedData(data) {
 }
 
 async function sendToServer(array) {
-  console.log("sendtoserver aaaaaaa");
   if (!isConnected){ 
-    console.log("is not connected")
     return
   }; // If not connected, don't send anything or request new tasks. 
   await fetch('requestNewTask', {
@@ -173,7 +163,6 @@ async function sendToServer(array) {
     if (response.ok) {
       //const data = await response.json();
       console.log(response)
-      console.log("Response AOK")
       handleReceivedData(response); // recursive, worker eventually calls sendToServer. Idk if that's a bad way to do it?
     } else {
       console.log("No data returned from the server.");
