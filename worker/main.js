@@ -70,7 +70,7 @@ function startWorking()
     //fetchTask()
 
     startPingTimer();
-    startPingTask();
+    fetchTask();
     
 
 }
@@ -88,20 +88,24 @@ function fetchTask(){
         console.log(data)
         statusMessage("Recieved task. Computing begun")
         handleReceivedData(data);
+      } else {
+        console.log("no work to do in original fetch")
+        startPingTask("fetchTask")
       }
     })
     .catch(error => console.error(error));
 }
 
-async function startPingTask(){
+async function startPingTask(from){
   console.log("startPingTask")
-  const pingInterval = 30000;
+  console.log("from: ",from)
+  const pingIntervalTask = 30000;
 
   while (pingTimerActive) {
     fetchTask()
-    statusMessage("No new tasks. Awaiting...")
+    statusMessage("Awaiting new tasks")
     console.log("ping loop")
-    await new Promise(r => setTimeout(r, pingInterval));
+    await new Promise(r => setTimeout(r, pingIntervalTask));
   } 
 }
 
@@ -180,7 +184,7 @@ async function sendToServer(array) {
       handleReceivedData(response); // recursive, worker eventually calls sendToServer. Idk if that's a bad way to do it?
     } else {
       console.log("No data returned from the server.");
-      startPingTask();
+      startPingTask("SendtoServer");
     }
   })
   .catch(error => console.error(error));
