@@ -33,7 +33,7 @@ async function toggleStartButton() {
 }
 
 function statusMessage(message) {
-  const errorMessage = document.getElementById('statusMsg');
+  const errorMessage = document.querySelector('#statusMsg');
   errorMessage.textContent = message;
   errorMessage.style.opacity = 1;
 }

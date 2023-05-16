@@ -5,7 +5,7 @@ h2{
 }
 
 p{
-  font: 24px Arial;
+  font: 16px Arial;
   color:white;
   margin-left: 50px;
 }
@@ -65,6 +65,7 @@ section {
     border-radius: 10px;
     width: 400px;
     background-color: #ececec;
+    box-shadow: 8px 16px 24px rgba(0, 0, 0, 0.8); /* Add larger and darker shadow effect */
   }
   
   /* Style the form title */
@@ -137,14 +138,14 @@ section {
 #indexp1 {
     line-height: 1.5;
     margin: 10px;
-    font-size: 24px;
+    font-size: 16px;
     margin-left: 50px;
     margin-top: -25px;
     color: white;
 }
 
 #indexul1{
-  font-size: 24px; 
+  font-size: 16px; 
   color: white;
   margin-left: 50px;
   padding: 20px;
@@ -213,11 +214,7 @@ section {
   margin-left: 45px;
 }
 
-.file-upload {
-  display: inline-flex;
-}
-
-.startWorker {
+.file-upload, .startWorker {
   display: inline-flex;
 }
 
@@ -232,7 +229,7 @@ section {
   margin-left: 14px;
 }
 
-#worker_text {
+#worker_text, #statusMsg {
   margin-left: 20px;
   color: white;
   font-size: 24px;
