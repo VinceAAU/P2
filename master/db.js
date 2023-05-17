@@ -112,3 +112,7 @@ function update(password, user){
     throw(err);
   }
 }
+
+export const exportForTesting = {
+  hash, create_table
+}
