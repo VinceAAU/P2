@@ -153,10 +153,10 @@ async function loadFinishedQueue() {      //loads the finished queue from the se
     }
 }
 
-async function pendingQueueToFinishedQueue() {     //Takes the first element from the pending queeu and pushes it to the finished queue
+async function pendingQueueToFinishedQueue(fileName) {     //Takes the first element from the pending queeu and pushes it to the finished queue
     await loadPendingQueue();                    //Also saves the finished and pending queue in their updated version
     finishedUserQueue.push(await getUserQueueHead());
-    finishedTaskQueue.push('sorted' + await getTaskQueueHead());
+    finishedTaskQueue.push(fileName);
     await removeCustomerQueue();
     await saveFinishedQueue();
     await savePendingQueue();
