@@ -5,6 +5,7 @@
 
 window.UUID = crypto.randomUUID(); //WARNING: THIS ONLY WORKS IN localhost AND HTTPS
 let pingTimerActive = false;
+let waitingForTask = false;
 let isConnected = false;
 let workerSort;
 
@@ -15,7 +16,12 @@ async function toggleStartButton() {
     button.textContent = "Disconnect";
     statusMessage("Node registered, awaiting tasks");
 
-    startWorking(); // Request data and start sorting
+    /* Check if a timer waiting for tasks is already active. 
+    *  If it is, this indicates that the button is being spammed, 
+    *  and we simply reload the page as a simple solution to avoid further problems. */
+    if(!waitingForTask) startWorking(); 
+    else location.reload();
+    
     startAlert();  //Gives a warning when closing if working.
 
   } else { // when user presses "disconnect"
@@ -65,12 +71,18 @@ async function waitForTask() {
 //  console.log("Waiting for task...");
   statusMessage("Waiting for task...");
   const timer = 10000;
+  waitingForTask = true;
 
   return new Promise((resolve) => {
     setTimeout(() => {
-      console.log("Finished waiting, asking for task");
-      fetchTask();
-      resolve();
+      if(isConnected) // Makes sure no tasks are fetched, while the worker is disconnected
+      {
+        console.log("Finished waiting, asking for task");
+        fetchTask();
+        waitingForTask = false;
+        resolve();
+      }
+      
     }, timer);
   });
 }

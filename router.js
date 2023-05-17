@@ -205,7 +205,7 @@ function handleUserCreation(req, res) {
 //Function for forgot password page
 function handlePasswordPostCase(req, res) {
     extractForm(req)
-        .then(username => search(username)) //in forgotPassword.js
+        .then(username => search(username["username"])) //in forgotPassword.js
         .then(_ => {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.write('User found');
