@@ -98,7 +98,7 @@ async function fetchTask() {
       if (data.ok) {
         console.log("ping response OK")
         console.log(data)
-        statusMessage("Received task. Computing begun")
+        statusMessage("Received task")
         handleReceivedData(data);
       } else {
         console.log("No work available on first fetch. Waiting...")
@@ -171,6 +171,7 @@ async function handleReceivedData(data) {
   const convertedArray = new Uint32Array(buffer);
   console.log("Array as Uint32Array:");
   console.log(convertedArray);
+  statusMessage("Computing...");
   startWebWorker(convertedArray);
 }
 
