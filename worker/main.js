@@ -25,13 +25,13 @@ async function toggleStartButton() {
   }
 }
 
-function statusMessage(message) {
+function statusMessage(message) { // Updates the user on what their worker node is doing.
   const errorMessage = document.querySelector('#statusMsg');
   errorMessage.textContent = message;
   errorMessage.style.opacity = 1;
 }
 
-function startAlert() {
+function startAlert() { // Asks the user if they're sure, when they try to exit.
   window.onbeforeunload = function (e) {
     if (isConnected) {
       e = e || window.event;
@@ -45,7 +45,7 @@ function stopWorking() {
   isConnected = false;
   workerSort.terminate();
   stopPingTimer();
-  fetch('dead', {
+  fetch('dead', { // tells server to remove worker from list of active workers
     method: 'POST',
     headers: {
       "UUID": window.UUID
@@ -54,11 +54,25 @@ function stopWorking() {
 }
 
 function startWorking() {
-  workerSort = new Worker("workerSort.js");
+  workerSort = new Worker("workerSort.js"); 
   isConnected = true;
   console.log("start")
-  startPingTimer();
+  startPingTimer(); // starts heartbeat
   fetchTask();
+}
+
+async function waitForTask() {
+//  console.log("Waiting for task...");
+  statusMessage("Waiting for task...");
+  const timer = 10000;
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log("Finished waiting, asking for task");
+      fetchTask();
+      resolve();
+    }, timer);
+  });
 }
 
 async function fetchTask() {
@@ -72,16 +86,16 @@ async function fetchTask() {
       if (data.ok) {
         console.log("ping response OK")
         console.log(data)
-        statusMessage("Recieved task. Computing begun")
+        statusMessage("Received task. Computing begun")
         handleReceivedData(data);
       } else {
-        console.log("no work to do in original fetch")
-        startPingTask()
+        console.log("No work available on first fetch. Waiting...")
+        waitForTask();
       }
     })
     .catch(error => console.error(error));
 }
-
+/* Replaced with waitForTask()
 async function startPingTask() {
   console.log("startPingTask")
   const pingIntervalTask = 5000;
@@ -92,7 +106,7 @@ async function startPingTask() {
     await new Promise(r => setTimeout(r, pingIntervalTask));
     await fetchTask()
   }
-}
+} */
 
 function startWebWorker(receivedArray) {
   if (window.Worker) {
@@ -167,7 +181,7 @@ async function sendToServer(array) {
         handleReceivedData(response); // recursive, worker eventually calls sendToServer. Idk if that's a bad way to do it?
       } else {
         console.log("No data returned from the server.");
-        startPingTask();
+        waitForTask();
       }
     })
     .catch(error => console.error(error));
