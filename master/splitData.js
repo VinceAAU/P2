@@ -137,6 +137,8 @@ class Bucket{
   }
 }
 
+export const exportForTesting = { Bucket };
+
 /*
 // Debugging:
 console.log("Pre-call");
