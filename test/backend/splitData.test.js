@@ -134,7 +134,7 @@ function generateBucketlistFromNumbers(bucketNumber, numbers) {
     return returnList;
 }
 
-const hashBuckets = true;
+const hashBuckets = false;
 
 //This test takes a while to run. Good thing ava runs tests in parallel!
 //It will time out after five minutes
