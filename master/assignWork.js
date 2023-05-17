@@ -132,3 +132,8 @@ async function bucketConcatenate() {
     sortedBuckets = [];
     console.log("Completed Sorting");
 };
+
+export const exportForTesting = {
+    storeSortedBuckets,
+    dequeueTask
+};
