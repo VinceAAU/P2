@@ -332,7 +332,7 @@ async function giveTask(req, res) {
         throw new Error("No tasks available");
       }
     } catch {
-      res.statusCode = 404;
+      res.statusCode = 204;
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify({ message: "No tasks available" }));
     }
