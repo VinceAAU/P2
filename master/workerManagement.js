@@ -5,10 +5,9 @@
 import {WorkerNode, addToBeginningOfQueue, enqueueTask} from './assignWork.js';
 
 export { workers, addWorker, removeWorker, pong, heartbeat };
-
 var workers = {};
 
-const timeout = 10_000;
+const timeout = 20_000;
 async function heartbeat(){
     while(true){ //Possible TODO: get a way to stop the heartbeat
         for(let uuid in workers){
