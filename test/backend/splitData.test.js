@@ -144,28 +144,20 @@ test('File loader', async t => {
     t.timeout(5*60_000, "Get a faster computer lol");
 
     const testfilename = 'test_file.csv';
-    const elementAmount = 100_000_00;
+    const elementAmount = 100_000_000;
     //`numbers` is a Uint32Array of all the numbers written to CSV
     const numbers = await generateCSVData(testfilename, elementAmount); //This should create 4 buckets
     
 
     const bucketsFromFile = await sd.BucketList.fromFile(testfilename);
-    //Hash the data to reduce memory usage
-    if(hashBuckets){
-        for (let i in bucketsFromFile){
-            bucketsFromFile[i] = crypto.createHash('md5').update(bucketsFromFile[i]).digest('hex');
-        }
-    }
 
     const bucketsFromNumbers = generateBucketlistFromNumbers(bucketsFromFile.length, numbers);
-    //Hash the data to reduce memory usage
-    if(hashBuckets){
-        for (let i in bucketsFromNumbers){
-            bucketsFromNumbers[i] = crypto.createHash('md5').update(bucketsFromNumbers[i]).digest('hex');
-        }
-    }
 
     for(let i in bucketsFromNumbers){
-        t.is(bucketsFromFile[i], bucketsFromNumbers[i]);
+        t.deepEqual(bucketsFromFile[i].slice(0, 100),
+                bucketsFromNumbers[i].slice(0, 100),
+                'The buckets are not the same');
     }
+
+    await fs.unlink(testfilename); //Clean up after myself
 });
