@@ -130,7 +130,7 @@ function startWebWorker(receivedArray) {
       let arrS = new Uint32Array(e.data);
       console.log("Worker returned the sorted list: ");
       console.log(arrS);
-      statusMessage("Done computing")
+      statusMessage("Done computing. Sending data to server...")
       sendToServer(arrS);
     }
   } else {
