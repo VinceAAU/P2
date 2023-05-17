@@ -114,5 +114,5 @@ function update(password, user){
 }
 
 export const exportForTesting = {
-  hash, create_table
+  hash
 }
