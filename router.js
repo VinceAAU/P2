@@ -52,8 +52,8 @@ function requestHandler(req, res) {
         res.end();
         return;
     }
-    if (req.url !== '/ping')
-        console.log("New request: " + req.method + " " + req.url);
+   /* if (req.url !== '/ping')
+        console.log("New request: " + req.method + " " + req.url); */
 
     let baseURL = 'http://' + req.headers.host + '/';
     let url = new URL(req.url, baseURL);
@@ -114,10 +114,6 @@ function requestHandler(req, res) {
         case "/style.css":
             fileResponse(res, CSSPath);
             break;
-
-        case "/request-worktask":
-            streamArrayToClient(res, Buffer.from(new Uint32Array([5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]).buffer)); // Example array
-            break;
         case "/posts":
             authenticateToken(req, res);
             break;
@@ -128,6 +124,7 @@ function requestHandler(req, res) {
             giveTask(req, res);
             break;
         case "/requestNewTask":
+            console.log("Node finished task: " + req.headers.uuid);
             giveNewTask(req, res);
             break;
 
@@ -163,6 +160,7 @@ function requestHandler(req, res) {
             //fileResponse(res, customerPagePath);
             break;
         case "/upload":
+            console.log("User uploading file");
             redirectToHandleUpload(req, res);
 
             // get user ID token thingy for the requester
@@ -171,6 +169,7 @@ function requestHandler(req, res) {
             handleFileQueue(req, res);
             break;
         case "/download":
+            console.log("User downloading file");
             downloadFile(req, res);
             break;
         case "/ping":
