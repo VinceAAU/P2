@@ -52,8 +52,8 @@ function requestHandler(req, res) {
         res.end();
         return;
     }
-   /* if (req.url !== '/ping')
-        console.log("New request: " + req.method + " " + req.url); */
+   if (req.url !== '/ping')
+        console.log("New request: " + req.method + " " + req.url);
 
     let baseURL = 'http://' + req.headers.host + '/';
     let url = new URL(req.url, baseURL);
