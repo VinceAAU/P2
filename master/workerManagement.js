@@ -33,7 +33,7 @@ function removeWorker(uuid) {
     if (workers[uuid] && (typeof workers[uuid].currentTask !== 'undefined' && workers[uuid].currentTask !== null)) {
       enqueueTask(workers[uuid].currentTask);
     } else {
-        console.log("User didn't have a task, probably ¯\\_(ツ)_/¯");
+        console.log("User didn't have a task, or didn't exist");
     }
     delete workers[uuid];
     console.log("Workers active: "+ Object.keys(workers).length );
