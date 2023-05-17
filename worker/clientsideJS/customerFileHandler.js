@@ -1,7 +1,10 @@
 const accessToken = localStorage.getItem('accessToken');
-const errorMessage = document.getElementById('error-message');
+const errorMessage = document.querySelector('#error-message');
 const form = document.querySelector('#upload-form');
-const fileInput = document.querySelector('input[name="fileupload"]');
+const fileInput = document.querySelector('#input[name="fileupload"]');
+const realFileBtn = document.querySelector("#file-input");
+const customBtn = document.querySelector("#custom-button");
+const customTxt = document.querySelector("#nameofFiles");
 
 let headers = {
   'Authorization': `Bearer ${accessToken}`
@@ -13,7 +16,7 @@ fetch('get-task-list-by-user', { headers })
     let numFiles = document.querySelector("#numFiles");
     console.log(numFiles);
     console.log(data.length);
-    numFiles.textContent = 'Number of files uploaded ' + (data.length - 1);
+    numFiles.textContent = 'Number of files uploaded: ' + (data.length - 1);
     console.log("Received array from server:");
     console.log(data);
 
@@ -21,7 +24,7 @@ fetch('get-task-list-by-user', { headers })
     data.forEach(x => {
       if (x === 'Shift') {
         shifted = true;
-        let text = document.createElement('p');
+        let text = document.createElement('h2');
         text.textContent = "In progress:";
         document.body.appendChild(text);
       } else {
@@ -32,6 +35,7 @@ fetch('get-task-list-by-user', { headers })
           let downloadButton = document.createElement('button');
           downloadButton.textContent = 'Download file';
           downloadButton.id = x;
+          downloadButton.classList.add('downloadButtons');
           downloadButton.addEventListener("click", downloadFileFromServer);
           document.body.appendChild(downloadButton);
         }
@@ -56,12 +60,12 @@ fileupload.addEventListener('change', (event) => {
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
 
-  if (fileInput.value === '') {
+  if (realFileBtn.value === '') {
     logError();
   } else {
     const formData = new FormData();
-  formData.append('fileupload', fileInput.files[0]);
-  fileInput.value = ''; // clear chosen file field
+  formData.append('fileupload', realFileBtn.files[0]);
+  realFileBtn.value = ''; // clear chosen file field
   try {
     const response = await fetch('upload', {
       method: 'POST',
@@ -115,3 +119,18 @@ function logError() {
   errorMessage.style.opacity = 1;
 }
 
+
+//Makes sure the pseudo button activates the real button
+customBtn.addEventListener("click", function(){
+    realFileBtn.click();
+})
+
+//This is what changes the file name
+realFileBtn.addEventListener("change", function(){
+  if (realFileBtn.value) {
+//That long weird text is neccesary, makes it so the file path is not shown and only the name
+    customTxt.innerHTML = realFileBtn.value.match(/[\/\\]([\w\d\s\.\-\(\)]+)$/)[1];
+  } else {
+    customTxt.innerHTML = "No file chosen, yet.";
+  }
+})

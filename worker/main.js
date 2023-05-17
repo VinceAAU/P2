@@ -5,29 +5,39 @@
 
 window.UUID = crypto.randomUUID(); //WARNING: THIS ONLY WORKS IN localhost AND HTTPS
 let pingTimerActive = false;
+let waitingForTask = false;
 let isConnected = false;
 let workerSort;
 
 async function toggleStartButton() {
-  let hackerman = document.querySelector("#hackerman");
   let button = document.querySelector("#start_button");
 
   if (button.textContent === "Start") { // when user presses "start"
     button.textContent = "Disconnect";
-    hackerman.style.visibility = "visible";
+    statusMessage("Node registered, awaiting tasks");
+
+    /* Check if a timer waiting for tasks is already active. 
+    *  If it is, this indicates that the button is being spammed, 
+    *  and we simply reload the page as a simple solution to avoid further problems. */
+    if(!waitingForTask) startWorking(); 
+    else location.reload();
     
-    startWorking(); // Request data and start sorting
     startAlert();  //Gives a warning when closing if working.
 
   } else { // when user presses "disconnect"
     button.textContent = "Start";
-    hackerman.style.visibility = "hidden";
+    statusMessage("")
     stopWorking();
   }
 }
 
-function startAlert()
-{
+function statusMessage(message) { // Updates the user on what their worker node is doing.
+  const errorMessage = document.querySelector('#statusMsg');
+  errorMessage.textContent = message;
+  errorMessage.style.opacity = 1;
+}
+
+function startAlert() { // Asks the user if they're sure, when they try to exit.
   window.onbeforeunload = function (e) {
     if (isConnected) {
       e = e || window.event;
@@ -37,12 +47,11 @@ function startAlert()
   };
 }
 
-function stopWorking()
-{
+function stopWorking() {
   isConnected = false;
   workerSort.terminate();
   stopPingTimer();
-  fetch('dead', {
+  fetch('dead', { // tells server to remove worker from list of active workers
     method: 'POST',
     headers: {
       "UUID": window.UUID
@@ -50,24 +59,66 @@ function stopWorking()
   });
 }
 
-function startWorking()
-{
-  workerSort = new Worker("workerSort.js");
-    isConnected = true;
-    fetch('requestFirstTask', {
-      method: 'GET',
-      headers: {
-        'UUID': window.UUID
+function startWorking() {
+  workerSort = new Worker("workerSort.js"); 
+  isConnected = true;
+  console.log("start")
+  startPingTimer(); // starts heartbeat
+  fetchTask();
+}
+
+async function waitForTask() {
+//  console.log("Waiting for task...");
+  statusMessage("Waiting for task...");
+  const timer = 10000;
+  waitingForTask = true;
+
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if(isConnected) // Makes sure no tasks are fetched, while the worker is disconnected
+      {
+        console.log("Finished waiting, asking for task");
+        fetchTask();
+        waitingForTask = false;
+        resolve();
+      }
+      
+    }, timer);
+  });
+}
+
+async function fetchTask() {
+  fetch('requestFirstTask', {
+    method: 'GET',
+    headers: {
+      'UUID': window.UUID
+    }
+  })
+    .then(async data => {
+      if (data.ok) {
+        console.log("ping response OK")
+        console.log(data)
+        statusMessage("Received task. Computing begun")
+        handleReceivedData(data);
+      } else {
+        console.log("No work available on first fetch. Waiting...")
+        waitForTask();
       }
     })
-      .then(async data => {
-        handleReceivedData(data);
-      })
-      .catch(error => console.error(error));
-
-    startPingTimer();
-
+    .catch(error => console.error(error));
 }
+/* Replaced with waitForTask()
+async function startPingTask() {
+  console.log("startPingTask")
+  const pingIntervalTask = 5000;
+
+  while (pingTimerActive) {
+    statusMessage("Awaiting new tasks")
+    console.log("ping loop")
+    await new Promise(r => setTimeout(r, pingIntervalTask));
+    await fetchTask()
+  }
+} */
 
 function startWebWorker(receivedArray) {
   if (window.Worker) {
@@ -79,6 +130,7 @@ function startWebWorker(receivedArray) {
       let arrS = new Uint32Array(e.data);
       console.log("Worker returned the sorted list: ");
       console.log(arrS);
+      statusMessage("Done computing. Sending data to server...")
       sendToServer(arrS);
     }
   } else {
@@ -112,7 +164,6 @@ function stopPingTimer() {
   pingTimerActive = false;
 }
 
-
 async function handleReceivedData(data) {
   console.log("Received array from server:");
   console.log(data);
@@ -124,7 +175,9 @@ async function handleReceivedData(data) {
 }
 
 async function sendToServer(array) {
-  if (!isConnected) return; // If not connected don't send anything or request new tasks. 
+  if (!isConnected) {
+    return
+  }; // If not connected, don't send anything or request new tasks. 
   await fetch('requestNewTask', {
     method: 'POST',
     headers: {
@@ -133,9 +186,15 @@ async function sendToServer(array) {
       'UUID': window.UUID
     },
     body: array
-  }).then(async data => {
-    handleReceivedData(data); // recursive, worker eventually calls sendToServer. Idk if that's a bad way to do it?
   })
+    .then(async response => {
+      if (response.ok) {
+        console.log(response)
+        handleReceivedData(response); // recursive, worker eventually calls sendToServer. Idk if that's a bad way to do it?
+      } else {
+        console.log("No data returned from the server.");
+        waitForTask();
+      }
+    })
     .catch(error => console.error(error));
 }
-

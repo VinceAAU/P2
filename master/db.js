@@ -97,17 +97,22 @@ function search_for_username(username){
 // ('UPDATE table SET column1 = value1 WHERE column2 = value2')
 // Better-Sqlite allows for '?' to be placeholders for values to insert in SQL statement
 function update_password(new_password, user){
+  console.log(user)
   hash(new_password)
-  .then(protectedPassword => update(protectedPassword, user.username))
+  .then(protectedPassword => update(protectedPassword, user))
   .catch(err => console.log(err))
 };
 
 function update(password, user){
   try {
     const stmt = db.prepare('UPDATE users SET password = ? WHERE username = ?');
-    const updates = stmt.run(password, user.username);  
+    const updates = stmt.run(password, user);  
   }
-  catch{
-    throw("update_fail");
+  catch (err){
+    throw(err);
   }
+}
+
+export const exportForTesting = {
+  hash
 }

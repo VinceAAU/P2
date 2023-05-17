@@ -52,8 +52,8 @@ function requestHandler(req, res) {
         res.end();
         return;
     }
-    if (req.url !== '/ping')
-        console.log("New request: " + req.method + " " + req.url);
+   /* if (req.url !== '/ping')
+        console.log("New request: " + req.method + " " + req.url); */
 
     let baseURL = "https://cs-23-sw-2-12.p2datsw.cs.aau.dk/node0/";
     let url = new URL(req.url, baseURL);
@@ -114,10 +114,6 @@ function requestHandler(req, res) {
         case "/style.css":
             fileResponse(res, CSSPath);
             break;
-
-        case "/request-worktask":
-            streamArrayToClient(res, Buffer.from(new Uint32Array([5, 2, 1, 2, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6]).buffer)); // Example array
-            break;
         case "/posts":
             authenticateToken(req, res);
             break;
@@ -128,6 +124,7 @@ function requestHandler(req, res) {
             giveTask(req, res);
             break;
         case "/requestNewTask":
+            console.log("Node finished task: " + req.headers.uuid);
             giveNewTask(req, res);
             break;
 
@@ -163,6 +160,7 @@ function requestHandler(req, res) {
             //fileResponse(res, customerPagePath);
             break;
         case "/upload":
+            console.log("User uploading file");
             redirectToHandleUpload(req, res);
 
             // get user ID token thingy for the requester
@@ -171,6 +169,7 @@ function requestHandler(req, res) {
             handleFileQueue(req, res);
             break;
         case "/download":
+            console.log("User downloading file");
             downloadFile(req, res);
             break;
         case "/ping":
@@ -205,7 +204,7 @@ function handleUserCreation(req, res) {
 //Function for forgot password page
 function handlePasswordPostCase(req, res) {
     extractForm(req)
-        .then(username => search(username)) //in forgotPassword.js
+        .then(username => search(username["username"])) //in forgotPassword.js
         .then(_ => {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.write('User found');
@@ -324,17 +323,22 @@ async function downloadFile(req, res) {
     }
 }
 
-
-
-
 async function giveTask(req, res) {
-    let task = await assignWorkToWorker(req.headers["uuid"]);
-    if (task !== null) {
+    try {
+      let task = await assignWorkToWorker(req.headers["uuid"]);
+      if (task !== null) {
         streamArrayToClient(res, task);
+      } else {
+        throw new Error("No tasks available");
+      }
+    } catch {
+      res.statusCode = 404;
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify({ message: "No tasks available" }));
     }
-
-}
-
+  }
+  
+  
 async function giveNewTask(req, res) {
     let recievedTask = await receiveArray(req, res)
 

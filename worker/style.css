@@ -1,5 +1,11 @@
+h2{
+  font: 32px Arial;
+  color:white;
+  margin-left: 50px;
+}
+
 p{
-  font: 24px Arial;
+  font: 16px Arial;
   color:white;
   margin-left: 50px;
 }
@@ -10,16 +16,19 @@ p{
     width: 100px; 
     height: 32px; 
     font-size: 19px; 
-    margin-right: 40px;
+    margin-right: 30px;
     margin-top:  10px;   
 }
 
 #footer {
+    position: fixed;
     border-top: 2px solid black;
     background-color: #9ba4b5;
+    height: 6%;
     bottom: 0;
     width: 100%;
     text-align: center;
+    padding-top: 2px;
 }
 
 html, body {
@@ -56,6 +65,7 @@ section {
     border-radius: 10px;
     width: 400px;
     background-color: #ececec;
+    box-shadow: 8px 16px 24px rgba(0, 0, 0, 0.8); /* Add larger and darker shadow effect */
   }
   
   /* Style the form title */
@@ -121,21 +131,22 @@ section {
     font: normal 48px Arial;
     text-align: center;
     padding: 40px; 
-    color: #f9f9f9;
+    color: white;
 
 }
 
 #indexp1 {
     line-height: 1.5;
     margin: 10px;
-    font-size: 24px;
+    font-size: 16px;
     margin-left: 50px;
-    color: #f9f9f9;
+    margin-top: -25px;
+    color: white;
 }
 
 #indexul1{
-  font-size: 24px; 
-  color: #f9f9f9;
+  font-size: 16px; 
+  color: white;
   margin-left: 50px;
   padding: 20px;
   line-height: 1.5;
@@ -156,26 +167,27 @@ section {
 
 #numFiles {
   margin-left: 50px;
-  color: #f9f9f9;
-  font-size: 24px;
+  color: white;
+  font-size: 32px;
 }
 
 #upload-form {
   padding: 5px; 
-  color: #f9f9f9;
+  color: white;
   font-size: 24px;
 }
 
 #file-input {
   padding: 5px; 
-  color: #f9f9f9;
+  color: white;
   font-size: 24px;
+  margin-left: 50px;
 }
 
 
 #error-message {
   padding: 5px; 
-  color: #f9f9f9;
+  color: white;
   font-size: 24px;
 }
 
@@ -202,18 +214,14 @@ section {
   margin-left: 45px;
 }
 
-.file-upload {
-  display: inline-flex;
-}
-
-.startWorker {
+.file-upload, .startWorker {
   display: inline-flex;
 }
 
 #nameofFiles {
   margin-left: 20px;
   margin-top: 15px;
-  color: #f9f9f9;
+  color: white;
   font-size: 24px;
 }
 
@@ -221,9 +229,15 @@ section {
   margin-left: 14px;
 }
 
-#worker_text {
+#worker_text, #statusMsg {
   margin-left: 20px;
-  color: #f9f9f9;
+  color: white;
   font-size: 24px;
 }
 
+.downloadButtons {
+  width: 200px; 
+  height: 50px; 
+  font-size: 24px; 
+  margin-left: 50px; 
+}

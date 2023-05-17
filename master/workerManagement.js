@@ -5,10 +5,9 @@
 import {WorkerNode, addToBeginningOfQueue, enqueueTask} from './assignWork.js';
 
 export { workers, addWorker, removeWorker, pong, heartbeat };
-
 var workers = {};
 
-const timeout = 10_000;
+const timeout = 20_000;
 async function heartbeat(){
     while(true){ //Possible TODO: get a way to stop the heartbeat
         for(let uuid in workers){
@@ -25,6 +24,8 @@ async function heartbeat(){
 function addWorker(uuid, task){
     if(workers===undefined) { workers = {}; }
     workers[uuid] = new WorkerNode(task);
+    console.log("Adding worker: " + uuid);
+    console.log("Workers active: "+ Object.keys(workers).length );
 }
 
 function removeWorker(uuid) {
@@ -32,9 +33,10 @@ function removeWorker(uuid) {
     if (workers[uuid] && (typeof workers[uuid].currentTask !== 'undefined' && workers[uuid].currentTask !== null)) {
       enqueueTask(workers[uuid].currentTask);
     } else {
-        console.log("User task or user was invalid for some reason ¯\\_(ツ)_/¯");
+        console.log("User didn't have a task, or didn't exist");
     }
     delete workers[uuid];
+    console.log("Workers active: "+ Object.keys(workers).length );
   }
   
   // 420th commit, hurray!
