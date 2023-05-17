@@ -22,10 +22,11 @@ function returnToken(req, res, username) {
     res.end("\n");
 }
 
-function authenticateToken(req, res, next) {
+function authenticateToken(req, res) {
+    console.log("authenticateToken")
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-
+    console.log(token == null)
     if (token == null) return res.sendStatus(401)
 
     jwt.verify(token, acccesTokenSecret, (err, user) => {
@@ -46,6 +47,7 @@ function returnTokenErr(res, code, err) {
 };
 
 function decodeToken(req) {
+    console.log("decode token")
     const authHeader = req.headers.authorization;
     const token = authHeader.split(' ')[1];
     const decodedToken = jwt.decode(token, { complete: true });

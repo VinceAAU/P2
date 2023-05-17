@@ -6,45 +6,49 @@ const realFileBtn = document.querySelector("#file-input");
 const customBtn = document.querySelector("#custom-button");
 const customTxt = document.querySelector("#nameofFiles");
 
-let headers = {
-  'Authorization': `Bearer ${accessToken}`
-};
 
-fetch('/get-task-list-by-user', { headers })
-  .then(response => response.json())
-  .then(data => {
-    let numFiles = document.querySelector("#numFiles");
-    console.log(numFiles);
-    console.log(data.length);
-    numFiles.textContent = 'Number of files uploaded: ' + (data.length - 1);
-    console.log("Received array from server:");
-    console.log(data);
 
-    let shifted = false;
-    data.forEach(x => {
-      if (x === 'Shift') {
-        shifted = true;
-        let text = document.createElement('h2');
-        text.textContent = "In progress:";
-        document.body.appendChild(text);
-      } else {
-        let text = document.createElement('p');
-        text.textContent = x;
-        document.body.appendChild(text);
-        if (shifted === false) {
-          let downloadButton = document.createElement('button');
-          downloadButton.textContent = 'Download file';
-          downloadButton.id = x;
-          downloadButton.classList.add('downloadButtons');
-          downloadButton.addEventListener("click", downloadFileFromServer);
-          document.body.appendChild(downloadButton);
+if(accessToken != null){
+  let headers = {
+    'Authorization': `Bearer ${accessToken}`
+  };
+
+  fetch('/get-task-list-by-user', { headers })
+    .then(response => response.json())
+    .then(data => {
+      let numFiles = document.querySelector("#numFiles");
+      console.log(numFiles);
+      console.log(data.length);
+      numFiles.textContent = 'Number of files uploaded: ' + (data.length - 1);
+      console.log("Received array from server:");
+      console.log(data);
+
+      let shifted = false;
+      data.forEach(x => {
+        if (x === 'Shift') {
+          shifted = true;
+          let text = document.createElement('h2');
+          text.textContent = "In progress:";
+          document.body.appendChild(text);
+        } else {
+          let text = document.createElement('p');
+          text.textContent = x;
+          document.body.appendChild(text);
+          if (shifted === false) {
+            let downloadButton = document.createElement('button');
+            downloadButton.textContent = 'Download file';
+            downloadButton.id = x;
+            downloadButton.classList.add('downloadButtons');
+            downloadButton.addEventListener("click", downloadFileFromServer);
+            document.body.appendChild(downloadButton);
+          }
         }
-      }
-    });
+      });
 
 
-  })
-  .catch(error => console.log(error));
+    })
+    .catch(error => console.log(error));
+  }
 
 //Gives a warning when user inputs a non csv file
 const fileupload = document.querySelector('input');
