@@ -6,13 +6,11 @@ const realFileBtn = document.querySelector("#file-input");
 const customBtn = document.querySelector("#custom-button");
 const customTxt = document.querySelector("#nameofFiles");
 
-
+let headers = {
+  'Authorization': `Bearer ${accessToken}`
+};
 
 if(accessToken != null){
-  let headers = {
-    'Authorization': `Bearer ${accessToken}`
-  };
-
   fetch('/get-task-list-by-user', { headers })
     .then(response => response.json())
     .then(data => {
