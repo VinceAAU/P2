@@ -55,4 +55,3 @@ function decodeToken(req) {
     const username = payload.name;
     return username;
   };
-  
