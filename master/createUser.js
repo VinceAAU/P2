@@ -20,8 +20,8 @@ function validateNewUser(user_info) {
   } else {
     return_object["password_match"] = false;
   }
-  //handler(return_object);
-  return(return_object);
+  handler(return_object);
+  //return(return_object);
 };
 
 
@@ -30,14 +30,15 @@ function handler(new_user_info) {
   console.log(new_user_info)
   switch (true) {
     case new_user_info.mail_validity === false: //if mail already exists
-      throw ("mail_exists");
+      throw new TypeError ("mail_exists");
     case new_user_info.user_validity === false: //if user already exists
-      throw ("user_exists");
+      throw new TypeError("user_exists");
     case new_user_info.password_match === false: //if passwords dont match
-      throw ("passwords_unequal");
+      throw new TypeError("passwords_unequal");
     default:
       console.log("handler: m,u,p: " + new_user_info['mail'])
       insert_values(new_user_info['mail'], new_user_info['username'], new_user_info['password'])
+      //return(new_user_info['mail'], new_user_info['username'], new_user_info['password'])
   };
 };
 
