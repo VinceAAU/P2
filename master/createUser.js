@@ -3,13 +3,7 @@ export { validateNewUser };
 
 //Purpose: To look for unique credentials and matching passwords, returns data to be handled
 function validateNewUser(user_info) {
-  console.log("userinfo: ",user_info)
   let return_object = { mail: user_info.mail, username: user_info.username };
-  // console.log("validify new user");
-  // console.log('name: ' + user_info.username);
-  // console.log('mail: ' + user_info.mail);
-  // console.log('pass1: ' + user_info.password);
-  // console.log('pass2: ' + user_info.passwordConfirmation);
   if (search_for_mail(user_info.mail) == false) {
     return_object["mail_validity"] = true;
   } else {
@@ -26,7 +20,6 @@ function validateNewUser(user_info) {
   } else {
     return_object["password_match"] = false;
   }
-  console.log("return object ===: ",return_object)
   //handler(return_object);
   return(return_object);
 };
@@ -48,6 +41,27 @@ function handler(new_user_info) {
   };
 };
 
-export const exportForTesting = {
-  validateNewUser
+function once(fn) {
+  var returnValue,
+    called = false;
+  return function () {
+    if (!called) {
+      called = true;
+      returnValue = fn.apply(this, arguments);
+    }
+    return returnValue;
+  };
 }
+
+export const exportForTesting = {
+  validateNewUser, handler, once
+}
+
+// test("calls the original function", t=> {
+//   var callback = sinon.fake();
+//   var proxy = once(callback);
+
+//   proxy();
+
+//   t.assert(callback.called);
+// });
