@@ -26,6 +26,7 @@ function enqueueTask(taskIndex) {
 }
 
 // In case a task fails, this task skips to the front of the queue.
+   
 function addToBeginningOfQueue(taskIndex) {
     qHead = (qHead - 1) % (allTasks.length + 1);
     availableTaskIndices[qHead] = taskIndex;
@@ -133,7 +134,32 @@ async function bucketConcatenate() {
     console.log("Completed Sorting");
 };
 
+
+// Below functions only exported for testing is found.
+
+const getAllTasks = () => allTasks;
+const setAllTasks = (value) => allTasks = value;
+const getSortedBuckets = () => sortedBuckets;
+const getPossibleValues = () => possibleValues;
+const getAvailableTaskIndices = () => availableTaskIndices;
+const setAvailableTaskIndices = (value) => availableTaskIndices = value;
+
+const getQueueHead = () => qHead;
+const setQueueHead = (value) => qHead = value;
+const getQueueTail = () => qTail;
+const setQueueTail = (value) => qTail = value;
+
 export const exportForTesting = {
     storeSortedBuckets,
-    dequeueTask
+    dequeueTask,
+    getAllTasks,
+    setAllTasks,
+    getSortedBuckets,
+    getPossibleValues,
+    getAvailableTaskIndices,
+    setAvailableTaskIndices,
+    getQueueHead,
+    setQueueHead,
+    getQueueTail,
+    setQueueTail
 };
