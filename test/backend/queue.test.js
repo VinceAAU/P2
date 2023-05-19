@@ -37,13 +37,10 @@ test('getTaskQueueHead returns head on non-empty array', async t=>{
     t.is(taskHead,'example1.csv');
 });
 
-test.serial('removeFinishedCustomerQueue removes at correct index', async t=>{
+test('removeFinishedCustomerQueue removes at correct index', async t=>{
     setFinishedUserQueue(['exampleUser1', 'exampleUser2', 'exampleUser3']);
     setFinishedTaskQueue(['example1.csv', 'example2.csv', 'example3.csv']);
     
-    let tFinishedUserQueue1 = getFinishedUserQueue();
-    let tFinishedTaskQueue1 = getFinishedTaskQueue();
-
     await q.removeFinishedCustomerQueue(1);
 
     let tFinishedUserQueue = getFinishedUserQueue();
@@ -90,7 +87,7 @@ test('csvMaker makes expected csv format', async t=>{
     let pendingQueueData = {
         User: ['exampleUser1','exampleUser2'],
         Task: ['example1.csv','example2.csv']
-    }
+    };
 
     let csvData = await q.csvMaker(pendingQueueData);
     let correctFormat = "User,Task\nexampleUser1,exampleUser2\nexample1.csv,example2.csv";
