@@ -153,7 +153,7 @@ section {
 }
 
 #login-error-msg, #error-message {
-  width: 23%;
+  width: 30%;
   text-align: center;
   margin: 0;
   padding: 5px;
@@ -163,6 +163,7 @@ section {
   border: 1px solid #8a0000;
   background-color: #e58f8f;
   opacity: 0;
+  
 }
 
 #numFiles {
@@ -187,7 +188,7 @@ section {
 
 #error-message {
   padding: 5px; 
-  color: white;
+  color: #8a0000;
   font-size: 24px;
 }
 
