@@ -18,12 +18,14 @@ test('streamArrayToClient handles errors gracefully', (t) => {
 
   const array = new Uint32Array([1, 2, 3]);
 
-  // Check if errors crash the server
+  // Check if errors are handled, and don't crash the server
   t.notThrows(() => {
     ed.streamArrayToClient(res, array);
   });
 });
 
+// Gives a bunch of errors, because i haven't found a good way to make a mock response object yet
+// but the test still holds, because it manages to do the important part before it fails due to an improper res.
 test('streamArrayToClient sends correct length in bytes', (t) => {
   const array = new Uint32Array([1, 2, 3, 4]);
   const res = {
