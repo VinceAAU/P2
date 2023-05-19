@@ -63,6 +63,7 @@ class  BucketList
 
       let buffer = Buffer.alloc(buffer_size);
       let fd_read_return = await fileHandle.read(buffer, 0, buffer_size, file_index);
+      console.log(`Buffer at ${file_index}, there are ${bucketList.buckets.length} buckets`);
   
       if(fd_read_return.bytesRead === 0) { //Checks end of file
         break;
