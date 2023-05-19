@@ -22,8 +22,7 @@ class  BucketList
     let bucketIndex = Math.floor(element/this.bucketInterval);
 
     if (this.buckets[bucketIndex] === undefined) {
-      this.buckets[bucketIndex] = new Bucket(this.bucketSize);
-      this.buckets[bucketIndex].push(element);
+      throw new Error(`Element ${element} is out of bounds, tried bucket ${bucketIndex}`)
     } else {
       this.buckets[bucketIndex].push(element);
     }
@@ -63,6 +62,7 @@ class  BucketList
 
       let buffer = Buffer.alloc(buffer_size);
       let fd_read_return = await fileHandle.read(buffer, 0, buffer_size, file_index);
+      console.log(`Buffer at ${file_index}, there are ${bucketList.buckets.length} buckets`);
   
       if(fd_read_return.bytesRead === 0) { //Checks end of file
         break;
@@ -78,12 +78,11 @@ class  BucketList
       array_buffer.splice(0, 1);
       leftoverNumber = array_buffer.pop();
       for (let i of array_buffer){
-        bucketList.push(i);
+        bucketList.push(Number(i));
       }
   
       file_index += buffer_size;
     }
-    bucketList.push(leftoverNumber);
   
     fileHandle.close();
     console.log(`Finished reading file ${path.basename(filePath)}`);
