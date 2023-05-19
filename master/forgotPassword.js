@@ -21,6 +21,7 @@ function passwords(info){
     if(info.password==info.passwordConfirmation){
         console.log("Equal passwords: ",info.password==info.passwordConfirmation);
         userCache(info.password);
+        //return(info.password) // For testing purposes
     } else {throw new TypeError("passwords_unequal");
     };
 };
@@ -28,15 +29,19 @@ function passwords(info){
 //Function for retrieving username from cache
 function userCache(password){ 
     let cache = myCache.get( "myKey" );
+    console.log(cache)
     if ( cache === undefined ){
         console.log("key not found");
         throw new TypeError("noKey")
     } else {
-        console.log(cache);
+        console.log("Changing password for: ",cache.user);
         update_password(password, cache.user);
+        //return(password) //, cache.user) // For testing purposes
     };
 };
 
+const getMyCache = () => myCache;
+
 export const exportForTesting = {
-    search, passwords, userCache
+    search, passwords, userCache, getMyCache
   }
