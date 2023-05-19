@@ -131,12 +131,7 @@ function generateBucketlistFromNumbers(bucketNumber, numbers) {
     return returnList;
 }
 
-//This test takes a while to run. Good thing ava runs tests concurrently!
-//It will time out after five minutes
-//Oh, it also takes up all your ram. Might fix it later. Probably won't
 test('File loader', async t => {
-    //Default timeout is 10 seconds, which is way less than what I need
-    t.timeout(30_000, "Get a faster computer lol");
 
     const testfilename = 'test_file.csv';
     const elementAmount = 10_000_000;
