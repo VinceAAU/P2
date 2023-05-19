@@ -134,9 +134,7 @@ function generateBucketlistFromNumbers(bucketNumber, numbers) {
     return returnList;
 }
 
-const hashBuckets = false;
-
-//This test takes a while to run. Good thing ava runs tests in parallel!
+//This test takes a while to run. Good thing ava runs tests concurrently!
 //It will time out after five minutes
 //Oh, it also takes up all your ram. Might fix it later. Probably won't
 test('File loader', async t => {
@@ -144,7 +142,7 @@ test('File loader', async t => {
     t.timeout(5*60_000, "Get a faster computer lol");
 
     const testfilename = 'test_file.csv';
-    const elementAmount = 100_000_000;
+    const elementAmount = 10_000_000;
     //`numbers` is a Uint32Array of all the numbers written to CSV
     const numbers = await generateCSVData(testfilename, elementAmount); //This should create 4 buckets
     
@@ -153,10 +151,14 @@ test('File loader', async t => {
 
     const bucketsFromNumbers = generateBucketlistFromNumbers(bucketsFromFile.length, numbers);
 
+    const testBufferSize = 10;
+
     for(let i in bucketsFromNumbers){
-        t.deepEqual(bucketsFromFile[i].slice(0, 100),
-                bucketsFromNumbers[i].slice(0, 100),
-                'The buckets are not the same');
+        for(let j=0; j<bucketsFromNumbers[i].length; j+=testBufferSize){
+            t.deepEqual(bucketsFromFile[i].slice(j, j+testBufferSize).toString(),
+                     bucketsFromNumbers[i].slice(j, j+testBufferSize).toString(),
+                     `The bucket ${i} is wrong between ${j} and ${j+testBufferSize}`);
+        }
     }
 
     await fs.unlink(testfilename); //Clean up after myself
