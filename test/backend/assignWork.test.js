@@ -1,42 +1,92 @@
 import test from 'ava';
 import * as aw from '../../master/assignWork.js';
 
-let { storeSortedBuckets, dequeueTask } = aw.exportForTesting;
+const {
+    storeSortedBuckets,
+    dequeueTask,
+    getAllTasks,
+    setAllTasks,
+    getSortedBuckets,
+    getPossibleValues,
+    getAvailableTaskIndices,
+    setAvailableTaskIndices,
+    getQueueHead,
+    setQueueHead,
+    getQueueTail,
+    setQueueTail
+} = aw.exportForTesting;
 
-let allTasks = [ [1,2,3] , [6,5,4] , [7,8,9] , [12,11,10] , [13,14,15] ];
-let availableTaskIndices = [ 0 , 1 , 2 , 3 , 4 , 5];
+/* "(DYNAMIC)" tests: the data is not predetermined here,
+   you will need a file in csvFiles and a pendingQueue pass this test. 
+   (use a small file for efficient testing)                             */
 
-let qHead = 0;
-let qTail = allTasks.length;
+let task;
+
+test.before("Initialise values in assignWork.js", async t => {
+    task = await aw.assignWorkToWorker("uuid_placeholder");
+});
+
+test("enqueueTask tests (DYNAMIC)", t => {
+    let randomInt = Math.round(Math.random() * 10000 % getAvailableTaskIndices().length);
+    let startTail = getQueueTail();
+
+    aw.enqueueTask(randomInt); // running enqueueTask function
+    
+    t.assert(getQueueTail() >= 0 && getQueueTail() < getAvailableTaskIndices().length); // tail stays in bounds
+    t.is(getAvailableTaskIndices()[startTail], randomInt); // the randomInt is inserted
+    t.assert(getQueueTail() !== startTail); // the tail has changed value
+});
+
+test("dequeueTask tests (DYNAMIC)", t => {
+    let startHead = getQueueHead();
+    let expectedDequeueReturn = getAvailableTaskIndices()[startHead];
+
+    let dequeueResult = dequeueTask();
+    let secondHead = getQueueHead();
+
+    t.is(dequeueResult, expectedDequeueReturn); // return value of dequeue is as expected
+    t.assert(secondHead >= 0 && secondHead < getAvailableTaskIndices().length); // head stays in bounds
+    t.assert(secondHead !== startHead); // the head has changed value
+});
 
 
-/* Dynamic meaning the data is not predetermined here,
-   you will need a file in csvFiles and a pendingQueue pass this test. */
-test("assignWorkToWorker tests (dynamic)", async t => {
-    let task = await aw.assignWorkToWorker("uuid_placeholder");
+test("assignWorkToWorker tests (DYNAMIC)", async t => {
     t.assert(task instanceof Uint32Array === true); // see if task is a Uint32Array
     for (let num in task) {
-        if (isNaN(num)) {
+        if (Number.isNaN(num)) {
             t.fail("NAN"); // check if everything in the task is a number
         }
     }
 });
 
+// These tests work best on larger files.
+test("storeSortedBuckets tests (DYNAMIC)", t => {
+    let allThemTasks = getAllTasks();
+    let expectedBucketPosition;
+    let preCallList;
+    let postCallList;
+    let allTaskLength = allThemTasks.length;
+    let possibleInterval = getPossibleValues();
 
-// Writitng the function here to have access to variables; primitive variables are hard to test.
-function enqueueTask(taskIndex) {
-    availableTaskIndices[qTail] = taskIndex;
-    qTail = (qTail + 1) % (allTasks.length + 1);
-}
+    for (let task in allThemTasks) {
+        preCallList = getSortedBuckets();
+        //t.log("This is the pre call: " + preCallList);
+        storeSortedBuckets(task); // store a task (not sorted here, but should still sort correctly)
+        postCallList = getSortedBuckets();
+        //t.log("This is the post call: " + postCallList);
 
-test("enqueueTask tests (static)", t => {
+        t.log(`This is the pre call: ${preCallList}  \n This is the post call: ${postCallList}`);
+        t.assert(preCallList !== postCallList);
+        
 
-    let randomInt = Math.random * 10000 % availableTaskIndices.length;
-    let startTail = qTail;
+        expectedBucketPosition = Math.floor(task/(possibleInterval/allTaskLength));
+        t.is(postCallList[expectedBucketPosition], task);
+    }
 
-    enqueueTask(randomInt);
 
-    t.assert(qTail >= 0 && qTail < availableTaskIndices.length); // tail stays in bounds
-    t.is(availableTaskIndices[startTail], randomInt); // the randomInt is inserted
-    t.assert(qTail !== startTail); // the tail has changed value
+
+    t.log(expectedBucketPosition);
+
 });
+
+
