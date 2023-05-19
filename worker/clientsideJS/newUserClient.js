@@ -2,14 +2,10 @@ const checkbox = document.querySelector("#submitBtn_id");
 const errorMessage = document.getElementById('error-message');
 
 
-checkbox.addEventListener("click", checkboxClick, false);
+checkbox.addEventListener("click", postNewUser, false);
 
-function checkboxClick(event) {
+async function postNewUser(event) {
     event.preventDefault();
-    toggleLogin(event)
-}
-
-async function toggleLogin(event) {
     var mail = document.getElementById("mailID");
     var username = document.getElementById("nameID");
     var password = document.getElementById("passwordID");

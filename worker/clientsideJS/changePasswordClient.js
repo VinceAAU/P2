@@ -1,14 +1,10 @@
 const update = document.querySelector("#updateBtn");
 const errorMessage = document.getElementById('error-message');
 
-update.addEventListener("click", updatePasswordEvent, false);
-
-function updatePasswordEvent(event) {
-    event.preventDefault();
-    updatePassword(event)
-}
+update.addEventListener("click", updatePassword, false);
 
 async function updatePassword(event) {
+    event.preventDefault();
     var password = document.getElementById("password");
     var passwordConfirmation = document.getElementById("passwordConfirmation");
     
