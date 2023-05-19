@@ -51,7 +51,7 @@ async function toggleLogin(event) {
 }
 
 function unevenPasswords() {
-    errorMessage.textContent = "Passwords are not equal";
+    errorMessage.textContent = "Passwords dont match";
     errorMessage.style.opacity = 1;
 }
 

@@ -6,7 +6,8 @@ import path from 'path';
 export { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToClient };
 
 function streamArrayToClient(res, array) {
-
+try
+{
   const readable = new Readable();
 
   const buffer = Buffer.from(array.buffer); 
@@ -19,8 +20,12 @@ function streamArrayToClient(res, array) {
     "Content-Type": "application/octet-stream",
     "Content-Length": buffer.length,
   });
-
   readable.pipe(res);
+} catch(e)
+{
+  console.log(e);
+}
+  
 
 }
 

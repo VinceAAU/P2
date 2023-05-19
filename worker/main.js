@@ -68,7 +68,6 @@ function startWorking() {
 }
 
 async function waitForTask() {
-//  console.log("Waiting for task...");
   statusMessage("Waiting for task...");
   const timer = 10000;
   waitingForTask = true;
@@ -82,7 +81,6 @@ async function waitForTask() {
         waitingForTask = false;
         resolve();
       }
-      
     }, timer);
   });
 }
@@ -94,31 +92,17 @@ async function fetchTask() {
       'UUID': window.UUID
     }
   })
-    .then(async data => {
-      if (data.ok) {
-        console.log("ping response OK")
-        console.log(data)
-        statusMessage("Received task. Computing begun")
-        handleReceivedData(data);
+    .then(async response => {
+      if (response.status === 200) {
+        statusMessage("Received task");
+        handleReceivedData(response);
       } else {
-        console.log("No work available on first fetch. Waiting...")
+        console.log("No work available on first fetch. Waiting...");
         waitForTask();
       }
     })
     .catch(error => console.error(error));
 }
-/* Replaced with waitForTask()
-async function startPingTask() {
-  console.log("startPingTask")
-  const pingIntervalTask = 5000;
-
-  while (pingTimerActive) {
-    statusMessage("Awaiting new tasks")
-    console.log("ping loop")
-    await new Promise(r => setTimeout(r, pingIntervalTask));
-    await fetchTask()
-  }
-} */
 
 function startWebWorker(receivedArray) {
   if (window.Worker) {
@@ -171,13 +155,15 @@ async function handleReceivedData(data) {
   const convertedArray = new Uint32Array(buffer);
   console.log("Array as Uint32Array:");
   console.log(convertedArray);
+  statusMessage("Computing...");
   startWebWorker(convertedArray);
 }
 
 async function sendToServer(array) {
   if (!isConnected) {
-    return
-  }; // If not connected, don't send anything or request new tasks. 
+    return;
+  } // If not connected, don't send anything or request new tasks.
+  
   await fetch('requestNewTask', {
     method: 'POST',
     headers: {
@@ -188,8 +174,8 @@ async function sendToServer(array) {
     body: array
   })
     .then(async response => {
-      if (response.ok) {
-        console.log(response)
+      if (response.status === 200) {
+        console.log(response);
         handleReceivedData(response); // recursive, worker eventually calls sendToServer. Idk if that's a bad way to do it?
       } else {
         console.log("No data returned from the server.");
