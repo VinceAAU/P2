@@ -1,9 +1,16 @@
 import { addWorker } from "./workerManagement.js";
-import {getTaskQueueHead, pendingQueueToFinishedQueue} from "./queue.js";
+import { getTaskQueueHead, pendingQueueToFinishedQueue } from "./queue.js";
 import { BucketList } from "./splitData.js";
-import fs from 'fs/promises';
+import fs from "fs/promises";
 import { existsSync } from "fs";
-export { assignWorkToWorker, enqueueTask, addToBeginningOfQueue, WorkerNode, taskCounter, storeSortedBuckets };
+export {
+  assignWorkToWorker,
+  enqueueTask,
+  addToBeginningOfQueue,
+  WorkerNode,
+  taskCounter,
+  storeSortedBuckets,
+};
 
 // Constants
 const possibleValues = 1_000_000_000;
@@ -21,145 +28,154 @@ let qTail;
 let fileLoad = false;
 
 function enqueueTask(taskIndex) {
-    availableTaskIndices[qTail] = taskIndex;
-    qTail = (qTail + 1) % (allTasks.length + 1);
+  availableTaskIndices[qTail] = taskIndex;
+  qTail = (qTail + 1) % (allTasks.length + 1);
 }
 
 // In case a task fails, this task skips to the front of the queue.
-   
+
 function addToBeginningOfQueue(taskIndex) {
-    qHead = (qHead - 1) % (allTasks.length + 1);
-    availableTaskIndices[qHead] = taskIndex;
+  qHead = (qHead - 1) % (allTasks.length + 1);
+  availableTaskIndices[qHead] = taskIndex;
 }
 
 function dequeueTask() {
-    let task = availableTaskIndices[qHead];
-    qHead = (qHead + 1) % (allTasks.length + 1);
-    return task;
+  let task = availableTaskIndices[qHead];
+  qHead = (qHead + 1) % (allTasks.length + 1);
+  return task;
 }
 
 async function assignWorkToWorker(workerUUID) {
-    if(fileLoad == false){
-        if (allTasks == null || allTasks.length === 0) {
-            fileLoad = true;    
-            allTasks = await BucketList.fromQueue();
-            fileLoad = false;
-            console.log(`All tasks:`);
-            for (let i in allTasks){
-                console.log(`\t${i}: ${allTasks[i].length}`);
-            }
-            if (allTasks !== null) {
-                availableTaskIndices = Array.from({length: allTasks.length + 1}, (_, i) => i);
-                qHead = 0;
-                qTail = allTasks.length;
-            } else {
-                qHead = 0;
-                qTail = 0;
-            };
-        };
-    } else {
+  if (fileLoad == false) {
+    if (allTasks == null || allTasks.length === 0) {
+      fileLoad = true;
+      allTasks = await BucketList.fromQueue();
+      fileLoad = false;
+      console.log(`All tasks:`);
+      for (let i in allTasks) {
+        console.log(`\t${i}: ${allTasks[i].length}`);
+      }
+      if (allTasks !== null) {
+        availableTaskIndices = Array.from(
+          { length: allTasks.length + 1 },
+          (_, i) => i
+        );
+        qHead = 0;
+        qTail = allTasks.length;
+      } else {
         qHead = 0;
         qTail = 0;
-        console.log("File is being loaded in")
+      }
     }
+  } else {
+    qHead = 0;
+    qTail = 0;
+    console.log("File is being loaded in");
+  }
 
-    if (qHead === qTail) {
-        console.log("No available tasks");
-        addWorker(workerUUID, null);
-        return null; // add some handling; if null is returned something is wrong.
-    } else {
-        let taskForWorker = dequeueTask();
-        console.log(`Task for worker: ${taskForWorker}`);
-        // Call a function here to add userID and sortTaskForWorker to a form of reservation list.
-        addWorker(workerUUID, taskForWorker);
-        return allTasks[taskForWorker];
-    }
+  if (qHead === qTail) {
+    console.log("No available tasks");
+    addWorker(workerUUID, null);
+    return null; // add some handling; if null is returned something is wrong.
+  } else {
+    let taskForWorker = dequeueTask();
+    console.log(`Task for worker: ${taskForWorker}`);
+    // Call a function here to add userID and sortTaskForWorker to a form of reservation list.
+    addWorker(workerUUID, taskForWorker);
+    return allTasks[taskForWorker];
+  }
 }
 
 // call this function with: let workerX/ID/whatever = new WorkerNode(task)
 class WorkerNode {
-    currentTask;
-    lastPing;
+  currentTask;
+  lastPing;
 
-    constructor(task){
-        this.currentTask = task;
-        this.lastPing = new Date().getTime();
-    }
+  constructor(task) {
+    this.currentTask = task;
+    this.lastPing = new Date().getTime();
+  }
 }
 
 // Put the sorted bucket into the correct position of the sortedBuckets array.
 function storeSortedBuckets(bucket) {
-    let indexForSortedBucket = Math.floor(bucket[0]/(possibleValues/allTasks.length));
-    sortedBuckets[indexForSortedBucket] = bucket;
+  let indexForSortedBucket = Math.floor(
+    bucket[0] / (possibleValues / allTasks.length)
+  );
+  sortedBuckets[indexForSortedBucket] = bucket;
 }
 
-
-async function taskCounter(){
-    taskCount++;
-    if (taskCount >= allTasks.length) {
-        await bucketConcatenate();
-        taskCount = 0;
-    }
+async function taskCounter() {
+  taskCount++;
+  if (taskCount >= allTasks.length) {
+    await bucketConcatenate();
+    taskCount = 0;
+  }
 }
 
-async function findUniqueName(filename)
-{
-    if (existsSync("master/autogeneratedFiles/csvFiles/sorted" + filename)) {
-        console.log("File already exists, creating new filename...");
-        const pureFilename = filename.slice(0, filename.lastIndexOf(".")); // get filename without .csv extension 
-        for (let i = 1; i < 50; i++) { // arbitrary limit
-            let newFileName = pureFilename + " (" + i + ")" + ".csv"; // similar to how windows handles duplicates, when downloading file
-            if(!existsSync("master/autogeneratedFiles/csvFiles/sorted"+ newFileName)) return `${newFileName}`;
-        }
-    } else {
-        console.log("No duplicates detected");
-        return `${filename}`;
+async function findUniqueName(filename) {
+  if (existsSync("master/autogeneratedFiles/csvFiles/sorted" + filename)) {
+    console.log("File already exists, creating new filename...");
+    const pureFilename = filename.slice(0, filename.lastIndexOf(".")); // get filename without .csv extension
+    for (let i = 1; i < 50; i++) {
+      // arbitrary limit
+      let newFileName = pureFilename + " (" + i + ")" + ".csv"; // similar to how windows handles duplicates, when downloading file
+      if (
+        !existsSync("master/autogeneratedFiles/csvFiles/sorted" + newFileName)
+      )
+        return `${newFileName}`;
     }
+  } else {
+    console.log("No duplicates detected");
+    return `${filename}`;
+  }
 }
 
 async function bucketConcatenate() {
-    let fileName = await getTaskQueueHead();
-    let uniqueFileName = await findUniqueName(fileName);
-    uniqueFileName = ("sorted"+ uniqueFileName)
+  let fileName = await getTaskQueueHead();
+  let uniqueFileName = await findUniqueName(fileName);
+  uniqueFileName = "sorted" + uniqueFileName;
 
-    let outputFile = await fs.open(`master/autogeneratedFiles/csvFiles/${uniqueFileName}`, "w+"); //Note to self: figure out if I can hack a computer through this
+  let outputFile = await fs.open(
+    `master/autogeneratedFiles/csvFiles/${uniqueFileName}`,
+    "w+"
+  ); //Note to self: figure out if I can hack a computer through this
 
-    for(let element of sortedBuckets){
-        await outputFile.write(`${element},`); //Might be a good idea to do some buffer stuff if this is too slow
-    }
-    fs.unlink(`master/autogeneratedFiles/csvFiles/${fileName}`); // delete unsorted file when sorted file is done
-    await pendingQueueToFinishedQueue(uniqueFileName);
-    allTasks = [];
-    sortedBuckets = [];
-    console.log("Completed Sorting");
-};
-
+  for (let element of sortedBuckets) {
+    await outputFile.write(`${element},`); //Might be a good idea to do some buffer stuff if this is too slow
+  }
+  fs.unlink(`master/autogeneratedFiles/csvFiles/${fileName}`); // delete unsorted file when sorted file is done
+  await pendingQueueToFinishedQueue(uniqueFileName);
+  allTasks = [];
+  sortedBuckets = [];
+  console.log("Completed Sorting");
+}
 
 // Below functions only exported for testing is found.
 
 const getAllTasks = () => allTasks;
-const setAllTasks = (value) => allTasks = value;
+const setAllTasks = (value) => (allTasks = value);
 const getSortedBuckets = () => sortedBuckets;
 const getPossibleValues = () => possibleValues;
 const getAvailableTaskIndices = () => availableTaskIndices;
-const setAvailableTaskIndices = (value) => availableTaskIndices = value;
+const setAvailableTaskIndices = (value) => (availableTaskIndices = value);
 
 const getQueueHead = () => qHead;
-const setQueueHead = (value) => qHead = value;
+const setQueueHead = (value) => (qHead = value);
 const getQueueTail = () => qTail;
-const setQueueTail = (value) => qTail = value;
+const setQueueTail = (value) => (qTail = value);
 
 export const exportForTesting = {
-    storeSortedBuckets,
-    dequeueTask,
-    getAllTasks,
-    setAllTasks,
-    getSortedBuckets,
-    getPossibleValues,
-    getAvailableTaskIndices,
-    setAvailableTaskIndices,
-    getQueueHead,
-    setQueueHead,
-    getQueueTail,
-    setQueueTail
+  storeSortedBuckets,
+  dequeueTask,
+  getAllTasks,
+  setAllTasks,
+  getSortedBuckets,
+  getPossibleValues,
+  getAvailableTaskIndices,
+  setAvailableTaskIndices,
+  getQueueHead,
+  setQueueHead,
+  getQueueTail,
+  setQueueTail,
 };
