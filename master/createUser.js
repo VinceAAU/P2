@@ -20,48 +20,27 @@ function validateNewUser(user_info) {
   } else {
     return_object["password_match"] = false;
   }
-  //handler(return_object);
-  return(return_object);
+  handler(return_object);
+  //return(return_object); //for testing purposes
 };
 
 
 //checks the given data for reasons to fail, if none; proceeds to insert data
 function handler(new_user_info) {
-  console.log(new_user_info)
   switch (true) {
     case new_user_info.mail_validity === false: //if mail already exists
-      throw ("mail_exists");
+      throw new TypeError ("mail_exists");
     case new_user_info.user_validity === false: //if user already exists
-      throw ("user_exists");
+      throw new TypeError("user_exists");
     case new_user_info.password_match === false: //if passwords dont match
-      throw ("passwords_unequal");
+      throw new TypeError("passwords_unequal");
     default:
-      console.log("handler: m,u,p: " + new_user_info['mail'])
+      //return(new_user_info['mail'], new_user_info['username'], new_user_info['password'])  //for testing purposes
       insert_values(new_user_info['mail'], new_user_info['username'], new_user_info['password'])
+
   };
 };
 
-function once(fn) {
-  var returnValue,
-    called = false;
-  return function () {
-    if (!called) {
-      called = true;
-      returnValue = fn.apply(this, arguments);
-    }
-    return returnValue;
-  };
-}
-
 export const exportForTesting = {
-  validateNewUser, handler, once
+  validateNewUser, handler
 }
-
-// test("calls the original function", t=> {
-//   var callback = sinon.fake();
-//   var proxy = once(callback);
-
-//   proxy();
-
-//   t.assert(callback.called);
-// });

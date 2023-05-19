@@ -104,39 +104,10 @@ function throw_user(res, thrown_error, redirected_from) {
   console.log("throw user. (Err, from): " + thrown_error, redirected_from);
   switch (redirected_from) {
     case "login handler":
-      switch (thrown_error) {
-        case "wrong-password":
-          console.log("wrong-password");
-          break;
-        case "no-user":
-          console.log("user not found");
-          break;
-      }
       fileresponse_path = loginPath;
       break;
     case "login.js":
-      switch (thrown_error) {
-        case "wrong-password":
-          console.log("wrong-password2");
-          break;
-        case "no-user":
-          console.log("user not found2");
-          break;
-      }
       fileresponse_path = '/login.html';
-      break;
-    case "create-user":
-      switch (thrown_error) {
-        case "mail_exists":
-          errorResponse(res, 409, thrown_error); //409 = conflict
-          break;
-        case "user_exists":
-          errorResponse(res, 409, thrown_error); //409 = conflict
-          break;
-        case "passwords_unequal":
-          errorResponse(res, 400, thrown_error); //400 = Bad Request
-          break;
-      }
       break;
     case "forgot-password-post": //User not found
       errorResponse(res, 400, thrown_error);

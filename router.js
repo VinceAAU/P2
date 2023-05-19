@@ -198,7 +198,16 @@ function handleUserCreation(req, res) {
             res.write('User created successfully');
             res.end();
         })
-        .catch(thrown_error => throw_user(res, thrown_error, "create-user"));
+        .catch(thrown_error => {
+            if (thrown_error instanceof TypeError) {
+                console.log(thrown_error.message)
+                if (thrown_error.message === "mail_exists" || thrown_error.message === "user_exists"){
+                    errorResponse(res, 409, thrown_error.message);
+                } else if (thrown_error.message === "passwords_unequal"){
+                    errorResponse(res, 400, thrown_error.message);
+                }
+            }
+        });
 }
 
 //Function for forgot password page
