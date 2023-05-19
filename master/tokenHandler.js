@@ -47,7 +47,6 @@ function returnTokenErr(res, code, err) {
 };
 
 function decodeToken(req) {
-    console.log("decode token")
     const authHeader = req.headers.authorization;
     const token = authHeader.split(' ')[1];
     const decodedToken = jwt.decode(token, { complete: true });
@@ -55,3 +54,7 @@ function decodeToken(req) {
     const username = payload.name;
     return username;
   };
+
+  export const exportForTesting = {
+    decodeToken
+  }
