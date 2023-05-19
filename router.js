@@ -214,7 +214,7 @@ function handlePasswordPostCase(req, res) {
         .catch(thrown_error => throw_user(res, thrown_error, "forgot-password-post"));
 }
 
-//Function for adding new password
+//Function for adding new password,
 function handleNewPassword(req, res) {
     extractForm(req)
         .then(info => passwords(info)) //in forgotPassword.js
@@ -223,7 +223,15 @@ function handleNewPassword(req, res) {
             res.write('User found');
             res.end();
         })
-        .catch(thrown_error => throw_user(res, thrown_error, "new password handler thing i wonder what this will look like"));
+        .catch(thrown_error => {
+            if (thrown_error instanceof TypeError) {
+                if (thrown_error.message === "passwords_unequal"){
+                    errorResponse(res, 400, thrown_error.message);
+                } else { // Triggered when TTL on cache is hit
+                    errorResponse(res, 404, thrown_error.message);
+                }
+            }
+        });
 }
 
 async function fileResponse(res, filename) {

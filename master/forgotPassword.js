@@ -20,17 +20,22 @@ function passwords(info){
     if(info.password==info.passwordConfirmation){
         console.log("Equal passwords: ",info.password==info.passwordConfirmation);
         userCache(info.password);
-    } else {throw("passwords_unequal");
+    } else {throw new TypeError("passwords_unequal");
     };
 };
 
 //Function for retrieving username from cache
 function userCache(password){ 
     let cache = myCache.get( "myKey" );
-    if ( cache == undefined ){
+    if ( cache === undefined ){
         console.log("key not found");
+        throw new TypeError("noKey")
     } else {
         console.log(cache);
+        update_password(password, cache.user);
     };
-    update_password(password, cache.user);
 };
+
+export const exportForTesting = {
+    search, passwords, userCache
+  }

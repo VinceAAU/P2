@@ -25,7 +25,20 @@ async function updatePassword(event) {
 
         if (!response.ok) {
             console.log(response.status)
-            unevenPasswords()
+            switch(response.status) {
+                case 400:
+                    console.log(response.status)
+                    unevenPasswords()
+                    break;
+                case 404:
+                    console.log(response.status)
+                    window.location.href = '/login.html';
+                    break;
+
+            }
+
+            
+            
             
         } else {
             console.log("response OK")
