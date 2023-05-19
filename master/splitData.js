@@ -58,7 +58,7 @@ class  BucketList
     const buffer_size = 10_000_000;
     const fileHandle = await fs.open(filePath);
     
-    let leftoverNumber = 0;
+    let leftoverNumber = '';
     while(true) {
       console.log(`Buffer at ${file_index}`);
 
@@ -69,24 +69,12 @@ class  BucketList
         break;
       }
       let string_buffer = buffer.toString('utf-8', 0, fd_read_return.bytesRead);
-      let array_buffer = string_buffer
-                      .replace('\n', ',').replace('\r', '')
-                      .split(',').map((value, uselessOne, uselessTwo) => {
-                          if(value==='')
-                            return NaN;
-                          else
-                            return Number(value);
-                      });
+      string_buffer = string_buffer.replaceAll('\n', ',');
+      string_buffer = string_buffer.replaceAll('\r', '');
+      let array_buffer = string_buffer.split(',');
 
       
-      if(buffer[0]===44 /*comma*/){
-        array_buffer[0] = NaN;
-      }
-
-      if(leftoverNumber===NaN)  leftoverNumber = '';
-      if(array_buffer[0]===NaN) array_buffer[0] = '';
-      
-      leftoverNumber = Number((leftoverNumber + '').concat(array_buffer[0]));
+      leftoverNumber = leftoverNumber.concat(array_buffer[0]);
       bucketList.push(leftoverNumber);
       array_buffer.splice(0, 1);
       leftoverNumber = array_buffer.pop();
@@ -96,7 +84,6 @@ class  BucketList
   
       file_index += buffer_size;
     }
-  
     bucketList.push(leftoverNumber);
   
     fileHandle.close();
@@ -138,10 +125,3 @@ class Bucket{
 }
 
 export const exportForTesting = { Bucket };
-
-/*
-// Debugging:
-console.log("Pre-call");
-const bigData = await BucketList.fromFile("/home/vince/Documents/aau/P2/repo/tools/random_numbers_average.csv"); //adjust file path for debugging.
-console.log("Post-call");
-console.log(bigData); // Result */
