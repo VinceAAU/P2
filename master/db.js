@@ -26,12 +26,8 @@ function connect_to_db() {
 
 //Purpose: To hash new passwords, before uploading to db
 async function hash(password){
-  try{
-    let hashedPassword = await bcrypt.hash(password, 10); //10 = salt - further explanation due
-    return(hashedPassword);
-  }catch (err){
-    console.error(err)
-  }
+  let hashedPassword = await bcrypt.hash(password, 10); //10 = salt - further explanation due
+  return(hashedPassword);
 }
 
 //For createUser.js
@@ -43,11 +39,7 @@ function insert_values(mail, username, password){
 
 function insert(mail, username, password){
   const insert = db.prepare('INSERT INTO users(username,email,password) VALUES (?,?,?)');
-    try {
-        insert.run(username, mail, password);
-    } catch (e) {
-        console.error(e);
-    }  
+    insert.run(username, mail, password);
 }
 
 //For login.js
