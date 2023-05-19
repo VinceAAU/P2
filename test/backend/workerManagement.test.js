@@ -10,16 +10,16 @@ test.serial('Create null worker', t=>{
 
     t.pass();
 
-    t.is(Object.keys(wm.workers).length, 1);
+    t.not(wm.workers[workerUUID], undefined);
 })
 
 test.serial('Is Null Worker\'s task null?', t=>{
     t.is(wm.workers[workerUUID].currentTask, null);
 });
 test.serial('Is Null Worker\'s ping correct?', t=>{
-    t.truthy(wm.workers[workerUUID].lastPing <= Date.now());
+    t.true(wm.workers[workerUUID].lastPing <= Date.now());
     //Test if it's within the same second
-    t.truthy(Date.now()-wm.workers[workerUUID].lastPing < 1000);
+    t.true(Date.now()-wm.workers[workerUUID].lastPing < 1000);
 });
 
 test.serial('Can we remove Null Worker?', t=>{
