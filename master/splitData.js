@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import path from "path";
 import { getTaskQueueHead } from "./queue.js";
 
 export { BucketList };
@@ -50,17 +51,15 @@ class  BucketList
     const maxBucketSize = 100_000_000; //Arbitrarily chosen
     const dataRange = 1_000_000_000;
 
-    console.log(`Bucket amount: ${bucketAmount}`);
-
     let bucketList = new BucketList(bucketAmount, maxBucketSize, dataRange);
   
     let file_index = 0;
     const buffer_size = 10_000_000;
     const fileHandle = await fs.open(filePath);
+    console.log(`Beginning to read file ${path.basename(filePath)}`);
     
     let leftoverNumber = '';
     while(true) {
-      console.log(`Buffer at ${file_index}`);
 
       let buffer = Buffer.alloc(buffer_size);
       let fd_read_return = await fileHandle.read(buffer, 0, buffer_size, file_index);
@@ -87,6 +86,7 @@ class  BucketList
     bucketList.push(leftoverNumber);
   
     fileHandle.close();
+    console.log(`Finished reading file ${path.basename(filePath)}`);
     
     const returnList = [];
     for(let bucket of bucketList.buckets){

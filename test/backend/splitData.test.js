@@ -118,18 +118,15 @@ async function generateCSVData(filename, elementAmount){
 }
 
 function generateBucketlistFromNumbers(bucketNumber, numbers) {
-    const bl = new sd.BucketList(bucketNumber, 100_000_000, 1_000_000_000); //The 4 is just to simulate reality
-    console.log("pushing numbers");
+    const bl = new sd.BucketList(bucketNumber, 100_000_000, 1_000_000_000);
     for (let number of numbers){
         bl.push(number);
     }
-    console.log('dezeroifying');
     const returnList = [];
     for(let bucket of bl.buckets){
       bucket.dezeroify();
       returnList.push(bucket.list); //This probably does it in the correct order
     }
-    console.log('dezeroified');
 
     return returnList;
 }
@@ -139,7 +136,7 @@ function generateBucketlistFromNumbers(bucketNumber, numbers) {
 //Oh, it also takes up all your ram. Might fix it later. Probably won't
 test('File loader', async t => {
     //Default timeout is 10 seconds, which is way less than what I need
-    t.timeout(5*60_000, "Get a faster computer lol");
+    t.timeout(30_000, "Get a faster computer lol");
 
     const testfilename = 'test_file.csv';
     const elementAmount = 10_000_000;
