@@ -148,7 +148,7 @@ test('File loader', async t => {
 
     const bucketsFromNumbers = generateBucketlistFromNumbers(bucketsFromFile.length, numbers);
 
-    const testBufferSize = 10;
+    const testBufferSize = 100;
 
     for(let i in bucketsFromNumbers){
         for(let j=0; j<bucketsFromNumbers[i].length; j+=testBufferSize){
