@@ -11,7 +11,7 @@ import { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToCli
 import { search, passwords } from "./master/forgotPassword.js";
 import { validateNewUser } from "./master/createUser.js";
 import { returnToken, authenticateToken, returnTokenErr, decodeToken } from './master/tokenHandler.js';
-import { securePath, throw_user, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
+import { securePath, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
 import { getTaskByUser, removeFinishedCustomerQueue, findFinishedTaskIndex } from './master/queue.js';
 import { pong, removeWorker } from './master/workerManagement.js'
 import { assignWorkToWorker, taskCounter, storeSortedBuckets } from './master/assignWork.js';
@@ -205,13 +205,16 @@ function handleUserCreation(req, res) {
 function handlePasswordPostCase(req, res) {
     extractForm(req)
         .then(username => search(username["username"])) //in forgotPassword.js
-        .then(_ => {
+        .then(status => {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
-            res.write('User found');
+            res.write(status);
             res.end();
         })
-        //.then(_ => fileResponse(res, changePasswordPath))
-        .catch(thrown_error => throw_user(res, thrown_error, "forgot-password-post"));
+        .catch(thrown_error => {
+            if (thrown_error instanceof TypeError) {
+            errorResponse(res, 400, thrown_error.message)
+            }
+        });
 }
 
 //Function for adding new password,
