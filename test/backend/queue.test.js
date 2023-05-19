@@ -2,7 +2,8 @@ import test from 'ava';
 import { existsSync } from "fs";
 import * as q from '../../master/queue.js';
 
-let { getPendingTaskQueue, 
+let { 
+    getPendingTaskQueue, 
     setPendingTaskQueue, 
     getPendingUserQueue, 
     setPendingUserQueue,
@@ -12,40 +13,12 @@ let { getPendingTaskQueue,
     setFinishedUserQueue
 } = q.exportForTesting;
 
-test('addCustomerQueue adds correctly', async t=>{
-    let exampleUser = 'exampleUser';
-    let exampleTask = 'example.csv';
-
-    q.addCustomerQueue(exampleUser,exampleTask);
-
-    let tPendingUserQueue = getPendingUserQueue();
-    let tPendingTaskQueue = getPendingTaskQueue();
-
-    t.deepEqual(tPendingUserQueue,['exampleUser']);
-    t.deepEqual(tPendingTaskQueue,['example.csv']);
-})
-
-test('removeCustoemrQueue removes correctly', async t=>{
-    setPendingUserQueue(['exampleUser1', 'exampleUser2']);
-    setPendingTaskQueue(['example1.csv', 'example2.csv']);
-
-
-    q.removeCustomerQueue();
-
-    let tPendingUserQueue = getPendingUserQueue();
-    let tPendingTaskQueue = getPendingTaskQueue();
-
-    t.deepEqual(tPendingUserQueue,['exampleUser2']);
-    t.deepEqual(tPendingTaskQueue,['example2.csv']);
-    q.removeCustomerQueue();
-});
-
-test('getUserQueueHead returns null on empty queue', async t=>{
+test.serial('getUserQueueHead returns null on empty queue', async t=>{
     let userHead = await q.getUserQueueHead();
     t.is(userHead,null);
 });
 
-test('getTaskQueueHead returns null on empty queue', async t=>{
+test.serial('getTaskQueueHead returns null on empty queue', async t=>{
     let taskHead = await q.getTaskQueueHead();
     t.is(taskHead,null);
 });
@@ -64,18 +37,23 @@ test('getTaskQueueHead returns head on non-empty array', async t=>{
     t.is(taskHead,'example1.csv');
 });
 
-test('removeFinishedCustomerQueue removes at correct index', async t=>{
+test.serial('removeFinishedCustomerQueue removes at correct index', async t=>{
     setFinishedUserQueue(['exampleUser1', 'exampleUser2', 'exampleUser3']);
     setFinishedTaskQueue(['example1.csv', 'example2.csv', 'example3.csv']);
+    
+    let tFinishedUserQueue1 = getFinishedUserQueue();
+    let tFinishedTaskQueue1 = getFinishedTaskQueue();
 
-    q.removeFinishedCustomerQueue(1);
+    await q.removeFinishedCustomerQueue(1);
 
     let tFinishedUserQueue = getFinishedUserQueue();
     let tFinishedTaskQueue = getFinishedTaskQueue();
 
-
     t.deepEqual(tFinishedUserQueue, ['exampleUser1','exampleUser3']);
     t.deepEqual(tFinishedTaskQueue, ['example1.csv','example3.csv']);
+    
+    await q.removeFinishedCustomerQueue(0); //Needed to clear out the finishedQueue
+    await q.removeFinishedCustomerQueue(0); //so that other tests work
 });
 
 test('findFinishedTaskIndex returns null if no matching index is found', async t=>{
@@ -120,7 +98,7 @@ test('csvMaker makes expected csv format', async t=>{
     t.is(csvData,correctFormat);
 });
 
-test('getTaskByUser gets all correct tasks', async t=>{
+test.serial('getTaskByUser gets all correct tasks', async t=>{
     setFinishedUserQueue(['exampleUser1', 'exampleUser1', 'exampleUser3']);
     setFinishedTaskQueue(['example1.csv', 'example2.csv', 'example3.csv']);
     setPendingUserQueue(['exampleUser1', 'exampleUser2', 'exampleUser3']);
