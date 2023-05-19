@@ -44,14 +44,6 @@ const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
 
 
 function requestHandler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:3000');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    if (req.method === 'OPTIONS') {
-        res.writeHead(200);
-        res.end();
-        return;
-    }
    if (req.url !== '/ping')
         console.log("New request: " + req.method + " " + req.url);
 
@@ -200,7 +192,6 @@ function handleUserCreation(req, res) {
         })
         .catch(thrown_error => {
             if (thrown_error instanceof TypeError) {
-                console.log(thrown_error.message)
                 if (thrown_error.message === "mail_exists" || thrown_error.message === "user_exists"){
                     errorResponse(res, 409, thrown_error.message);
                 } else if (thrown_error.message === "passwords_unequal"){
@@ -276,16 +267,14 @@ function saveCachePath(path) {
     } else {
         let obj = { path: path };
         let success = myCache.set("myPath", obj, 100);
-        console.log('path saved as: ', path)
     }
 }
 
 function getCache() {
     let cache = myCache.get("myPath");
     if (cache == undefined) {
-        return ("/index.html")
+        return ("/index.html") //Returns if user timed out beyond cache TTL
     } else {
-        console.log(cache);
         return (cache.path);
     }
 }
