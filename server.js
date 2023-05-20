@@ -53,7 +53,6 @@ function isFormEncoded(contentType) {//cg addin explanation due
 
 function guessMimeType(fileName) {
   const fileExtension = fileName.split('.').pop().toLowerCase();
-  //console.log(fileExtension);
   const ext2Mime = {
     "txt": "text/txt",
     "html": "text/html",
@@ -114,3 +113,8 @@ server.listen(port, hostname, () => {
   heartbeat();
   console.log(`Server running at http://${hostname}:${port}/`);
 });
+
+export const exportForTesting = {
+  securePath,
+  guessMimeType
+};
