@@ -5,11 +5,11 @@ import bcrypt from 'bcrypt';
 let sql;
 
 const db_path = './data.db';
-const db = connect_to_db();
+const db = connectDB();
 
-export {connect_to_db, search_db, insert_values, search_for_username, search_for_mail, update_password};
+export {connectDB, searchDB, insertValues, searchUsername, searchMail, updatePassword};
 
-function connect_to_db() {
+function connectDB() {
     if (fs.existsSync(db_path)) {
       console.log("Database initiated");
       const db = new Database(db_path);
@@ -31,7 +31,7 @@ async function hash(password){
 }
 
 //For createUser.js
-function insert_values(mail, username, password){
+function insertValues(mail, username, password){
   hash(password)
   .then(protectedPassword => insert(mail, username, protectedPassword))
   .catch(err => console.log(err))
@@ -43,7 +43,7 @@ function insert(mail, username, password){
 }
 
 //For login.js
-async function search_db(searchUsername, searchPassword){
+async function searchDB(searchUsername, searchPassword){
   const stmt = db.prepare('SELECT * FROM users WHERE username = ?').bind(searchUsername);
   const got = stmt.get(); 
 
@@ -57,7 +57,7 @@ async function search_db(searchUsername, searchPassword){
 };
 
 // Returns true/false    //for the function create_user in createUser.js
-function search_for_mail(mailSearch){
+function searchMail(mailSearch){
     const stmt = db.prepare('SELECT * FROM users WHERE email = ?');
     const mail = stmt.all(mailSearch);
     if(mail.length == 0) {
@@ -66,7 +66,7 @@ function search_for_mail(mailSearch){
 }
 
 // Returns true/false    //for the function create_user in login.js
-function search_for_username(username){
+function searchUsername(username){
     const stmt = db.prepare('SELECT * FROM users WHERE username = ?');
     const usernameSearch = stmt.all(username);
     if(usernameSearch.length == 0) {
@@ -77,7 +77,7 @@ function search_for_username(username){
 //SQL syntax for updating:
 // ('UPDATE table SET column1 = value1 WHERE column2 = value2')
 // Better-Sqlite allows for '?' to be placeholders for values to insert in SQL statement
-function update_password(new_password, user){
+function updatePassword(new_password, user){
   console.log(user)
   hash(new_password)
   .then(protectedPassword => update(protectedPassword, user))
@@ -96,13 +96,13 @@ function update(password, user){
 
 export const exportForTesting = {
   hash, 
-  connect_to_db,  
-  insert_values, 
+  connectDB,  
+  insertValues, 
   insert, 
-  search_db, 
-  search_for_mail, 
-  search_for_username, 
-  update_password, 
+  searchDB, 
+  searchMail, 
+  searchUsername, 
+  updatePassword, 
   update
 }
 

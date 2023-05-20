@@ -1,15 +1,15 @@
-import { insert_values, search_for_username, search_for_mail } from "./db.js";
+import { insertValues, searchUsername, searchMail } from "./db.js";
 export { validateNewUser };
 
 //Purpose: To look for unique credentials and matching passwords, returns data to be handled
 function validateNewUser(user_info) {
   let return_object = { mail: user_info.mail, username: user_info.username };
-  if (search_for_mail(user_info.mail) == false) {
+  if (searchMail(user_info.mail) == false) {
     return_object["mail_validity"] = true;
   } else {
     return_object["mail_validity"] = false;
   };
-  if (search_for_username(user_info.username) == false) {
+  if (searchUsername(user_info.username) == false) {
     return_object["user_validity"] = true;
   } else {
     return_object["user_validity"] = false;
@@ -36,7 +36,7 @@ function handler(new_user_info) {
       throw new TypeError("passwords_unequal");
     default:
       //return(new_user_info['mail'], new_user_info['username'], new_user_info['password'])  //for testing purposes
-      insert_values(new_user_info['mail'], new_user_info['username'], new_user_info['password'])
+      insertValues(new_user_info['mail'], new_user_info['username'], new_user_info['password'])
 
   };
 };

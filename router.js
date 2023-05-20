@@ -6,7 +6,7 @@ import NodeCache from "node-cache";
 export { requestHandler, fileResponse };
 
 //function imports from other .js files
-import { search_db } from "./master/db.js";
+import { searchDB } from "./master/db.js";
 import { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToClient } from "./master/exchangeData.js";
 import { search, passwords } from "./master/forgotPassword.js";
 import { validateNewUser } from "./master/createUser.js";
@@ -180,7 +180,7 @@ function requestHandler(req, res) {
 //Function for
 function fetchUser(req, res) {
     extractForm(req)
-        .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
+        .then(user_info => searchDB(user_info['username'], user_info['password'])) //login.js
         .then(user => returnToken(req, res, user))
         .catch(thrown_error => {
             if (thrown_error instanceof TypeError) {
