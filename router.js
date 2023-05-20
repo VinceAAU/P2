@@ -128,10 +128,7 @@ function requestHandler(req, res) {
             authenticateToken(req, res);
             break;
         case "/fetchUser":
-            extractForm(req)
-                .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
-                .then(user => returnToken(req, res, user))
-                .catch(thrown_error => returnTokenErr(res, 401, thrown_error)); //401: unauthorized
+            fetchUser(req, res)
             break;
         case "/worker":
             saveCachePath("/workerPage.html");
@@ -180,6 +177,19 @@ function requestHandler(req, res) {
     }
 }
 
+//Function for
+function fetchUser(req, res) {
+    extractForm(req)
+        .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
+        .then(user => returnToken(req, res, user))
+        .catch(thrown_error => {
+            if (thrown_error instanceof TypeError) {
+                if (thrown_error.message === "login-failed") {
+                    errorResponse(res, 401, thrown_error.message);
+            }
+        }
+        });
+    }
 
 //Function for creating new users
 function handleUserCreation(req, res) {
@@ -192,9 +202,9 @@ function handleUserCreation(req, res) {
         })
         .catch(thrown_error => {
             if (thrown_error instanceof TypeError) {
-                if (thrown_error.message === "mail_exists" || thrown_error.message === "user_exists"){
+                if (thrown_error.message === "mail_exists" || thrown_error.message === "user_exists") {
                     errorResponse(res, 409, thrown_error.message);
-                } else if (thrown_error.message === "passwords_unequal"){
+                } else if (thrown_error.message === "passwords_unequal") {
                     errorResponse(res, 400, thrown_error.message);
                 }
             }
