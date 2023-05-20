@@ -44,8 +44,8 @@ const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
 
 
 function requestHandler(req, res) {
-   if (req.url !== '/ping')
-        console.log("New request: " + req.method + " " + req.url);
+   // if (req.url !== '/ping')
+   //     console.log("New request: " + req.method + " " + req.url);
 
     let baseURL = "https://cs-23-sw-2-12.p2datsw.cs.aau.dk/node0/";
     let url = new URL(req.url, baseURL);
