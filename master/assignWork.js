@@ -50,7 +50,7 @@ async function assignWorkToWorker(workerUUID) {
       fileLoad = true;
       allTasks = await BucketList.fromQueue();
       fileLoad = false;
-      console.log(`All tasks:`);
+     // console.log(`All tasks:`);
       for (let i in allTasks) {
         console.log(`\t${i}: ${allTasks[i].length}`);
       }
