@@ -1,14 +1,10 @@
 const update = document.querySelector("#updateBtn");
 const errorMessage = document.getElementById('error-message');
 
-update.addEventListener("click", updatePasswordEvent, false);
-
-function updatePasswordEvent(event) {
-    event.preventDefault();
-    updatePassword(event)
-}
+update.addEventListener("click", updatePassword, false);
 
 async function updatePassword(event) {
+    event.preventDefault();
     var password = document.getElementById("password");
     var passwordConfirmation = document.getElementById("passwordConfirmation");
     
@@ -29,7 +25,20 @@ async function updatePassword(event) {
 
         if (!response.ok) {
             console.log(response.status)
-            unevenPasswords()
+            switch(response.status) {
+                case 400:
+                    console.log(response.status)
+                    unevenPasswords()
+                    break;
+                case 404:
+                    console.log(response.status)
+                    window.location.href = '/login.html';
+                    break;
+
+            }
+
+            
+            
             
         } else {
             console.log("response OK")

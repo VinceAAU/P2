@@ -15,31 +15,19 @@ function connect_to_db() {
       const db = new Database(db_path);
       return db; 
     } else {
-      try{
         const db = new Database('data.db');
-        create_table(db); 
+        console.log("Database created");
+        const insert = db.prepare('CREATE TABLE users(id INTEGER PRIMARY KEY,username,email,password)');
+        insert.run(); 
+        console.log(db.name);
         return db;
-      } catch (e) {
-        console.error(e);
-      };
     };
-    console.log("Connection with SQLite has been established");
   };
-
-//Function is only run, if connect_to_db() creates new database
-function create_table(db){
-    const insert = db.prepare('CREATE TABLE users(id INTEGER PRIMARY KEY,username,email,password)');
-    insert.run();
-};
 
 //Purpose: To hash new passwords, before uploading to db
 async function hash(password){
-  try{
-    let hashedPassword = await bcrypt.hash(password, 10); //10 = salt - further explanation due
-    return(hashedPassword);
-  }catch (err){
-    console.error(err)
-  }
+  let hashedPassword = await bcrypt.hash(password, 10); //10 = salt - further explanation due
+  return(hashedPassword);
 }
 
 //For createUser.js
@@ -51,11 +39,7 @@ function insert_values(mail, username, password){
 
 function insert(mail, username, password){
   const insert = db.prepare('INSERT INTO users(username,email,password) VALUES (?,?,?)');
-    try {
-        insert.run(username, mail, password);
-    } catch (e) {
-        console.error(e);
-    }  
+    insert.run(username, mail, password);
 }
 
 //For login.js
@@ -114,5 +98,14 @@ function update(password, user){
 }
 
 export const exportForTesting = {
-  hash
+  hash, 
+  connect_to_db,  
+  insert_values, 
+  insert, 
+  search_db, 
+  search_for_mail, 
+  search_for_username, 
+  update_password, 
+  update
 }
+

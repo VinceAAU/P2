@@ -2,14 +2,10 @@ const search = document.querySelector("#searchBtn");
 const errorMessage = document.getElementById('error-message');
 
 
-search.addEventListener("click", searchForUserEvent, false);
-
-function searchForUserEvent(event) {
-    event.preventDefault();
-    toggleSearch(event)
-}
+search.addEventListener("click", toggleSearch, false);
 
 async function toggleSearch(event) {
+    event.preventDefault();
     var username = document.getElementById("nameID");
     
 

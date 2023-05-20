@@ -14,7 +14,7 @@ import { heartbeat } from './master/workerManagement.js';
 
 
 //function and const exports
-export { throw_user, securePath, errorResponse, guessMimeType, redirect, extractForm };
+export { securePath, errorResponse, guessMimeType, redirect, extractForm };
 
 
 const hostname = '127.0.0.1';
@@ -87,53 +87,7 @@ function securePath(userPath) {
   return p;
 }
 
-/**
- * TODO: Move the user and form handling functions to their own file
- * Pls :(
- * 
- * I would do this myself, but that would require that I read through them,
- * and I did try doing that, but then I saw yet another 2-dimensional switch 
- * statement, and I don't particuarly feel like crying today again
- */
-
-
-
-
-function throw_user(res, thrown_error, redirected_from) {
-  let fileresponse_path = "FAKE PATH IN CASE THERE'S A CATASTROPHIC FAILURE";
-  console.log("throw user. (Err, from): " + thrown_error, redirected_from);
-  switch (redirected_from) {
-    case "login handler":
-      fileresponse_path = loginPath;
-      break;
-    case "login.js":
-      fileresponse_path = '/login.html';
-      break;
-    case "forgot-password-post": //User not found
-      errorResponse(res, 400, thrown_error);
-      break;
-    case "new password handler thing i wonder what this will look like":
-      switch (thrown_error) {
-        case "passwords_unequal":
-          console.log("Thrown user: passwords dont match");
-          errorResponse(res, 400, thrown_error);
-          break;
-        case "TypeError: Cannot read properties of undefined (reading 'user')":
-          errorResponse(res, 408, thrown_error); //request timeout
-          console.log("Cache timed out waiting for a response");
-          break;
-      }
-      fileresponse_path = changePasswordPath;
-      break;
-    default:
-      console.log("an error occured, while directing users");
-      fileresponse_path = "/"; //Idk where else to go
-  }
-  //fileResponse(res, fileresponse_path);
-}
-
-
-function collectPostBody(req) {//cg addin explanation due
+function collectPostBody(req) {
   function collectPostBodyExecutor(resolve, reject) {
     let bodyData = [];
     let length = 0;

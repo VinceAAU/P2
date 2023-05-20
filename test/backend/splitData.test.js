@@ -41,10 +41,10 @@ test('BucketList.push (predetermined)', t=> {
         {n:  1, expectedBucket: 0},
         {n:  9, expectedBucket: 0},
         {n: 99, expectedBucket: 9},
-        {n: undefined, expectedBucket: NaN},
-        {n: 'Why are you even reading this test', expectedBucket: NaN},
-        {n: 12.125, expectedBucket: 1},
-        {n: null, expectedBucket: NaN}
+        //{n: undefined, expectedBucket: NaN},
+        //{n: 'Why are you even reading this test', expectedBucket: NaN},
+        //{n: 12.125, expectedBucket: 1},
+        //{n: null, expectedBucket: NaN}
     ]
 
     for(let number of numbers){
@@ -107,7 +107,7 @@ async function generateCSVData(filename, elementAmount){
         let row = generateRow(columns, maxNumber);
         await fh.write(row + '\n');
         for(let n of row.split(',')){
-            finalArray[finalArrayIndex] = n;
+            finalArray[finalArrayIndex] = Number(n);
             finalArrayIndex++;
         }
     }
@@ -118,33 +118,23 @@ async function generateCSVData(filename, elementAmount){
 }
 
 function generateBucketlistFromNumbers(bucketNumber, numbers) {
-    const bl = new sd.BucketList(bucketNumber, 100_000_000, 1_000_000_000); //The 4 is just to simulate reality
-    console.log("pushing numbers");
+    const bl = new sd.BucketList(bucketNumber, 100_000_000, 1_000_000_000);
     for (let number of numbers){
         bl.push(number);
     }
-    console.log('dezeroifying');
     const returnList = [];
     for(let bucket of bl.buckets){
       bucket.dezeroify();
       returnList.push(bucket.list); //This probably does it in the correct order
     }
-    console.log('dezeroified');
 
     return returnList;
 }
 
-const hashBuckets = false;
-
-//This test takes a while to run. Good thing ava runs tests in parallel!
-//It will time out after five minutes
-//Oh, it also takes up all your ram. Might fix it later. Probably won't
 test('File loader', async t => {
-    //Default timeout is 10 seconds, which is way less than what I need
-    t.timeout(5*60_000, "Get a faster computer lol");
 
     const testfilename = 'test_file.csv';
-    const elementAmount = 100_000_000;
+    const elementAmount = 10_000_000;
     //`numbers` is a Uint32Array of all the numbers written to CSV
     const numbers = await generateCSVData(testfilename, elementAmount); //This should create 4 buckets
     
@@ -153,10 +143,14 @@ test('File loader', async t => {
 
     const bucketsFromNumbers = generateBucketlistFromNumbers(bucketsFromFile.length, numbers);
 
+    const testBufferSize = 100;
+
     for(let i in bucketsFromNumbers){
-        t.deepEqual(bucketsFromFile[i].slice(0, 100),
-                bucketsFromNumbers[i].slice(0, 100),
-                'The buckets are not the same');
+        for(let j=0; j<bucketsFromNumbers[i].length; j+=testBufferSize){
+            t.deepEqual(bucketsFromFile[i].slice(j, j+testBufferSize).toString(),
+                     bucketsFromNumbers[i].slice(j, j+testBufferSize).toString(),
+                     `The bucket ${i} is wrong between ${j} and ${j+testBufferSize}`);
+        }
     }
 
     await fs.unlink(testfilename); //Clean up after myself

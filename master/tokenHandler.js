@@ -1,19 +1,16 @@
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
-import {errorResponse} from '../server.js'
 import dotenv from 'dotenv';
+export { returnToken, authenticateToken, returnTokenErr, decodeToken }
+
+//Used to retrieve the secret key hidden in the .env file
 dotenv.config();
 
 //const acccesTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 const acccesTokenSecret = "473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0";
 
-export { returnToken, authenticateToken, returnTokenErr, decodeToken }
-
-
-//
+// Function to assign an accessToken to user upon login. 
 function returnToken(req, res, username) {
-    console.log("return token with user: " + username)
-    console.log(acccesTokenSecret);
     const user = { name: username }
     const accessToken = jwt.sign(user, acccesTokenSecret);
     res.statusCode = 201;
@@ -23,32 +20,32 @@ function returnToken(req, res, username) {
     res.end("\n");
 }
 
+//Function to validate the previously assigned accesstoken
 function authenticateToken(req, res) {
-    console.log("authenticateToken")
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    console.log(token == null)
     if (token == null) return res.sendStatus(401)
 
     jwt.verify(token, acccesTokenSecret, (err, user) => {
-        if (err) return returnTokenErr(res, 403, err)
-        decodeToken(req,res)
-        console.log("token authenticated")
-        res.statusCode = 201;
+        if (err) return returnTokenErr(res, 403, err) // HTTP 403 = access to the requested resource is forbidden
+        //decodeToken(req,res)
+        console.log("User: '",decodeToken(req),"' Just logged in")
+        res.statusCode = 201; //HTTP 201 = request has succeeded and has led to the creation of a resource 
         res.setHeader('Content-Type', 'text/txt');
         res.write(JSON.stringify({ UUID: uuidv4() }));
         res.end("\n");
     });
 };
 
+//Errorhandling. Used to give a response to the user
 function returnTokenErr(res, code, err) {
     console.log(err)
     res.statusCode = code;
     res.end("\n");
 };
 
+//Function to decode accesstokens, to return the username, decoded in the payload
 function decodeToken(req) {
-    console.log("decode token")
     const authHeader = req.headers.authorization;
     const token = authHeader.split(' ')[1];
     const decodedToken = jwt.decode(token, { complete: true });
@@ -56,3 +53,8 @@ function decodeToken(req) {
     const username = payload.name;
     return username;
   };
+
+//For testing purposes
+export const exportForTesting = {
+    decodeToken
+  }

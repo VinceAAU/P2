@@ -11,7 +11,7 @@ import { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToCli
 import { search, passwords } from "./master/forgotPassword.js";
 import { validateNewUser } from "./master/createUser.js";
 import { returnToken, authenticateToken, returnTokenErr, decodeToken } from './master/tokenHandler.js';
-import { securePath, throw_user, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
+import { securePath, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
 import { getTaskByUser, removeFinishedCustomerQueue, findFinishedTaskIndex } from './master/queue.js';
 import { pong, removeWorker } from './master/workerManagement.js'
 import { assignWorkToWorker, taskCounter, storeSortedBuckets } from './master/assignWork.js';
@@ -44,14 +44,6 @@ const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
 
 
 function requestHandler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:3190');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    if (req.method === 'OPTIONS') {
-        res.writeHead(200);
-        res.end();
-        return;
-    }
    if (req.url !== '/ping')
         console.log("New request: " + req.method + " " + req.url);
 
@@ -200,7 +192,6 @@ function handleUserCreation(req, res) {
         })
         .catch(thrown_error => {
             if (thrown_error instanceof TypeError) {
-                console.log(thrown_error.message)
                 if (thrown_error.message === "mail_exists" || thrown_error.message === "user_exists"){
                     errorResponse(res, 409, thrown_error.message);
                 } else if (thrown_error.message === "passwords_unequal"){
@@ -214,16 +205,19 @@ function handleUserCreation(req, res) {
 function handlePasswordPostCase(req, res) {
     extractForm(req)
         .then(username => search(username["username"])) //in forgotPassword.js
-        .then(_ => {
+        .then(status => {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
-            res.write('User found');
+            res.write(status);
             res.end();
         })
-        //.then(_ => fileResponse(res, changePasswordPath))
-        .catch(thrown_error => throw_user(res, thrown_error, "forgot-password-post"));
+        .catch(thrown_error => {
+            if (thrown_error instanceof TypeError) {
+            errorResponse(res, 400, thrown_error.message)
+            }
+        });
 }
 
-//Function for adding new password
+//Function for adding new password,
 function handleNewPassword(req, res) {
     extractForm(req)
         .then(info => passwords(info)) //in forgotPassword.js
@@ -232,7 +226,15 @@ function handleNewPassword(req, res) {
             res.write('User found');
             res.end();
         })
-        .catch(thrown_error => throw_user(res, thrown_error, "new password handler thing i wonder what this will look like"));
+        .catch(thrown_error => {
+            if (thrown_error instanceof TypeError) {
+                if (thrown_error.message === "passwords_unequal"){
+                    errorResponse(res, 400, thrown_error.message);
+                } else { // Triggered when TTL on cache is hit
+                    errorResponse(res, 404, thrown_error.message);
+                }
+            }
+        });
 }
 
 async function fileResponse(res, filename) {
@@ -276,16 +278,14 @@ function saveCachePath(path) {
     } else {
         let obj = { path: path };
         let success = myCache.set("myPath", obj, 100);
-        console.log('path saved as: ', path)
     }
 }
 
 function getCache() {
     let cache = myCache.get("myPath");
     if (cache == undefined) {
-        return ("index.html")
+        return ("index.html") //Returns if user timed out beyond cache TTL
     } else {
-        console.log(cache);
         return (cache.path);
     }
 }
