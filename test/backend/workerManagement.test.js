@@ -3,29 +3,27 @@ import * as wm from '../../master/workerManagement.js';
 
 let workerUUID;
 
-test.serial('Create null worker', t=>{
+test.before('Create null worker', t=>{
     workerUUID = crypto.randomUUID();
 
     wm.addWorker(workerUUID, null);
 
-    t.pass();
-
     t.not(wm.workers[workerUUID], undefined);
 })
 
-test.serial('Is Null Worker\'s task null?', t=>{
+test('Is Null Worker\'s task null?', t=>{
     t.is(wm.workers[workerUUID].currentTask, null);
 });
-test.serial('Is Null Worker\'s ping correct?', t=>{
+test('Is Null Worker\'s ping correct?', t=>{
     t.true(wm.workers[workerUUID].lastPing <= Date.now());
     //Test if it's within the same second
     t.true(Date.now()-wm.workers[workerUUID].lastPing < 1000);
 });
 
-test.serial('Can we remove Null Worker?', t=>{
+test.after('Can we remove Null Worker?', t=>{
     wm.removeWorker(workerUUID);
 
-    t.is(Object.keys(wm.workers).length, 0);
+    t.is(wm.workers[workerUUID], undefined);
 });
 
 test.before('Start heartbeat', async t=> {
@@ -45,7 +43,7 @@ test('Does heartbeat kill dead workers?',async t=> {
 test('Does heartbeat preserve living workers?', async t => {
     const uuid = crypto.randomUUID();
     wm.addWorker(uuid, null);
-
+    
     await new Promise(r => setTimeout(r, 6_000));
 
     t.not(wm.workers[uuid], undefined);
