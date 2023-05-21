@@ -13,7 +13,7 @@ async function toggleSearch(event) {
     bodyData.append('username', username['value']);
 
     try {
-        const response = await fetch('/forgot-password-post', {
+        const response = await fetch('forgot-password-post', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
