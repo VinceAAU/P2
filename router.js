@@ -8,7 +8,7 @@ export { requestHandler, fileResponse };
 //function imports from other .js files
 import { insertValues, searchDB } from "./master/db.js";
 import { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToClient } from "./master/exchangeData.js";
-import { search, passwords } from "./master/forgotPassword.js";
+import { search, passwords, userCache } from "./master/forgotPassword.js";
 import { validateNewUser, handler } from "./master/createUser.js";
 import { returnToken, authenticateToken, decodeToken } from './master/tokenHandler.js';
 import { securePath, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
@@ -233,6 +233,7 @@ function handlePasswordPostCase(req, res) {
 function handleNewPassword(req, res) {
     extractForm(req)
         .then(info => passwords(info)) //in forgotPassword.js
+        .then(forUser => userCache(forUser))
         .then(_ => {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.write('User found');

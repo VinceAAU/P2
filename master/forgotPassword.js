@@ -20,8 +20,7 @@ function search(username) {
 function passwords(info){
     if(info.password==info.passwordConfirmation){
         console.log("Equal passwords: ",info.password==info.passwordConfirmation);
-        userCache(info.password);
-        //return(info.password) // For testing purposes
+        return(info.password)
     } else {throw new TypeError("passwords_unequal");
     };
 };
