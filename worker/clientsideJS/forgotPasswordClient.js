@@ -27,7 +27,7 @@ async function toggleSearch(event) {
             
         } else {
             console.log("response OK")
-            window.location.href = '/enterNewPassword';
+            window.location.href = 'enterNewPassword';
         }
     } catch (error) {
         console.error(error);        
