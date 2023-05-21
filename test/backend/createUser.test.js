@@ -1,9 +1,7 @@
 import test from 'ava';
-import sinon from 'sinon';
 import * as cu from '../../master/createUser.js';
 
-var stub = sinon.stub();
-const {validateNewUser, handler, once} = cu.exportForTesting
+const {validateNewUser, handler} = cu.exportForTesting
 
 // remember to uncomment the return statements in createSecureServer.js
 
@@ -96,8 +94,14 @@ test('Test handler: All fields match', t => {
     password_match: true,
     password: '7'
   };
+  let expectedReturnObject = {
+    mail: '7',
+    username: '7',
+    password: '7'
+  };
 
-  t.deepEqual(handler(new_user_info), new_user_info['mail'], new_user_info['username'], new_user_info['password']);
+
+  t.deepEqual(handler(new_user_info), expectedReturnObject);
 });
 
 test('Test handler: Throw for already existing mail', t => {
