@@ -31,9 +31,9 @@ async function hash(password) {
 }
 
 //For createUser.js
-function insertValues(mail, username, password) {
-  hash(password)
-    .then(protectedPassword => insert(mail, username, protectedPassword))
+function insertValues(obj) {
+  hash(obj.password)
+    .then(protectedPassword => insert(obj.mail, obj.username, protectedPassword))
     .catch(err => console.log(err))
 };
 

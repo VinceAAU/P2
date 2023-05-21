@@ -6,11 +6,11 @@ import NodeCache from "node-cache";
 export { requestHandler, fileResponse };
 
 //function imports from other .js files
-import { searchDB } from "./master/db.js";
+import { insertValues, searchDB } from "./master/db.js";
 import { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToClient } from "./master/exchangeData.js";
 import { search, passwords } from "./master/forgotPassword.js";
-import { validateNewUser } from "./master/createUser.js";
-import { returnToken, authenticateToken, returnTokenErr, decodeToken } from './master/tokenHandler.js';
+import { validateNewUser, handler } from "./master/createUser.js";
+import { returnToken, authenticateToken, decodeToken } from './master/tokenHandler.js';
 import { securePath, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
 import { getTaskByUser, removeFinishedCustomerQueue, findFinishedTaskIndex } from './master/queue.js';
 import { pong, removeWorker } from './master/workerManagement.js'
@@ -195,6 +195,8 @@ function fetchUser(req, res) {
 function handleUserCreation(req, res) {
     extractForm(req)
         .then(user_info => validateNewUser(user_info))
+        .then(obj => handler(obj))
+        .then(values => insertValues(values))
         .then(_ => {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.write('User created successfully');
