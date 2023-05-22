@@ -16,7 +16,7 @@
 #define MAX_NUMBERS_AMOUNT 1000000000
 
 int main(int argc, char** argv) {
-    long size = atoi(argv[1]);
+    long size = atol(argv[1]);
 
 	clock_t start_time, end_time;
     start_time = clock();
@@ -34,8 +34,12 @@ int main(int argc, char** argv) {
         size--;
     }
 
-	for(long k = 0; k < numbers_amount; k++){
-		printf("%s%ld%s", (k % 1000 == 0) ? "\n" : "", numbers[k], k == (numbers_amount-1) ? "" : ",");
+	for (long k = 0; k < numbers_amount; k++){
+		if (k % 1000 == 0) { // Will result in one number on the first line, but newlines and commas should be handled fine in sorting.
+			printf("%ld%s", numbers[k], "\n");
+		} else {
+			printf("%ld%s", numbers[k], k == (numbers_amount-1) ? "" : ",");
+		}
 	} // Adding newlines so VSCode can actually open the CSV file (VSCode does not have horizontal virtualization, so it is allergic to large lines. Very sad.).
 
 	end_time = clock();
