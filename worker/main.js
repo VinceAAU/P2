@@ -108,6 +108,7 @@ async function fetchTask() {
 }
 
 function startWebWorker(receivedArray) {
+  let startTime = new Date().getTime();
   if (window.Worker) {
 
     workerSort.postMessage(receivedArray, [receivedArray.buffer]);
@@ -117,6 +118,8 @@ function startWebWorker(receivedArray) {
       let arrS = new Uint32Array(e.data);
       console.log("Worker returned the sorted list: ");
       console.log(arrS);
+      let finishedTime = (new Date().getTime() - startTime)/1000;
+      console.log("It took " + finishedTime);
       statusMessage("Done computing. Sending data to server...")
       sendToServer(arrS);
     }
