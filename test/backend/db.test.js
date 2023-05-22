@@ -7,6 +7,7 @@ import Database from 'better-sqlite3';
 import bcrypt from 'bcrypt';
 let sql;
 
+//After running test, remember to discard changes to data.db
 
 const { hash,
     connectDB,
@@ -65,10 +66,10 @@ test('Test insert', t => {
     const stmt = db.prepare('SELECT * FROM users WHERE username = ? AND email = ? AND password = ?');
     const result = stmt.get(username, email, password);
 
-    if (!result) {
-        t.fail();
-    } else {
+    if (result) {
         t.pass()
+    } else {
+        t.fail();
     }
 });
 
@@ -84,10 +85,10 @@ test('Test update', t => {
     const stmt = db.prepare('SELECT * FROM users WHERE username = ? AND email = ? AND password = ?');
     const result = stmt.get(forUser, dummymail, newP);
 
-    if (!result) {
-        t.fail();
-    } else {
+    if (result) {
         t.pass()
+    } else {
+        t.fail();
     }
 });
 
