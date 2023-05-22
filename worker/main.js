@@ -108,7 +108,7 @@ async function fetchTask() {
 }
 
 
-function startWebWorker(receivedArray) {
+function startSorting(receivedArray) {
   let startTime = new Date().getTime();
 
   function quickSort(left = 0, right = receivedArray.length - 1) {
@@ -216,7 +216,7 @@ async function handleReceivedData(data) {
   console.log("Array as Uint32Array:");
   console.log(convertedArray);
   statusMessage("Computing...");
-  startWebWorker(convertedArray);
+  startSorting(convertedArray);
 }
 
 async function sendToServer(array) {
