@@ -4,6 +4,7 @@
  */
 
 window.UUID = crypto.randomUUID(); //WARNING: THIS ONLY WORKS IN localhost AND HTTPS
+const accessToken = localStorage.getItem("accessToken");
 let pingTimerActive = false;
 let waitingForTask = false;
 let isConnected = false;
@@ -54,6 +55,7 @@ function stopWorking() {
   fetch('dead', { // tells server to remove worker from list of active workers
     method: 'POST',
     headers: {
+      'Authorization': `Bearer ${accessToken}`,
       "UUID": window.UUID
     }
   });
@@ -89,6 +91,7 @@ async function fetchTask() {
   fetch('requestFirstTask', {
     method: 'GET',
     headers: {
+      'Authorization': `Bearer ${accessToken}`,
       'UUID': window.UUID
     }
   })
@@ -104,27 +107,84 @@ async function fetchTask() {
     .catch(error => console.error(error));
 }
 
+
 function startWebWorker(receivedArray) {
-  if (window.Worker) {
+  let startTime = new Date().getTime();
 
-    workerSort.postMessage(receivedArray, [receivedArray.buffer]);
-    console.log("Block of work posted to the worker. ");
+  function quickSort(left = 0, right = receivedArray.length - 1) {
 
-    workerSort.onmessage = function (e) {
-      let arrS = new Uint32Array(e.data);
-      console.log("Worker returned the sorted list: ");
-      console.log(arrS);
-      statusMessage("Done computing. Sending data to server...")
-      sendToServer(arrS);
+    if (left < right) {
+      const pivotIndex = getRandomInt(left, right);
+      const pivot = receivedArray[pivotIndex];
+  
+      const partitionIndex = partition(pivot, left, right);
+    
+      quickSort(left, partitionIndex);
+      quickSort(partitionIndex + 1, right);
+    } else {
+      return;  //  Base case: array is already sorted (~length less than two).
     }
-  } else {
-    console.log("Browser does not support webworkers. ");
+  }
+  
+function partition(pivot, left, right) {
+  let i = left - 1;
+  let j = right + 1;
+
+  while (true) {
+    do {
+      j--;
+    } while (receivedArray[j] > pivot);
+
+    do {
+      i++;
+    } while (receivedArray[i] < pivot);
+
+    if (i < j) {
+      swap(i, j);
+    } else {
+      return j;
+    }
   }
 }
 
+  
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function swap(i, j) {
+    const temp = receivedArray[i];
+    receivedArray[i] = receivedArray[j];
+    receivedArray[j] = temp;
+  }
+  
+  //  Running QuickSort.
+  quickSort();
+  let finishedTime = (new Date().getTime() - startTime)/1000;
+  console.log("It took " + finishedTime);
+  console.log(receivedArray);
+
+  // if (window.Worker) {
+
+  //   workerSort.postMessage(receivedArray, [receivedArray.buffer]);
+  //   console.log("Block of work posted to the worker. ");
+
+    // workerSort.onmessage = function (e) {
+    console.log("Worker returned the sorted list: ");
+    console.log(receivedArray);
+    statusMessage("Done computing. Sending data to server...")
+    sendToServer(receivedArray);
+  //   }
+  // } else {
+  //   console.log("Browser does not support webworkers. ");
+  // }
+}
+
+
+
 async function pingTimer() {
   const pingInterval = 5000;
-  const accessToken = localStorage.getItem("accessToken");
+  
   const uuid = window.UUID;
 
   while (pingTimerActive) {
@@ -169,6 +229,7 @@ async function sendToServer(array) {
     headers: {
       "Content-Type": "application/octet-stream",
       "Content-Length": array.length,
+      'Authorization': `Bearer ${accessToken}`,
       'UUID': window.UUID
     },
     body: array
