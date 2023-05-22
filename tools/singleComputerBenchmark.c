@@ -19,6 +19,7 @@ int compare(const void* a, const void* b){
 
 int main(){
 	clock_t start_time, end_time;
+	start_time = clock();
 	long* numbers = malloc(MAX_NUMBERS_AMOUNT * sizeof(long));
 	long  numbers_amount = 0;
 	char number_buffer[20];
