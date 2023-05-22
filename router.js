@@ -113,10 +113,13 @@ function requestHandler(req, res) {
             fileResponse(res, changePasswordPath);
             break;
         case "/requestFirstTask":
+            let userTask = decodeToken(req)
+            console.log("First task requested by: ", userTask)
             giveTask(req, res);
             break;
         case "/requestNewTask":
-            console.log("Node finished task: " + req.headers.uuid);
+            let userNewTask = decodeToken(req)
+            console.log(userNewTask," finished task: " + req.headers.uuid);
             giveNewTask(req, res);
             break;
 

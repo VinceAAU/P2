@@ -4,6 +4,7 @@
  */
 
 window.UUID = crypto.randomUUID(); //WARNING: THIS ONLY WORKS IN localhost AND HTTPS
+const accessToken = localStorage.getItem("accessToken");
 let pingTimerActive = false;
 let waitingForTask = false;
 let isConnected = false;
@@ -54,6 +55,7 @@ function stopWorking() {
   fetch('dead', { // tells server to remove worker from list of active workers
     method: 'POST',
     headers: {
+      'Authorization': `Bearer ${accessToken}`,
       "UUID": window.UUID
     }
   });
@@ -89,6 +91,7 @@ async function fetchTask() {
   fetch('requestFirstTask', {
     method: 'GET',
     headers: {
+      'Authorization': `Bearer ${accessToken}`,
       'UUID': window.UUID
     }
   })
@@ -124,7 +127,7 @@ function startWebWorker(receivedArray) {
 
 async function pingTimer() {
   const pingInterval = 5000;
-  const accessToken = localStorage.getItem("accessToken");
+  
   const uuid = window.UUID;
 
   while (pingTimerActive) {
@@ -169,6 +172,7 @@ async function sendToServer(array) {
     headers: {
       "Content-Type": "application/octet-stream",
       "Content-Length": array.length,
+      'Authorization': `Bearer ${accessToken}`,
       'UUID': window.UUID
     },
     body: array
