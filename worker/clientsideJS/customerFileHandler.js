@@ -11,7 +11,7 @@ let headers = {
 };
 
 if(accessToken != null){
-  fetch('get-task-list-by-user', { headers })
+  fetch('getTaskListByUser', { headers })
     .then(response => response.json())
     .then(data => {
       let numFiles = document.querySelector("#numFiles");

@@ -157,7 +157,7 @@ function requestHandler(req, res) {
 
             // get user ID token thingy for the requester
             break;
-        case "/get-task-list-by-user":
+        case "/getTaskListByUser":
             handleFileQueue(req, res);
             break;
         case "/download":
