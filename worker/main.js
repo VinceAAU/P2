@@ -8,7 +8,6 @@ const accessToken = localStorage.getItem("accessToken");
 let pingTimerActive = false;
 let waitingForTask = false;
 let isConnected = false;
-let workerSort;
 
 async function toggleStartButton() {
   let button = document.querySelector("#start_button");
@@ -20,9 +19,9 @@ async function toggleStartButton() {
     /* Check if a timer waiting for tasks is already active. 
     *  If it is, this indicates that the button is being spammed, 
     *  and we simply reload the page as a simple solution to avoid further problems. */
-    if(!waitingForTask) startWorking(); 
+    if (!waitingForTask) startWorking();
     else location.reload();
-    
+
     startAlert();  //Gives a warning when closing if working.
 
   } else { // when user presses "disconnect"
@@ -50,7 +49,6 @@ function startAlert() { // Asks the user if they're sure, when they try to exit.
 
 function stopWorking() {
   isConnected = false;
-  workerSort.terminate();
   stopPingTimer();
   fetch('dead', { // tells server to remove worker from list of active workers
     method: 'POST',
@@ -62,7 +60,6 @@ function stopWorking() {
 }
 
 function startWorking() {
-  workerSort = new Worker("workerSort.js"); 
   isConnected = true;
   console.log("start")
   startPingTimer(); // starts heartbeat
@@ -76,7 +73,7 @@ async function waitForTask() {
 
   return new Promise((resolve) => {
     setTimeout(() => {
-      if(isConnected) // Makes sure no tasks are fetched, while the worker is disconnected
+      if (isConnected) // Makes sure no tasks are fetched, while the worker is disconnected
       {
         console.log("Finished waiting, asking for task");
         fetchTask();
@@ -108,7 +105,7 @@ async function fetchTask() {
 }
 
 
-function startWebWorker(receivedArray) {
+function startSorting(receivedArray) {
   let startTime = new Date().getTime();
 
   function quickSort(left = 0, right = receivedArray.length - 1) {
@@ -116,38 +113,38 @@ function startWebWorker(receivedArray) {
     if (left < right) {
       const pivotIndex = getRandomInt(left, right);
       const pivot = receivedArray[pivotIndex];
-  
+
       const partitionIndex = partition(pivot, left, right);
-    
+
       quickSort(left, partitionIndex);
       quickSort(partitionIndex + 1, right);
     } else {
       return;  //  Base case: array is already sorted (~length less than two).
     }
   }
-  
-function partition(pivot, left, right) {
-  let i = left - 1;
-  let j = right + 1;
 
-  while (true) {
-    do {
-      j--;
-    } while (receivedArray[j] > pivot);
+  function partition(pivot, left, right) {
+    let i = left - 1;
+    let j = right + 1;
 
-    do {
-      i++;
-    } while (receivedArray[i] < pivot);
+    while (true) {
+      do {
+        j--;
+      } while (receivedArray[j] > pivot);
 
-    if (i < j) {
-      swap(i, j);
-    } else {
-      return j;
+      do {
+        i++;
+      } while (receivedArray[i] < pivot);
+
+      if (i < j) {
+        swap(i, j);
+      } else {
+        return j;
+      }
     }
   }
-}
 
-  
+
   function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
@@ -157,34 +154,25 @@ function partition(pivot, left, right) {
     receivedArray[i] = receivedArray[j];
     receivedArray[j] = temp;
   }
-  
-  //  Running QuickSort.
+
+
   quickSort();
-  let finishedTime = (new Date().getTime() - startTime)/1000;
+  let finishedTime = (new Date().getTime() - startTime) / 1000;
   console.log("It took " + finishedTime);
   console.log(receivedArray);
 
-  // if (window.Worker) {
 
-  //   workerSort.postMessage(receivedArray, [receivedArray.buffer]);
-  //   console.log("Block of work posted to the worker. ");
-
-    // workerSort.onmessage = function (e) {
-    console.log("Worker returned the sorted list: ");
-    console.log(receivedArray);
-    statusMessage("Done computing. Sending data to server...")
-    sendToServer(receivedArray);
-  //   }
-  // } else {
-  //   console.log("Browser does not support webworkers. ");
-  // }
+  console.log("Worker returned the sorted list: ");
+  console.log(receivedArray);
+  statusMessage("Done computing. Sending data to server...")
+  sendToServer(receivedArray);
 }
 
 
 
 async function pingTimer() {
   const pingInterval = 5000;
-  
+
   const uuid = window.UUID;
 
   while (pingTimerActive) {
@@ -216,14 +204,14 @@ async function handleReceivedData(data) {
   console.log("Array as Uint32Array:");
   console.log(convertedArray);
   statusMessage("Computing...");
-  startWebWorker(convertedArray);
+  startSorting(convertedArray);
 }
 
 async function sendToServer(array) {
   if (!isConnected) {
     return;
   } // If not connected, don't send anything or request new tasks.
-  
+
   await fetch('requestNewTask', {
     method: 'POST',
     headers: {
