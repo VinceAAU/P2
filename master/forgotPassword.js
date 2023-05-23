@@ -1,4 +1,4 @@
-import { search_for_username, update_password } from "./db.js";
+import { searchUsername, updatePassword } from "./db.js";
 export { search, passwords, userCache };
 
 //Cache parameters
@@ -7,7 +7,7 @@ const myCache = new NodeCache( { stdTTL: 100, checkperiod: 120 } ); //TTL and ch
 
 //Searches if the user exists in the database, returns throw if no user is found
 function search(username) {
-    if (search_for_username(username) === false) { 
+    if (searchUsername(username) === false) { 
         throw new TypeError ("noUser");
     } else {
         let obj = { user: username};
@@ -20,8 +20,7 @@ function search(username) {
 function passwords(info){
     if(info.password==info.passwordConfirmation){
         console.log("Equal passwords: ",info.password==info.passwordConfirmation);
-        userCache(info.password);
-        //return(info.password) // For testing purposes
+        return(info.password)
     } else {throw new TypeError("passwords_unequal");
     };
 };
@@ -35,7 +34,7 @@ function userCache(password){
         throw new TypeError("noKey")
     } else {
         console.log("Changing password for: ",cache.user);
-        update_password(password, cache.user);
+        updatePassword(password, cache.user);
         //return(password) //, cache.user) // For testing purposes
     };
 };

@@ -1,15 +1,15 @@
-import { insert_values, search_for_username, search_for_mail } from "./db.js";
-export { validateNewUser };
+import { insertValues, searchUsername, searchMail } from "./db.js";
+export { validateNewUser, handler };
 
 //Purpose: To look for unique credentials and matching passwords, returns data to be handled
 function validateNewUser(user_info) {
   let return_object = { mail: user_info.mail, username: user_info.username };
-  if (search_for_mail(user_info.mail) == false) {
+  if (searchMail(user_info.mail) == false) {
     return_object["mail_validity"] = true;
   } else {
     return_object["mail_validity"] = false;
   };
-  if (search_for_username(user_info.username) == false) {
+  if (searchUsername(user_info.username) == false) {
     return_object["user_validity"] = true;
   } else {
     return_object["user_validity"] = false;
@@ -20,8 +20,7 @@ function validateNewUser(user_info) {
   } else {
     return_object["password_match"] = false;
   }
-  handler(return_object);
-  //return(return_object); //for testing purposes
+  return(return_object); 
 };
 
 
@@ -35,8 +34,12 @@ function handler(new_user_info) {
     case new_user_info.password_match === false: //if passwords dont match
       throw new TypeError("passwords_unequal");
     default:
-      //return(new_user_info['mail'], new_user_info['username'], new_user_info['password'])  //for testing purposes
-      insert_values(new_user_info['mail'], new_user_info['username'], new_user_info['password'])
+      let obj = {
+        mail: new_user_info['mail'], 
+        username: new_user_info['username'], 
+        password: new_user_info['password']
+      }
+      return(obj)
 
   };
 };

@@ -6,11 +6,11 @@ import NodeCache from "node-cache";
 export { requestHandler, fileResponse };
 
 //function imports from other .js files
-import { search_db } from "./master/db.js";
+import { insertValues, searchDB } from "./master/db.js";
 import { handleUpload, streamArrayToClient, receiveArray, streamStringArrayToClient } from "./master/exchangeData.js";
-import { search, passwords } from "./master/forgotPassword.js";
-import { validateNewUser } from "./master/createUser.js";
-import { returnToken, authenticateToken, returnTokenErr, decodeToken } from './master/tokenHandler.js';
+import { search, passwords, userCache } from "./master/forgotPassword.js";
+import { validateNewUser, handler } from "./master/createUser.js";
+import { returnToken, authenticateToken, decodeToken } from './master/tokenHandler.js';
 import { securePath, errorResponse, guessMimeType, redirect, extractForm } from './server.js';
 import { getTaskByUser, removeFinishedCustomerQueue, findFinishedTaskIndex } from './master/queue.js';
 import { pong, removeWorker } from './master/workerManagement.js'
@@ -113,10 +113,13 @@ function requestHandler(req, res) {
             fileResponse(res, changePasswordPath);
             break;
         case "/requestFirstTask":
+            let userTask = decodeToken(req)
+            console.log("First task requested by: ", userTask)
             giveTask(req, res);
             break;
         case "/requestNewTask":
-            console.log("Node finished task: " + req.headers.uuid);
+            let userNewTask = decodeToken(req)
+            console.log(userNewTask," finished task: " + req.headers.uuid);
             giveNewTask(req, res);
             break;
 
@@ -128,10 +131,7 @@ function requestHandler(req, res) {
             authenticateToken(req, res);
             break;
         case "/fetchUser":
-            extractForm(req)
-                .then(user_info => search_db(user_info['username'], user_info['password'])) //login.js
-                .then(user => returnToken(req, res, user))
-                .catch(thrown_error => returnTokenErr(res, 401, thrown_error)); //401: unauthorized
+            fetchUser(req, res)
             break;
         case "/worker":
             saveCachePath("workerPage.html");
@@ -180,11 +180,26 @@ function requestHandler(req, res) {
     }
 }
 
+//Function for
+function fetchUser(req, res) {
+    extractForm(req)
+        .then(user_info => searchDB(user_info['username'], user_info['password'])) //login.js
+        .then(user => returnToken(req, res, user))
+        .catch(thrown_error => {
+            if (thrown_error instanceof TypeError) {
+                if (thrown_error.message === "login-failed") {
+                    errorResponse(res, 401, thrown_error.message);
+            }
+        }
+        });
+    }
 
 //Function for creating new users
 function handleUserCreation(req, res) {
     extractForm(req)
         .then(user_info => validateNewUser(user_info))
+        .then(obj => handler(obj))
+        .then(values => insertValues(values))
         .then(_ => {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.write('User created successfully');
@@ -192,9 +207,9 @@ function handleUserCreation(req, res) {
         })
         .catch(thrown_error => {
             if (thrown_error instanceof TypeError) {
-                if (thrown_error.message === "mail_exists" || thrown_error.message === "user_exists"){
+                if (thrown_error.message === "mail_exists" || thrown_error.message === "user_exists") {
                     errorResponse(res, 409, thrown_error.message);
-                } else if (thrown_error.message === "passwords_unequal"){
+                } else if (thrown_error.message === "passwords_unequal") {
                     errorResponse(res, 400, thrown_error.message);
                 }
             }
@@ -221,6 +236,7 @@ function handlePasswordPostCase(req, res) {
 function handleNewPassword(req, res) {
     extractForm(req)
         .then(info => passwords(info)) //in forgotPassword.js
+        .then(forUser => userCache(forUser))
         .then(_ => {
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             res.write('User found');

@@ -6,8 +6,6 @@ onmessage = function(e) {
   console.log("Worker: received block of work. ");
   console.log("Unsorted: " + e.data);
 
-  let amountOfRecursions = 0; //  Keeping track of how many times QuickSort is called, for science!
-
   /**
    * Implementation of the QuickSort algorithm. Sorts in-place and uses a random pivot.
    * It is worth noting that QuickSort is performed directly on the data received (e.data).
@@ -21,11 +19,6 @@ onmessage = function(e) {
       const pivotIndex = getRandomInt(left, right);
       const pivot = e.data[pivotIndex];
   
-      //  -------------------------- For debugging. --------------------------
-      //  console.log(`Pivot for run #${amountOfRecursions} is ${pivotIndex}`); 
-      amountOfRecursions++;
-      //  --------------------------------------------------------------------
-
       const partitionIndex = partition(pivot, left, right);
     
       quickSort(left, partitionIndex);
@@ -90,7 +83,4 @@ onmessage = function(e) {
 
   //  Returning the now-sorted array using POST.
   this.postMessage(e.data, [e.data.buffer]);
-
-  //  Logging the amount of times QuickSort was called, for fun (also somewhat informative).
-  console.log(`QuickSort ran ${amountOfRecursions} recursive calls. `);
 }

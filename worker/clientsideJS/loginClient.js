@@ -1,7 +1,7 @@
-const checkbox = document.querySelector("#submitBtn_id");
+const login = document.querySelector("#submitBtn_id");
 const loginErrorMsg = document.getElementById("login-error-msg");
 
-checkbox.addEventListener("click", toggleLogin, false);
+login.addEventListener("click", toggleLogin, false);
 
 async function toggleLogin(event) {
   event.preventDefault();
