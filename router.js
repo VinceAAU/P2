@@ -44,10 +44,10 @@ const myCache = new NodeCache({ stdTTL: 200, checkperiod: 240 }); //Cache config
 
 
 function requestHandler(req, res) {
-   if (req.url !== '/ping')
-        console.log("New request: " + req.method + " " + req.url);
+   // if (req.url !== '/ping')
+   //     console.log("New request: " + req.method + " " + req.url);
 
-    let baseURL = 'http://' + req.headers.host + '/';
+    let baseURL = "https://cs-23-sw-2-12.p2datsw.cs.aau.dk/node0/";
     let url = new URL(req.url, baseURL);
     //let form = new formidable.IncomingForm();
 
@@ -134,12 +134,12 @@ function requestHandler(req, res) {
             fetchUser(req, res)
             break;
         case "/worker":
-            saveCachePath("/workerPage.html");
-            redirect(req, res, "/login.html");
+            saveCachePath("workerPage.html");
+            redirect(req, res, "login.html");
             break;
         case "/customer":
-            saveCachePath("/customerPage.html");
-            redirect(req, res, "/login.html");
+            saveCachePath("customerPage.html");
+            redirect(req, res, "login.html");
             break;
         case "/loggedIn":
             redirect(req, res, getCache());
@@ -300,7 +300,7 @@ function saveCachePath(path) {
 function getCache() {
     let cache = myCache.get("myPath");
     if (cache == undefined) {
-        return ("/index.html") //Returns if user timed out beyond cache TTL
+        return ("index.html") //Returns if user timed out beyond cache TTL
     } else {
         return (cache.path);
     }

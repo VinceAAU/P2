@@ -5,7 +5,9 @@ export { returnToken, authenticateToken, returnTokenErr, decodeToken }
 
 //Used to retrieve the secret key hidden in the .env file
 dotenv.config();
-const acccesTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+
+//const acccesTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+const acccesTokenSecret = "473f2eb9c7b9a92b59f2990e4e405fedb998dd88a361c0a8534c6c9988a44fa5eeeb5aea776de5b45bdc3cabbc92a8e4c1074d359aacba446119e82f631262f0";
 
 // Function to assign an accessToken to user upon login. 
 function returnToken(req, res, username) {
