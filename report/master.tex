@@ -1,0 +1,65 @@
+%  A simple AAU report template.
+%  2015-05-08 v. 1.2.0
+%  Copyright 2010-2015 by Jesper Kjær Nielsen <jkn@es.aau.dk>
+%
+%  This is free software: you can redistribute it and/or modify
+%  it under the terms of the GNU General Public License as published by
+%  the Free Software Foundation, either version 3 of the License, or
+%  (at your option) any later version.
+%
+%  This is distributed in the hope that it will be useful,
+%  but WITHOUT ANY WARRANTY; without even the implied warranty of
+%  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%  GNU General Public License for more details.
+%
+%  You can find the GNU General Public License at <http://www.gnu.org/licenses/>.
+%
+\input{setup/preamble.tex}% package inclusion and set up of the document
+\input{setup/hyphenations.tex}% 
+\input{setup/macros.tex}% my new macros
+
+\begin{document}
+%frontmatter
+\pagestyle{empty} %disable headers and footers
+\pagenumbering{roman} %use roman page numbering in the frontmatter
+\input{sections/0.Frontpage/frontpage}
+%\input{sections/0.Frontpage/colophon}
+\input{sections/0.Frontpage/titlepages}
+\cleardoublepage
+\pdfbookmark[0]{Contents}{label:contents}
+\pagestyle{fancy} %enable headers and footers again
+\tableofcontents
+\input{sections/0.Frontpage/preface}
+\cleardoublepage
+%mainmatter
+\pagenumbering{arabic} %use arabic page numbering in the mainmatter
+\input{sections/1.Intro/introduction}
+\input{sections/2.ProblemAnalysis/problem_analysis}
+    \input{sections/2.ProblemAnalysis/grid_computing}
+    \input{sections/2.ProblemAnalysis/big_data}
+    \input{sections/2.ProblemAnalysis/challenges}
+    \input{sections/2.ProblemAnalysis/task_scheduling}
+    \input{sections/2.ProblemAnalysis/node_failure}
+    \input{sections/2.ProblemAnalysis/malicious_intent}
+    \input{sections/2.ProblemAnalysis/authentication}
+    \input{sections/2.ProblemAnalysis/problem_delimitation}
+    \input{sections/2.ProblemAnalysis/problem_statement}
+\input{sections/3.SoftwareDesign/software_design}
+    \input{sections/3.SoftwareDesign/requirements}
+    \input{sections/3.SoftwareDesign/mmi}
+    \input{sections/3.SoftwareDesign/choice_of_algorithm}
+    \input{sections/3.SoftwareDesign/benchmarking}
+\input{sections/4.CodeImpletation/code_implentation}
+    \input{sections/4.CodeImpletation/frontend}
+    \input{sections/4.CodeImpletation/backend}
+\input{sections/5.Testing/testing}
+    \input{sections/5.Testing/unitTesting}
+    \input{sections/5.Testing/e2etesting}
+    \input{sections/5.Testing/runningTime}
+\input{sections/6.Discussion/discussion}
+\input{sections/7.Conclusion/conclusion}
+\printbibliography[heading=bibintoc]
+\label{bib:mybiblio}
+\appendix
+\input{sections/8.Appendix/appAname}
+\end{document}

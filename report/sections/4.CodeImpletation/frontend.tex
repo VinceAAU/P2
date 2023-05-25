@@ -1,0 +1,26 @@
+\section{Frontend}
+In this section, the development of the frontend of the web-based product will be described. This includes both the User Interface and the worker node's implementation.
+
+\subsection{Login Page}
+The login on the frontend is handled by an HTML form controlled with JavaScript. The form does some basic checks for username/password lengths, but as removing these checks is as simple as altering the HTML in the browser, the backend cannot expect that these limits are kept. When the form is submitted, the page sends the username and password to the server via a POST request. If there have not been any errors, it should then receive an access token. Section \ref{sec:backendLogin} details how the interaction is treated on the backend.
+
+The login page also links to two pages: Create User and Forgot Password. The "Create User" page prompts the potential user for a mail, username, and password, and creates such a user. The "Forgot Password" page prompts the user for their username, and allows them to change the password of that user. Currently, the system works on blind trust that nobody would change the password of another user, which is fine for a proof of concept, but in the real world, such a page would have to require some sort of verification.
+
+
+\subsection{Customer Page}
+The customer page allows a user to upload files for sorting. This is again an HTML form controlled with JavaScript to send the file to the server. As the server will reject any non-CSV files, the frontend makes sure to warn the user if they attempt to upload such a file.
+
+The customer page also contains a list of the associated user's files that are currently in the server's queue for processing, which is retrieved from the server on page load. Once a file is done loading, it is added to a separate list, from which it can be downloaded. The download functionality is implemented through Object URLs.
+
+\subsection{Worker}
+
+The interface for the worker page is simply a button that toggles whether or not work is being done. 
+
+On the page load, a Universally Unique Identifier (UUID) is generated for the worker, and stored under the browser's \lstinline{window} object. Using \lstinline{window} as opposed to \lstinline{localStorage} allows a user to have several workers running in different tabs (so that the user can contribute more than one CPU thread at a time), without them sharing the UUID and confusing the master. 
+
+When the "Start" button is pressed, the \lstinline{fetchTask()} function is called, sending a GET request to the server retrieving a task for the worker node or setting the worker as active. Then, the heartbeat system is started (Section \ref{sub:frontendHeartbeat}), and the worker waits for a task.
+
+When the worker receives some data as a task, it sorts that data using QuickSort, as described in Section \ref{sec:quicksortDesc}, implemented in the file \lstinline{main.js}. It then sends the sorted data back to the master.
+
+\subsubsection{Heartbeat System} \label{sub:frontendHeartbeat}
+Section \ref{sub:backendHeartbeat} describes the importance for the master to be able to detect when a worker is down. For the master to be able to do this, the worker must ping the server periodically. The interval between each ping was chosen to be five seconds. To guarantee that the master knows which worker is sending the ping, the worker sends its UUID as a header.

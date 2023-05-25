@@ -1,0 +1,110 @@
+\section{Running Time Comparison} \label{sec:runningTime}
+
+In this section running time comparisons will be shown along with some of the data collected about the running time of the product. This is relevant when assessing the product and its satisfaction of the requirements made for it.
+
+\subsection{Running Time Comparison of the Product}
+
+Running the server and simulating a situation wherein a customer needs a roughly two gigabyte CSV file sorted and comparing this running time to a scenario where the customer sorts the file themselves is discussed as an End-to-End test, in Section \ref{sec:E2ETesting}.
+
+A part of this running time was further investigated, specifically the network overhead which affects the performance of the server (seen in Table \ref{tab:networkOverhead}). Looking at these averages, there is a noticeable delay added to the total running time, in the form of downloading the tasks to the worker nodes. On average 15.74 seconds are added, when downloading the first task. Subsequent tasks add an average of 19.55 seconds. Furthermore, uploading the sorted task back to the server adds on average 9.04 seconds.
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+    \hline
+    \multicolumn{3}{|c|}{Test of Network Running Time}\\
+    \hline
+    \multicolumn{2}{|c|}{\textbf{requestNewTask}} & \textbf{requestFirstTask} \\
+    \hline
+    Upload (s) & Download (s) & Download (s) \\
+    \hline
+    5.09 & 25.35 & 20.80 \\
+    \hline
+    6.45 & 23.75 & 17.6 \\
+    \hline
+    7.58 & 16.2 & 8.23 \\
+    \hline
+    15.50 & N/A & 18.25 \\
+    \hline
+    7.87 & N/A & 17.67 \\
+    \hline
+    12.19 & 28.81 & 18.56 \\
+    \hline
+    6.62 & N/A & 13.86 \\
+    \hline
+    8.27 & 21.61 & 12.00 \\
+    \hline
+    9.85 & 21.84 & 14.51 \\
+    \hline
+    13.74 & 17.38 & 15.27 \\
+    \hline
+    0.94 & 21.83 & 16.11 \\
+    \hline
+    12.81 & 19.02 & 9.98 \\
+    \hline
+    8.90 & 14.53 & 11.71 \\
+    \hline
+    9.10 & 18.98 & 34.57 \\
+    \hline
+    9.43 & N/A & 12.00 \\
+    \hline
+    10.99 & 23.58 &  \\
+    \hline
+    8.33 & N/A &  \\
+    \hline
+    \multicolumn{3}{|c|}{Average:}\\
+    \hline
+    9.04 & 21.07 & 16.07 \\
+    \hline
+\end{tabular}
+\end{center}
+\caption{A table showing the recorded times it took to download and upload a 100 MB file, to and from the worker. In seconds.}
+\label{tab:networkOverhead}
+\end{table} 
+
+\subsection{Running Time Comparison of Quicksort Implementation}
+
+To quantify the inefficiency of JavaScript, an implementation of QuickSort was written in JavaScript (\lstinline{jsSortingBenchmark.js}), and a similar sorting program was written in C (\lstinline{singleComputerBenchmark.c}). They can be found in the \lstinline{tools/} directory in the repository. These two programs were then timed while sorting an array of 25 million numbers, which takes about 100MB in memory. The results can be seen on Table \ref{tab:singleBenchmark}.
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|p{5cm}|p{5cm}|}
+    \hline
+    \multicolumn{2}{|c|}{\textbf{Running "specificTest.c" vs. jsSortingBenchmark.js (s)}}\\
+    \hline
+    specificTest.c & jsSortingBenchmark.js \\
+    \hline
+    3.07 &3.28\\
+    \hline
+    3.05 &3.27\\
+    \hline
+    3.05 &3.30\\
+    \hline
+    3.09 &3.33\\
+    \hline
+    3.05 &3.26\\
+    \hline
+    3.09 &3.30\\
+    \hline
+    3.04 &3.22\\
+    \hline
+    3.06 &3.34\\
+    \hline
+    3.07 &3.37\\
+    \hline
+    3.08 &3.29\\
+    \hline
+\end{tabular}
+\begin{tabular}{
+|p{2.28cm}|p{2.28cm}|p{2.28cm}|p{2.28cm}|}
+    \multicolumn{2}{|c|}{Average:} & \multicolumn{2}{|c|}{Difference:}\\
+    \hline
+    3.07 & 3.29 & 0.23 & 7.52\% \\
+    \hline
+\end{tabular}
+\end{center}
+\caption{A table showing the recorded times it took to sort 25 million numbers using the two different program.}
+\label{tab:singleBenchmark}
+\end{table}
+
+Looking at this data, it is clear that the difference between the running times of these two benchmarking programs is negligible. So, whilst the product ultimately did not satisfy the problem statement, the reason behind its inability to do so is not the implementation of sorting. 

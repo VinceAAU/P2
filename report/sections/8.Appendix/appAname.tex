@@ -1,0 +1,38 @@
+\chapter{Code of Selected Unit Tests}\label{ch:unitTestsCode}
+\begin{lstlisting}[caption=Code for the unit test of assignWorkToWorker, label=lst:assignWorkToWorker] 
+test.before("Initialise values in assignWork.js", async (t) => {
+  task = await aw.assignWorkToWorker("uuid_placeholder");
+});
+
+...
+
+test("assignWorkToWorker tests (DYNAMIC)", async (t) => {
+  t.assert(task instanceof Uint32Array === true); // see if task is a Uint32Array
+  for (let num in task) {
+    if (Number.isNaN(num)) {
+      t.fail("NAN"); // check if everything in the task is a number
+    }
+  }
+});
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Code for the unit test of dequeueTask, label=lst:dequeueTask] 
+test("dequeueTask tests (DYNAMIC)", (t) => {
+  let startHead = getQueueHead();
+  let expectedDequeueReturn = getAvailableTaskIndices()[startHead];
+
+  let dequeueResult = dequeueTask();
+  let secondHead = getQueueHead();
+
+  t.is(dequeueResult, expectedDequeueReturn); // return value of dequeue is as expected
+  t.assert(secondHead >= 0 && secondHead < getAvailableTaskIndices().length); // head stays in bounds
+  t.assert(secondHead !== startHead); // the head has changed value
+});
+\end{lstlisting}
+
+
+\chapter{Unit Test Table}\label{ap:UnitTestTable}
+\input{sections/5.Testing/TABLEUnitTest}
+
+\chapter{End-to-End Test Table}\label{ap:E2ETestTable}
+\input{sections/5.Testing/TABLEe2etesting}

@@ -1,0 +1,31 @@
+\section{Coding Conventions}
+
+To allow for readability and maintainability, the use of agreed upon coding conventions are helpful. Before development of the product for this project, it was decided that camelCase would be used. It was also chosen that the code would include detailed naming of variables, objects, classes, and functions alike to allow for a minimal amount of required documentation, in order to read and maintain the code. The ability to understand the main functionality of a code snippet, e.g. a function, at first glance, can be very helpful when working in a larger group, or as a part of a larger development team. 
+
+\section{Version Control}
+In terms of version control, Git was used. This gives the ability to revert changes that were either not meant to be pushed (added to the codebase) or if bugs were inadvertently introduced, the program could be reverted to the correct stage. Another reason was the ability to create branches, which gives the possibility to test new features that may not work immediately, while other group members still have a working version of the code that they can easily access.
+
+\section{Unit Testing}
+To carry out unit tests, the JavaScript testing framework called AVA was used \cite{AvaSource}. This specific framework was chosen as it supports ES6 modules and Promises, which were heavily used throughout the development of the product.
+
+Some aspects proved difficult to test, for instance requiring mock functions, and were subsequently not tested. As a result, these functions must be monitored closely when bugs occur.
+
+\subsection{Example of Unit Testing}
+While all completed unit tests can be found in the project's related GitHub repository (see the \href{https://github.com/VinceAAU/P2/tree/main/test}{test/} directory), only some selected tests will be explored in the report. These tests have been selected, as they are generally representative for the unit tests that were carried out in the process of testing the product's codebase. The code of the selected tests can be found under the report's Appendix \ref{ch:unitTestsCode} and a table of all the test and their success status can be found at Appendix \ref{ap:UnitTestTable}.
+
+\subsubsection{assignWorkToWorker() from assignWork.js}
+This first example highlights a relatively small, yet important, unit test. 
+
+The first three lines of code in the snippet (\ref{lst:assignWorkToWorker}) are used to setup the test environment. Before the unit test can run, it is necessary to have a task (unsorted bucket) loaded into a variable within the scope of the test. This specific unit test looks at the result of the assignWorkToWorker() function and tests two important things. 
+
+On line 8 an assert statement is performed. It is asserted that the variable \lstinline{task} is in fact the correct type of typed array, Uint32Array. This is asserted by checking that \lstinline{task instanceof Uint32Array} is \lstinline{true}. "\lstinline{instanceof}" is a JavaScript operator that returns a Boolean value which, simply speaking, represents whether the given object (in this case \lstinline{task}) is an instance of the subclass \lstinline{Uint32Array}. This is significant to test, as the returned, unsorted bucket that is stored in the \lstinline{task} variable \emph{should} be a Uint32Array and if it is not this expected type of array, unexpected behaviour will likely arise.
+
+On line 9 to 12 a for-loop is executed. This loop checks every single element in the specific task, ensuring that each element is in fact a number. This is significant, as this task will be sent to a worker node for sorting that expects an array of numbers. If even one element in the given task is not a number, as determined by the static method \lstinline{Number.isNaN()}, \lstinline{t.fail()} will run, failing the test.
+
+\subsubsection{dequeueTask() from assignWork.js}
+This second unit test is an example of testing multiple surrounding values to check if the behaviour is as expected (code snippet \ref{lst:dequeueTask}). 
+
+The values for the variables in this unit test are retrieved using getter functions, declared towards the bottom of the \lstinline{assignWork.js} file. Lines 2 and 3 declare and initialise two variables used to check for expected behaviour. The \lstinline{startHead} variable stores the value of the \lstinline{qHead} variable from \lstinline{assignWork.js}, before running the \lstinline{dequeueTask} function. This is done, partly because the value of \lstinline{qHead} should change and partly because, having this value stored, it is possible to check for the expected return value of the function. It is supposed to return the value of the array \lstinline{availableTaskIndices} in \lstinline{assignWork.js}, at the index of the current \lstinline{qHead} value. As it returns this value, it is also supposed to move, or update, the value of \lstinline{qHead} to point at the next available task index. 
+
+At this point, on line 5, the \lstinline{dequeueTask()} function is called. Its return value is stored in the variable \lstinline{dequeueResult}. Then, the updated value of \lstinline{qHead} from \lstinline{assignWork.js} is stored in the variable \lstinline{secondHead}. With these variables at hand, the following checks are done. If any of the individual tests evaluate to anything but true, the whole test of the function fails. Line 8 checks, with a \lstinline{t.is()} call, that the values of \lstinline{dequeueResult} and \lstinline{expectedDequeueResult} are the same. Line 9 asserts that the value of \lstinline{secondHead} is larger than or equal to zero and that the value is less than the length of the \lstinline{availableTaskIndices} array in \lstinline{assignWork.js}. This is done to check for any unexpected behaviour in regards to the bounds of the queue. \lstinline{qHead} is never supposed to move outside of these bounds, since doing so would break the queue system. Line 10 asserts that \lstinline{secondHead} and \lstinline{startHead} are not the same value. This needs to be checked since an important part of the \lstinline{dequeueTask} function is the updating of the \lstinline{qHead}. If the head of the queue is not updated, the same task would be assigned to the grid's workers, endlessly. 
+

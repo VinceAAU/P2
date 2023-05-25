@@ -1,0 +1,23 @@
+\subsection{Node Failure} \label{sec:nodeFailure}
+
+When there are a large amount of nodes in a system, and they are used to process a large amount of data, it is inevitable that some of them will fail, and therefore it is imperative that a grid computing system is able to deal with these issues.
+
+\subsubsection{Detection}
+
+The first step to dealing with node failure is to detect that the node has failed.
+
+One way to detect node failure is by monitoring the network itself.
+However, this requires detailed knowledge about the network that the nodes operate on, which is not reasonable to have if you have a large number of nodes spread over a large variety of networks with different properties \cite{dabrowski_2009}.
+
+Another way is through heartbeat techniques, where nodes will occasionally ping each other to make sure that no worker node has disconnected. This technique is common, as it can be implemented quite simply, and will work even in diverse and dynamic environments. In a distributed system, this has the drawback that it does not scale well, as each node must always communicate with every other node. Trying to centralise the heartbeat creates a single node that acts as a hot-spot, and heartbeating in a ring creates unpredictable fail detection times
+\cite{gupta_chandra_goldszmidt_2001}.
+
+\subsubsection{Mitigation}
+
+When a node fails, it might either be a temporary failure (e.g. due to network failures, or unexpected software updates) or a permanent failure. 
+
+If a node is temporarily down and therefore ends up missing some of the tasks, it must communicate with its master about where it last left off, so that it can catch up to all those tasks, and continue from there. This requires that the worker keeps a note of which message it has last received and that the master node keeps a journal of its previously distributed tasks. 
+
+However, if a node is permanently down, its tasks must be redistributed entirely. This once again requires that the master node keeps a journal of previously distributed tasks, so it can redistribute the ones given to the failed node, to a node that is still in operation. 
+
+If the failed node is a master node, a new master could be elected. In the case of a faulty election or bad communication, two masters might be elected, which would result in a split brain. This should be avoided. After an election, the new master must be able to continue from where the previous one has left off. This might be a challenge if the worker node does not have a properly updated list of tasks, which is likely due to the asynchronous nature of grid computing \cite{upadhyay_2021}.

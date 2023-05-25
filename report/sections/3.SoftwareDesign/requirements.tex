@@ -1,0 +1,170 @@
+\section{System Overview}
+In order to develop a piece of software that achieves the specifications of the problem statement, this chapter will include all the system requirements made for the product. 
+
+Block diagrams will be used to show an outline of the different parts of the system. The MoSCoW method will be used to manage the requirements that exist for the product. 
+
+This is done so as to have a clear understanding of what is important for the product, and which requirements are more highly prioritised than others, while still touching on other possible features for the product. 
+
+\begin{figure}[H]
+    \adjustbox{scale=0.75, center}{
+        \begin{tikzpicture}[node distance=5cm,
+            component/.style={draw, text width=2cm, text centered, node distance=2cm},
+            important_component/.style={draw, text width=4cm, text centered}]
+            
+            \node [important_component] (frontend) {Frontend};
+            \node [important_component] (backend) [right of=frontend, xshift=3cm] {Backend};
+
+            \node [component] (customer) [below of=frontend, xshift=-2cm] {Customer};
+            \node [component] (worker) [below of=frontend, xshift= 2cm] {Worker};
+
+            \node [component] (server) [below of=backend, xshift=-2cm] {Server};
+            \node [component] (master) [below of=backend, xshift= 2cm] {Master};
+
+            \node [component] (filesystem) [below of=master, xshift=-2cm] {Filesystem};
+            \node [component] (tasks) [below of=master, xshift= 2cm] {Tasks};
+
+            \node [component] (fetch) [below of=server, xshift=-2cm] {Router};  
+
+
+            \draw[<->] ([xshift=3pt]frontend.east) -- ([xshift=-3pt]backend.west);
+
+            \draw[->] ([yshift=-0.5pt, xshift=-1cm] frontend.south) -- ([yshift=3pt]customer.north);
+            \draw[->] ([yshift=-0.5pt, xshift=1cm]frontend.south) -- ([yshift=3pt]worker.north);
+
+            \draw[->] ([yshift=-0.5pt, xshift=-1cm]backend.south) -- ([yshift=3pt]server.north);
+            \draw[->] ([yshift=-0.5pt, xshift=1cm]backend.south) -- ([yshift=3pt]master.north);
+
+            \draw[->] ([yshift=-0.5pt, xshift=-1cm]master.south) -- ([yshift=3pt]filesystem.north);
+            \draw[->] ([yshift=-0.5pt, xshift=1cm]master.south) -- ([yshift=3pt]tasks.north);         
+
+            \draw[->] ([yshift=-0.5pt, xshift=-1cm]server.south) -- ([yshift=3pt]fetch.north);              
+            
+            \draw[frame=33pt];
+        \end{tikzpicture}
+    }
+
+    \caption{A block diagram providing an overview of the system.}
+    \label{fig:SystemOverview}
+\end{figure}
+Figure \ref{fig:SystemOverview} outlines the main points of the system. 
+
+Under the backend are the server and master. The server is responsible for serving the web-pages to the frontend interface. The master is the system that divides data into tasks, and distributes it among workers.
+
+Under the frontend, are the customer and worker pages. The customer in question is the user that needs their files sorted, and the customer page is therefore the interface through which said user can upload the files that need sorting. The worker receives tasks from the master, and completes said tasks, before sending the processed data back. 
+
+\subsection{Frontend Overview}
+
+\begin{figure}[H]
+    \adjustbox{scale=0.75, center}{
+        \begin{tikzpicture}[node distance=4cm,
+            webpage/.style={draw, text width=4cm, text centered}]
+
+            \node[webpage] (index)                                                         {Index};
+
+            \node[webpage] (login)               [below of=index]                          {Login};
+
+            \node[webpage] (createUserRight)     [right of=login, yshift= 1cm, xshift=2cm] {Create User};
+
+            \node[webpage] (forgotPasswordRight) [right of=login, yshift=-1cm, xshift=2cm] {Forgot Password};
+
+            \node[webpage] (worker)              [below of=login, xshift=-3cm]             {Worker};
+
+            \node[webpage] (customer)            [below of=login, xshift= 3cm]             {Customer};
+    
+            \draw[->] ([xshift=-1cm]index.south) -- ([xshift=-1cm, yshift=3pt]login.north);
+            \draw[->] ([xshift= 1cm]index.south) -- ([xshift=1cm, yshift=3pt]login.north);
+
+            \draw[->] ([xshift=-1cm]login.south) -- ([yshift=3pt]worker.north);
+            \draw[->] ([xshift= 1cm]login.south) -- ([yshift=3pt]customer.north);
+
+            \draw[<->] ([xshift=5pt]worker.east) -- ([xshift=-5pt]customer.west);
+
+            \draw[<->] ([xshift=3pt, yshift=5pt]login.east) -- ([xshift=-3pt]createUserRight.west);
+            \draw[<->] ([xshift=3pt, yshift=-5pt]login.east) -- ([xshift=-3pt]forgotPasswordRight.west);
+
+
+            \draw[frame=33pt];
+        \end{tikzpicture}
+    }
+
+    \caption{A block diagram providing an overview of the frontend aspect of the website.}
+    \label{fig:frontendOverview}
+\end{figure}
+
+In order to make an overview of the parts within the product's user interface, a block diagram was made (Figure \ref{fig:frontendOverview}). This is not a detailed diagram, but it gives an overview of what is encompassed in the user interface of the product's frontend. As can be seen in the figure, there are two arrows from the "Index" block to the "Login" block. This is due to the fact that a dynamic login system will be implemented, such that when the user wants to navigate to either the customer or worker page, they will first be directed to the login page and afterwards redirected to the desired page.
+
+\subsection{Backend Overview}
+\begin{figure}[H]
+    \adjustbox{scale=0.75, center}{
+        \begin{tikzpicture}[node distance=5cm,
+            component/.style={draw, text width=2cm, text centered, node distance=2cm},
+            important_component/.style={draw, text width=4cm, text centered}]
+            
+            \node [important_component] (upload) {Upload File};
+
+            \node [component] (save) [below of=frontend, xshift=-2cm] {Save to Server};
+            \node [component] (queue) [below of=frontend, xshift=2cm] {Queuing System};
+
+            \node [component] (task) [right of=queue, xshift=2cm] {Task Splitter};
+            \node [component] (scheduler) [right of=task, xshift=2cm] {Task Scheduler};
+
+            \node [component] (worker) [above of=scheduler] {Worker};
+
+            \draw[->] ([yshift=-0.5pt, xshift=-1cm] upload.south) -- ([yshift=3pt] save.north);
+            \draw[->] ([yshift=-0.5pt, xshift=1cm] upload.south) -- ([yshift=3pt] queue.north);
+
+            \draw[->] ([xshift=0.5pt] queue.east) -- ([xshift=-3pt] task.west);
+            \draw[->] ([xshift=0.5pt] task.east) -- ([xshift=-3pt] scheduler.west);
+
+            
+            \draw[->] ([xshift=-0.75cm] worker.south) -- ([yshift=3pt, xshift=-0.75cm] scheduler.north);            
+            \draw[->] ([xshift=0.75cm] scheduler.north) -- ([yshift=-3pt, xshift=0.75cm] worker.south);    
+            
+            \draw[frame=33pt];
+        \end{tikzpicture}
+    }
+
+    \caption{A more detailed look into the "Tasks" part of the backend model mentioned in Figure \ref{fig:SystemOverview}.}
+    \label{fig:BackendOverview}
+\end{figure}
+
+The diagram in figure \ref{fig:BackendOverview} gives an overview of how the task-handling part of the backend is structured. The diagram provides an overview of how different parts of the server side interact with each other. The process starts when a customer uploads a file. Once this file is saved to the server, it is put into the file queuing system, where it will stay until the server is ready to work on that file. The file will be split into various tasks which the task scheduler delegates to different workers. This continues until all of the tasks are done. The sorted file is then sent to the list of finished files.
+
+\section{System Requirements} \label{sec:MoSCoW}
+This section uses the MoSCoW method to prioritise different, possible features for the development of the product. 
+
+\subsection{MoSCoW Method} 
+
+\subsubsection{Must Have} 
+\begin{enumerate}
+    \item The master node must be able to receive a task from a customer.
+    \item The product must have a web-based user interface, where the customer can upload a CSV document, containing only numbers that need to be sorted.
+    \item The master node must be able to split tasks into suitable sizes, such that any modern, consumer-grade device can be a worker node in the system.
+    \item The master node must be able to connect, and distribute tasks, to worker nodes.
+    \item The grid must be able to handle a minimum of three nodes: one master and two connected worker nodes
+    \item The master node must be able to receive results from worker nodes.
+    \item The master node must be able to combine results that it receives from the worker nodes.
+    \item The master node must be able to return the final product (a sorted CSV document) to the customer.
+\end{enumerate}
+
+\subsubsection{Should Have}
+\begin{enumerate}
+    \item The grid should be able to sort a file efficiently in regards to time.
+    \item The master node should be able to validate the results that it receives from the worker nodes.
+    \item The product should have a web-based login system so that the identity of a user can be verified, to keep track of their files.
+    \item The master node should keep track of tasks, both tasks that are completed and pending.
+    \item The master node should validate the type and content of the input CSV file.
+\end{enumerate}
+
+\subsubsection{Could Have}
+\begin{enumerate}
+    \item Login sessions could expire after some time, in order to enhance security.
+    \item The login system could have a mechanism for preventing SQL injections and similar attacks.
+    \item There could be a reward system for contributing worker nodes.
+\end{enumerate}
+
+\subsubsection{Will Not Have}
+\begin{enumerate}
+    \item The master node will not be able to process two files simultaneously.
+    \item The frontend will not have an option for the customer to upload custom scripts for workers to run.
+\end{enumerate}

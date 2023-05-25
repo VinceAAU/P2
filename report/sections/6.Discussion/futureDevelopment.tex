@@ -1,0 +1,36 @@
+\section{Future development} \label{sec:futuredev}
+This project has attempted to be an example of a 'proof of concept'. This means that some elements of the program should be worked further upon, some features reevaluated and some key missing features would need to be implemented, if this program were to be used in production. Some of these features are discussed in the following section.
+
+
+\subsubsection{Encrypted Network Connections}
+An important thing to consider, if this product was to be published and therefore made available to the public, would be to use the HTTPS protocol. HTTPS provides extra security for the user as it facilitates encrypted data transmission. This encryption plays a crucial role in protecting information and enhancing overall security \cite{HTTPSadvantage}. As of right now all tasks are sent directly to the user, which means that a malicious user could perhaps intercept the network connection and see the data being sent. An additional benefit of HTTPS is that it increases the perceived reliability of a website, potentially making users more willing to use and volunteer for it \cite{HTTPSadvantage}.
+
+\subsubsection{Login System}
+
+To enhance security, the access token authentication process could check for when the token has been issued, thereby giving a fixed time for access tokens to stay valid, in case of access tokens being intercepted.
+While giving a fixed time for access tokens to stay valid would improve security within the system, the use of HTTPS for encrypting fetch calls would further improve the security. This gives a very limited time for access tokens to be decrypted and misused, in case of interception. 
+
+Furthermore, to improve scalability, the login functions and thereby also access token validation, could be hosted on a different port on the server. This would decrease the strain being put on the main port, and allow for scaling of the login function, according to the amount of users on the system, without necessarily having to scale the entire program.
+
+\subsubsection{Filetypes}
+As of now the only files the program can work with are CSV files containing numbers, which is limiting as the objective is sorting big data and CSV files do not store numbers efficiently. Data can come in a lot of different ways and expecting the data to meet the exact requirements needed to be run in the program is not realistic. In future developments one of the main points of improvement could be to expand the possible file types to include a wider variety of formats, e.g. JSON or XML. 
+
+\subsubsection{More Uniform Bucket Sizes} \label{sec:betterBuckets}
+A limitation of bucket sort is that on non-uniform data distributions, the buckets will have variable sizes. This means that if a dataset contains the majority of its data within the range of one bucket, then one worker will effectively be given that majority of the file to sort. 
+
+One possible solution could be, after the buckets have been created, to check their sizes. If one of the buckets has a size that could overwhelm a worker node, the bucket could be further split up into a sufficient amount of sub-buckets. 
+
+\subsubsection{Gradual File Writing}
+In the program's current state, all buckets have to finish getting sorted before they can be written to the output file on the server. An improvement could be made by writing the buckets into the file as soon as they are received, rather than waiting for all of them to finish. An additional improvement could be to write to the file non-sequentially, meaning that the order the buckets are completed in does not matter. In this case, if the fifth bucket is done before the first or the second it will just be written where the fifth bucket would fit in. For this to work, one would also need to keep track of the sizes of the different buckets, such that the buckets can be correctly placed in the sorted file. This implementation would reduce the overall processing time, as there is no need to wait for the completion of other buckets. 
+
+\subsubsection{WebSockets}
+A major problem in the grid was communication overhead. Most of the sorting time was spent downloading tasks rather than sorting, leaving the available processing power unused most of the time. 
+In the current implementation, the program uses the common HyperText Transfer Protocol (HTTP) with the fetch API for all communication between the master node and the worker nodes. When the master node receives a request, it handles it appropriately, and then the connection is closed. Communication in this way is reasonable for most cases, however, in the case of pings and sending/receiving data, it is less than ideal.
+Since these requests are expected relatively often, it is unnecessary to close the connection before the worker has stopped working, and it may increase the communication overhead to constantly establish and terminate new connections for every active node in the system.
+WebSockets would likely alleviate this issue, as the connection is not closed until the client or server explicitly closes it. WebSocket connections use a full-duplex protocol, which means information can be sent and received concurrently, and they are designed for longer connections where data is meant to be sent more frequently.
+
+\subsubsection{Simultaneous File Processing}
+One of the \emph{Will-Not-Have} requirements for the product was the ability to process multiple files simultaneously. This was not implemented due to concerns that multiple files may prove difficult to keep track of at the same time. Adding this feature would mean that while one file is finishing its processing, and therefore some of the workers may be sitting idle, these workers could instead be spending time processing a second file's tasks.
+
+\subsubsection{Custom Script Upload}
+Another of the \emph{Will-Not-Have} requirements was the ability for users to upload custom scripts that they need workers to process. This was not implemented as it could potentially introduce security issues, and would result in a much more open analysis. Allowing users to upload their own scripts would allow the grid to be more versatile as a customer would be able to process any data in any way. This could for example be used for matrix multiplication, or other sorting algorithms that could be more suited for their particular data.

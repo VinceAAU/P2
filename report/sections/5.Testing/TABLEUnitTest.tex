@@ -1,0 +1,84 @@
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{13cm}|l|}
+    \hline
+        \multicolumn{2}{|c|}{\textbf{assignWork.test.js}} \\ \hline
+        \multicolumn{1}{|c|}{\textbf{Test name}} & \textbf{Test status} \\ 
+        \hline
+        enqueueTask tests (DYNAMIC) & Success \\ \hline
+        addToBeginningOfQueue tests (DYNAMIC) & Success\\ \hline
+        dequeueTask tests (DYNAMIC) & Success\\ \hline
+        assignWorkToWorker tests (DYNAMIC) & Success\\ \hline
+        storeSortedBuckets tests (DYNAMIC) & Success\\ \hline
+        \multicolumn{2}{|c|}{\textbf{createUser.test.js}}\\ \hline
+        Test validateNewUser: Correct information & Success\\ \hline
+        Test validateNewUser: unmatching passwords & Success\\ \hline
+        Test validateNewUser: Existing mail & Success\\ \hline
+        Test validateNewUser: Existing user & Success\\ \hline
+        Test handler: All fields match & Success\\ \hline
+        Test handler: Throw for already existing mail & Success\\ \hline
+        Test handler: Throw for already existing user & Success\\ \hline
+        Test handler: Throw for non-matching passwords & Success\\ \hline
+    \end{tabular}
+\end{table}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{13cm}|l|}
+        \hline
+                \multicolumn{2}{|c|}{\textbf{db.test.js}} \\ \hline
+        Test hashing & Success\\ \hline
+        Test searchDB: With existing username & Success\\ \hline
+        Test searchDB: Without existing username & Success\\ \hline
+        Test searchDB: Wrong password & Success\\ \hline
+        Test insert & Success\\ \hline
+        Test update & Success\\ \hline
+        Test searchUsername: for existing user & Success\\ \hline
+        Test searchUsername: for non-existing user & Success\\ \hline
+        Test searchMail: for existing mail & Success\\ \hline
+        Test searchMail: for non-existing mail & Success\\ \hline
+        \multicolumn{2}{|c|}{\textbf{exchangeData.test.js}}\\ \hline
+        streamArrayToClient handles errors gracefully & Success\\ \hline
+        streamArrayToClient sends correct length in bytes & Success\\ \hline
+        \multicolumn{2}{|c|}{\textbf{forgotPasswork.test.js}}\\ \hline
+        Test search: With user & Success\\ \hline
+        Test search: Without user & Success\\ \hline
+        Test passwords: Matching passwords & Success\\ \hline
+        Test passwords: Not matching passwords & Success\\ \hline
+        Test userCache: existing cache & Success\\ \hline
+        Test userCache: Cleared cache & Success\\ \hline
+        \multicolumn{2}{|c|}{\textbf{queue.test.js}}\\ \hline
+        getUserQueueHead returns null on empty queue & Success\\ \hline
+        getTaskQueueHead returns null on empty queue & Success\\ \hline
+        getUserQueueHead returns head on non-empty array & Success\\ \hline
+        getTaskQueueHead returns head on non-empty array & Success\\ \hline
+        removeFinishedCustomerQueue removes at correct index & Success\\ \hline
+        findFinishedTaskIndex returns null if no matching index is found & Success\\ \hline
+        findFinishedTaskIndex finds correct index & Success\\ \hline
+        serverDownloadCsv downloads with correct placement & Success\\ \hline
+        csvMaker makes expected csv format & Success\\ \hline
+        getTaskByUser gets all correct tasks & Success\\ \hline
+        \end{tabular}
+\end{table}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{13cm}|l|}
+    \hline
+            \multicolumn{2}{|c|}{\textbf{server.test.js}}\\ \hline
+        securePath tests (STATIC) & Success\\ \hline
+        guessMimeType tests (STATIC) & Success\\ \hline
+        \multicolumn{2}{|c|}{\textbf{splitData.test.js}}\\ \hline
+        BucketList.push (randomised) & Success\\ \hline
+        BucketList.push (predetermined) & Success\\ \hline
+        Dezeroifier & Success\\ \hline
+        File loader & Success\\ \hline
+        \multicolumn{2}{|c|}{\textbf{tokenHandler.test.js}}\\ \hline
+        Test decodeToken & Success\\ \hline
+        \multicolumn{2}{|c|}{\textbf{workerManagment.test.js}}\\ \hline
+        Is Null Worker's task null? & Success\\ \hline
+        Is Null Worker's ping correct? & Success\\ \hline
+        Can we remove Null Worker? & Success\\ \hline
+        Does heartbeat kill dead workers? & Success\\ \hline
+        Does heartbeat preserve living workers? & Success\\ \hline
+    \end{tabular}
+\end{table}

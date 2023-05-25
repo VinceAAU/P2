@@ -1,0 +1,31 @@
+\begin{table}
+    \begin{tabular}{|p{10cm}|c|}
+        \hline
+        \multicolumn{2}{|c|}{\textbf{Must-Have}} \\ \hline
+        The master node must be able to receive a task from a customer & Success \\ \hline
+        The product must have a web-based user interface, where the customer can upload a CSV document, containing only numbers that need to be sorted & Success \\ \hline
+        The master node must be able to split tasks into suitable sizes, such that any modern, consumer-grade device can be a worker node in the system & Partial success \\ \hline
+        The master node must be able to connect, and distribute tasks, to worker nodes & Success \\ \hline
+        The grid must be able to handle a minimum of three nodes: one master and two connected worker nodes & Success \\ \hline
+        The master node must be able to receive results from worker nodes & Success \\ \hline
+        The master node must be able to combine results that it receives from the worker nodes & Success \\ \hline
+        The master must be able to return the final product (a sorted CSV document) to the customer & Success \\ \hline
+
+        \multicolumn{2}{|c|}{\textbf{Should-Have}} \\ \hline
+        The grid should be able to sort a file efficiently in regards to time & Failure \\ \hline
+        The master node should be able to validate the results that it receives from the worker nodes &  Failure \\ \hline
+        The product should have a web-based login system so that the identity of a user can be verified, to keep track of the files & Success \\ \hline
+        The master node should keep track of tasks, both tasks that are completed and pending & Success \\ \hline
+        The master node should validate the type and content of the input CSV file & Partial success \\ \hline
+
+        \multicolumn{2}{|c|}{\textbf{Could-Have}} \\ \hline
+        Login sessions could expire after some time, in order to enhance security & Failure \\ \hline
+        The login system could have a mechanism for preventing SQL injections and similar attacks & Success \\ \hline
+        There could be a reward system for the contributing worker nodes & Failure \\ \hline
+
+        \multicolumn{2}{|c|}{\textbf{Will-Not-Have}} \\ \hline
+        The master node will not be able to process two files simultaneously & Failure \\ \hline
+        The frontend will not have an option for the customer to upload custom scripts for workers to run & Failure \\ \hline
+    \end{tabular}
+    \caption{Summary of the results of the end-to-end tests}
+\end{table}
