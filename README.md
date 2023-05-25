@@ -8,7 +8,7 @@ Running
 ---
 As a prerequisite, you must first install dependencies:
 
-    npm install
+    npm ci
 
 Then, you can simply run our program as:
 
@@ -18,6 +18,11 @@ or
 
     node server.js
 
+Testing
+---
+Testing the product can be done with the command:
+
+    npm test
 
 Contact
 ---
