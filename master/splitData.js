@@ -36,7 +36,7 @@ class  BucketList
    * @returns The amount of buckets you need
    */
   static bucketAmount(elementAmount, elementSize){
-    const targetPayloadSize = 100_000_000; //100 megabytes. Too much? Too little? Idk
+    const targetPayloadSize = 100_000_000; 
 
     return Math.ceil((elementAmount*elementSize)/targetPayloadSize);
   }
@@ -47,7 +47,7 @@ class  BucketList
 
     const bucketAmount = BucketList.bucketAmount(fileSize/10 /*The average size of each element is 9.89 bytes*/, 4);
 
-    const maxBucketSize = 100_000_000; //Arbitrarily chosen
+    const maxBucketSize = 100_000_000; 
     const dataRange = 1_000_000_000;
 
     let bucketList = new BucketList(bucketAmount, maxBucketSize, dataRange);
@@ -90,7 +90,7 @@ class  BucketList
     const returnList = [];
     for(let bucket of bucketList.buckets){
       bucket.dezeroify();
-      returnList.push(bucket.list); //This probably does it in the correct order
+      returnList.push(bucket.list); 
     }
 
     return returnList;

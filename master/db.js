@@ -79,7 +79,7 @@ function searchUsername(username) {
 //SQL syntax for updating:
 // ('UPDATE table SET column1 = value1 WHERE column2 = value2')
 // Better-Sqlite allows for '?' to be placeholders for values to insert in SQL statement
-function updatePassword(new_password, user) { //not tested
+function updatePassword(new_password, user) { 
   hash(new_password)
     .then(protectedPassword => update(protectedPassword, user))
     .catch(err => console.log(err))

@@ -8,7 +8,7 @@ export { workers, addWorker, removeWorker, pong, heartbeat, stopHeartbeat };
 var workers = {};
 
 let heartBeating;
-const timeout = 20_000;
+const timeout = 20_000; // time before worker is considered dead
 async function heartbeat(){
     heartBeating = true;
     while(heartBeating){
