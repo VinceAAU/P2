@@ -43,6 +43,7 @@ function dequeueTask() {
   qHead = (qHead + 1) % (allTasks.length + 1);
   return task;
 }
+// global variable to time start to finish of sorting
 let startTime;
 
 async function assignWorkToWorker(workerUUID) {
